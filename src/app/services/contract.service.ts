@@ -1,14 +1,12 @@
 import { Injectable } from '@angular/core';
 import Web3 from "web3";
-import { ERC20Token, RentInfo } from 'src/app/models/interfaces';
+import { ERC20Token, RentInfo, Position } from 'src/app/models/interfaces';
 import { ERC20ABI, myABI, poolABI, NFTMinterABI } from 'src/app/models/abi';
 
 declare const window: any;
 
-const address = "0xc79226118CB5aee4d6d35654132b987c1aB56aAe";
-const NFTMinterAddress = "0xC36442b4a4522E871399CD717aBDD847Ab11FE88";
-const abi = [{"constant":true,"inputs":[],"name":"manager","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"pickWinner","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"getPlayers","outputs":[{"name":"","type":"address[]"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"enter","outputs":[],"payable":true,"stateMutability":"payable","type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint256"}],"name":"players","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"inputs":[],"payable":false,"stateMutability":"nonpayable","type":"constructor"}]
-
+const address = "0x215a56BcC26653C554cF63ddefD3fD329ba9Ebd0"; //Address of our custom smart contract
+const NFTMinterAddress = "0xC36442b4a4522E871399CD717aBDD847Ab11FE88"; //Hard coded address of Uniswap NFT Minter contract
 
 @Injectable({
   providedIn: 'root'
@@ -77,9 +75,32 @@ export class ContractService {
 
   public getPairing = async (tokenId: number) => {
     await this.getManagerContract();
-    const tokens = await this.managerContract.methods.itemIdToTokenAddrs(tokenId).call();
-    const tokenInfo: ERC20Token[] = [await this.getERC20TokenInfoFromAddress(tokens.token0Addr), await this.getERC20TokenInfoFromAddress(tokens.token1Addr)]
-    return tokenInfo;
+    try {
+      const tokens = await this.managerContract.methods.itemIdToTokenAddrs(tokenId).call();
+      const tokenInfo: ERC20Token[] = [await this.getERC20TokenInfoFromAddress(tokens.token0Addr), await this.getERC20TokenInfoFromAddress(tokens.token1Addr)]
+      return tokenInfo;
+    } catch (e) {
+      console.log("ERROR :: getPairing ::", e);
+      return []
+    }
+  }
+
+  public getPosition = async (tokenId: number) => {
+    await this.getManagerContract();
+    try {
+      const position = await this.managerContract.methods.positions(tokenId).call();
+      return {
+        tickUpper: position.tickUpper,
+        tickLower: position.tickLower,
+        liquidity: position.liquidity,
+        feeGrowth: [position.feeGrowthInside0LastX128, position.feeGrowthInside1LastX128],
+        tokensOwed: [position.tokensOwed0, position.tokensOwed1]
+      } as Position
+      return true
+    } catch (e) {
+      console.log("ERROR :: getPosition ::", e);
+      return false
+    }
   }
 
   public approveTransfer = async (tokenId: number) => {
@@ -114,6 +135,7 @@ export class ContractService {
 
   public deleteRental = async (tokenId: number) => {
     await this.getManagerContract();
+    console.log(this.account);
     try {
       await this.managerContract.methods.removeNFTForRent(
         tokenId
@@ -132,7 +154,7 @@ export class ContractService {
         tokenId
       ).send({
         from: this.account,
-        value: window.web3.utils.toWei(priceInEther, 'ether')
+        value: window.web3.utils.toWei(priceInEther.toString(), 'ether')
       });
       return true;
     } catch (e) {
@@ -146,7 +168,7 @@ export class ContractService {
     try {
       await this.managerContract.methods.withdrawCash(
         tokenId
-      ).call();
+      ).send({ from: this.account});
       return true;
     } catch (e) {
       console.log("ERROR :: withdrawCash ::", e);
@@ -167,36 +189,25 @@ export class ContractService {
     }
   }
 
-  public getRentalListings = async (num?: number) => {
-    // let listings: RentInfo[] = [
-    //   { 
-    //     tokenId: 1, originalOwner: 'abcdefg', renter: null, priceInEther: 1, durationInSeconds: 2629743.83, expiryDate: null, 
-    //     pairing: [await this.getERC20TokenInfoFromAddress('0x63f6b6439fd32610f460e2199aa263eb0559abc9'), await this.getERC20TokenInfoFromAddress('0x02f055b6719919d69af7c63c8ab4abb380383925')] 
-    //   } as RentInfo,
-    //   { 
-    //     tokenId: 2, originalOwner: 'hijklmnop', renter: null, priceInEther: 0.15, durationInSeconds: 604800, expiryDate: null,
-    //     pairing: [await this.getERC20TokenInfoFromAddress('0x63f6b6439fd32610f460e2199aa263eb0559abc9'), await this.getERC20TokenInfoFromAddress('0x02f055b6719919d69af7c63c8ab4abb380383925')] 
-    //   } as RentInfo
-    // ]
-    // return listings;
-
+  public getAllListings = async () => {
     await this.getManagerContract();
     try {
-      const result: any[] = await this.managerContract.methods.getAllNFTsForRent().call();
-      let makeRentInfo = async (listing: any) => {
-        let pairing: ERC20Token[] = await this.getPairing(listing.tokenId)
-        return {
-          tokenId: listing.tokenId,
-          originalOwner: listing.originalOwner,
-          renter: null,
-          priceInEther: window.web3.utils.fromWei(listing.price, 'ether'),
-          durationInSeconds: listing.duration,
-          expiryDate: null,
-          pairing: pairing
-        } as RentInfo
-      } 
-      const listings: RentInfo[] = await Promise.all(result.map(makeRentInfo))
-      return listings
+      const tokenIds: any[] = await this.managerContract.methods.getAllItemIds().call();
+      console.log("tokenIds:", tokenIds)
+      const allListings: RentInfo[] = await Promise.all(tokenIds.map(this.getRentalListingById));
+      return allListings
+    } catch (e) {
+      console.log("ERROR :: getAllListings ::", e);
+      return []
+    }
+  }
+
+  public getRentalListings = async () => {
+    await this.getManagerContract();
+    try {
+      const allListings: RentInfo[] = await this.getAllListings();
+      const availableListings: RentInfo[] = allListings.filter(listing => listing.renter == null)
+      return availableListings
     } catch (e) {
       console.log("ERROR :: getRentalListings ::", e);
       return []
@@ -204,11 +215,33 @@ export class ContractService {
   }
 
   public getRentalListingsByOwner = async (ownerAddress: string) => {
-
+    await this.getManagerContract();
+    if (ownerAddress == "") {
+      ownerAddress = this.account;
+    }
+    try {
+      const allListings: RentInfo[] = await this.getAllListings();
+      const ownedListings: RentInfo[] = allListings.filter(listing => listing.originalOwner?.toLowerCase() == ownerAddress.toLowerCase())
+      return ownedListings
+    } catch (e) {
+      console.log("ERROR :: getRentalListingsByOwner ::", e);
+      return []
+    }
   }
 
   public getRentalListingsByRenter = async (renterAddress: string) => {
-
+    await this.getManagerContract();
+    if (renterAddress == "") {
+      renterAddress = this.account;
+    }
+    try {
+      const allListings: RentInfo[] = await this.getAllListings();
+      const rentedListings: RentInfo[] = allListings.filter(listing => listing.renter?.toLowerCase() == renterAddress.toLowerCase())
+      return rentedListings
+    } catch (e) {
+      console.log("ERROR :: getRentalListingsByRenter ::", e);
+      return []
+    }
   }
 
   public getRentalListingById = async (tokenId: number) => {
@@ -217,20 +250,22 @@ export class ContractService {
     try {
       const result = await this.managerContract.methods.itemIdToRentInfo(tokenId).call({ from: this.account });
       let makeRentInfo = async (listing: any) => {
-        // let pairing: ERC20Token[] = await this.getPairing(listing.tokenId)
+        let pairing: ERC20Token[] = await this.getPairing(listing.tokenId)
+        console.log("Pairing:",pairing)
         return {
           tokenId: listing.tokenId,
           originalOwner: listing.originalOwner,
-          renter: null,
+          renter: listing.renter == "0x0000000000000000000000000000000000000000" ? null : listing.renter,
           priceInEther: window.web3.utils.fromWei(listing.price, 'ether'),
           durationInSeconds: listing.duration,
-          expiryDate: null
-        } 
+          expiryDate: listing.expiryDate == 0 ? null : new Date(listing.expiryDate*1000),
+          pairing: pairing
+        } as RentInfo
       }
       return await makeRentInfo(result)
     } catch (e) {
       console.log("ERROR :: getRentalListingById ::", e);
-      return
+      return {} as RentInfo
     }
   }
 

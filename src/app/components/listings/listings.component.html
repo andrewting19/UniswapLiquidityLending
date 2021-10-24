@@ -5,9 +5,10 @@
         <p>Pairing: {{listing.pairing[0].symbol}}-{{listing.pairing[1].symbol}}</p>
         <p>Duration: {{(listing.durationInSeconds/60/60/24).toFixed(0)}} days</p>
         <p>Price: {{listing.priceInEther}} ETH</p>
-
         <button (click)="purchaseListing(listing)" class="rent-btn button button--mimas">
             <span>Rent</span>
         </button>
     </div>
+    <p class="title" *ngIf="!listings.length">No listings :(</p>
+    <p *ngIf="loading">Transaction in progress...</p>
 </div>

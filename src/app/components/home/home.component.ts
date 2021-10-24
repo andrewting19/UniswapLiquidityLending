@@ -30,13 +30,16 @@ export class HomeComponent implements OnInit {
     // this.players = await this.contractService.getPlayerAddresses();
     // this.balance = await this.contractService.getLotteryBalance();
     // console.log(this.manager, this.players, this.balance)
-    let poolAddr = "0x1d42064fc4beb5f8aaf85f4617ae8b3b5b8bd801";
-    // await this.contractService.approveTransfer(7597);
-    console.log(await this.contractService.createNewRental(7597, .5, 100000, poolAddr));
-    console.log(await this.contractService.getRentalListingById(7597))
-    console.log(await this.contractService.deleteRental(7597))
-    console.log(await this.contractService.getRentalListingById(7597))
-    this.nftSvg = await this.getNFTImg(7597) 
+    let poolAddr = "0xc2e9f25be6257c210d7adf0d4cd6e3e881ba25f8";
+    // await this.contractService.approveTransfer(7595);
+    // console.log(await this.contractService.createNewRental(7600, .0001, 100000, poolAddr));
+    // console.log(await this.contractService.withdrawCash(7600));
+    // console.log(await this.contractService.getRentalListingById(7602));
+    // console.log(await this.contractService.rent(7600, 0.0001));
+    // console.log(await this.contractService.getRentalListingById(7595));
+    // console.log(await this.contractService.getRentalListingById(7586));
+    console.log(await this.contractService.deleteRental(7605));
+    // this.nftSvg = await this.getNFTImg(7597) 
   }
 
   async getNFTImg(tokenId: number) {

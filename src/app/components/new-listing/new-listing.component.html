@@ -1,1 +1,49 @@
-<p>new-listing works!</p>
+<p class="title">Lend Liquidity</p>
+<div class="container">
+    <div class="form">
+        <div class="field" tabindex="1">
+            <label for="tokenId">
+                <i class="far fa-user"></i>Token ID
+            </label>
+            <input [formControl]="tokenId" [ngClass]="{ 'error': error && tokenId.invalid }" name="tokenId" type="text" placeholder="12345" required>
+        </div>
+        <div class="field" tabindex="2">
+            <label for="priceInEther">
+                <i class="far fa-user"></i>Rental Price (in Ether)
+            </label>
+            <input [formControl]="priceInEther" [ngClass]="{ 'error': error && priceInEther.invalid }" name="priceInEther" type="text" placeholder="0.01" required>
+        </div>
+        <div class="field" tabindex="3">
+            <label for="duration">
+                <i class="far fa-envelope"></i>Rental Duration
+            </label>
+            <div class="runtime">
+                <input [formControl]="duration" [ngClass]="{ 'error': error && duration.invalid }" name="duration" type="text" placeholder="30" required>
+                <select id="standard-select" [formControl]="durationUnits">
+                    <option value="w">Weeks</option>
+                    <option value="d" selected>Days</option>
+                    <option value="h">Hours</option>
+                    <option value="m">Minutes</option>
+                    <option value="s">Seconds</option>
+                </select>
+            </div>
+            <p class="error-txt" *ngIf="error && duration.invalid">Duration must be a number. Choose between seconds, minutes, hours, days, or weeks.</p>
+        </div>
+        <div class="field" tabindex="4">
+            <label for="poolAddress">
+                <i class="far fa-user"></i>Pool Address for Pairing
+            </label>
+            <input [formControl]="poolAddress" [ngClass]="{ 'error': error && poolAddress.invalid }" name="poolAddress" type="text" placeholder="0x0000000000000000000000000000000000000000"required>
+        </div>
+        <div *ngIf="error || postError">
+            <p *ngIf="error">Please fill out all of the required fields.</p>
+            <p *ngIf="postError">Transaction rejected by smart contract. Please ensure your inputs are correct and you are the owner of the smart contract.</p>
+        </div>
+        <div class="centered" (click)="submitForm()">
+            <button  class="button button--mimas">
+                <span>Create New Session</span>
+                <!-- <span *ngIf="loading"><mat-spinner style="margin: auto;" diameter="25"></mat-spinner></span> -->
+            </button>
+        </div>
+    </div>
+</div>

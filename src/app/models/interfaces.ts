@@ -15,3 +15,11 @@ export interface ERC20Token {
     symbol: string;
     name: string;
 }
+
+export interface Position {
+    tickLower: number;
+    tickUpper: number;
+    liquidity: number;
+    feeGrowth: number[],
+    tokensOwed: number[]
+}

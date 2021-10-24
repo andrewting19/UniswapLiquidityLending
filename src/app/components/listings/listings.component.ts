@@ -9,18 +9,24 @@ import { ContractService } from 'src/app/services/contract.service';
 })
 export class ListingsComponent implements OnInit {
   listings: RentInfo[] = [];
+  loading: boolean = false;
 
   constructor(private contractService: ContractService) { }
 
   ngOnInit(): void {
-    let setup = async () => {
-      this.listings = await this.contractService.getRentalListings();
-    }
-    setup();
+    this.getListings();
   }
 
-  purchaseListing(listing: RentInfo) {
+  async getListings() {
+    this.listings = await this.contractService.getRentalListings();
+    console.log(this.listings)
+  }
 
+  async purchaseListing(listing: RentInfo) {
+    this.loading = true;
+    let result = await this.contractService.rent(listing.tokenId, listing.priceInEther);
+    this.loading = false;
+    this.getListings();
   }
 
   secondsToString(seconds: number) {
