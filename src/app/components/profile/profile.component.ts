@@ -40,6 +40,10 @@ export class ProfileComponent implements OnInit {
   timedelta(expiry: any) {
     let now = new Date();
     let delta: number = expiry.getTime()/1000 - now.getTime()/1000;
+    return this.deltaToString(delta)
+  }
+
+  deltaToString(delta: number) {
     if (delta < 0) {
       return "Expired"
     }
@@ -76,6 +80,13 @@ export class ProfileComponent implements OnInit {
     this.loading = true;
     let result = await this.contractService.deleteRental(tokenId);
     console.log("removeListing:",tokenId,result);
+    this.loading = false;
+  }
+
+  async reclaimLiquidity(tokenId: number) {
+    this.loading = true;
+    let result = await this.contractService.returnRentalToOwner(tokenId);
+    console.log("reclaimLiquidity:",tokenId,result);
     this.loading = false;
   }
 

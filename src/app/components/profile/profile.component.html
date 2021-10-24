@@ -2,33 +2,18 @@
 
 <div class="centered listings-div">
     <p *ngIf="!ownedListings.length">No owned liquidity :(</p>
-    <p *ngIf="ownedListings.length">Your Liquidity</p>
+    <p class="title" *ngIf="ownedListings.length">Your Liquidity</p>
     <div class="listing" *ngFor="let listing of ownedListings">
-        <p>NFT {{listing.tokenId}}</p>
-        <p>Owner: {{listing.originalOwner}}</p>
-        <p>Pairing: {{listing.pairing[0].symbol}}-{{listing.pairing[1].symbol}}</p>
-        <p>Duration: {{(listing.durationInSeconds/60/60/24).toFixed(0)}} days</p>
-        <p>Price: {{listing.priceInEther}} ETH</p>
-        <button (click)="removeListing(listing.tokenId)" class="rent-btn button button--mimas">
-            <span>Remove Listing</span>
-        </button>
+        <app-listing [listing]="listing" [isRenter]="false" [isOwner]="true"></app-listing>
     </div>
     <p *ngIf="loading">Transaction in progress...</p>
 </div>
 
 <div class="centered listings-div">
-    <p  *ngIf="!rentedListings.length">No rented liquidity :(</p>
-    <p  *ngIf="rentedListings.length">Rented Liquidity</p>
+    <p *ngIf="!rentedListings.length">No rented liquidity :(</p>
+    <p class="title" *ngIf="rentedListings.length">Rented Liquidity</p>
     <div class="listing" *ngFor="let listing of rentedListings">
-        <p>NFT {{listing.tokenId}}</p>
-        <p>Owner: {{listing.originalOwner}}</p>
-        <p>Pairing: {{listing.pairing[0].symbol}}-{{listing.pairing[1].symbol}}</p>
-        <p>Remaining Duration: {{timedelta(listing.expiryDate)}}</p>
-        <p>{{listing.expiryDate}}</p>
-        <p>Price: {{listing.priceInEther}} ETH</p>
-        <button (click)="collectFees(listing.tokenId)" class="rent-btn button button--mimas">
-            <span>Collect Fees</span>
-        </button>
+        <app-listing [listing]="listing" [isRenter]="true" [isOwner]="false"></app-listing>
     </div>
     <p *ngIf="loading">Transaction in progress...</p>
 </div>

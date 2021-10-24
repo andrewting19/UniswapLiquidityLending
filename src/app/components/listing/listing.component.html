@@ -1,0 +1,26 @@
+<div class="listing">
+    <p>Owner: {{listing.originalOwner}}</p>
+    <img *ngIf="nftSvg" [src]="nftSvg">
+    <p *ngIf="listing.renter">Renter: {{listing.renter}}</p>
+    <p>Liquidity: {{listing.position.liquidity}}</p>
+    <p *ngIf="!listing.expiryDate">Duration: {{deltaToString(listing.durationInSeconds)}}</p>
+    <p *ngIf="listing.expiryDate">Remaining Duration: {{timedelta(listing.expiryDate)}}</p>
+    <p>Price: {{listing.priceInEther}} ETH</p>
+    <button *ngIf="isOwner && !listing.expiryDate" (click)="removeListing()" class="rent-btn button button--mimas">
+        <span *ngIf="!loading">Remove Listing</span>
+        <span *ngIf="loading"><mat-spinner style="margin: auto;" diameter="25"></mat-spinner></span>
+    </button>
+    <button *ngIf="isOwner && listing.expiryDate && timedelta(listing.expiryDate) == 'Expired'" (click)="reclaimLiquidity()" class="rent-btn button button--mimas">
+        <span *ngIf="!loading">Reclaim Liquidity</span>
+        <span *ngIf="loading"><mat-spinner style="margin: auto;" diameter="25"></mat-spinner></span>
+    </button>
+    <button *ngIf="isRenter" (click)="collectFees()" class="rent-btn button button--mimas">
+        <span *ngIf="!loading">Collect Fees</span>
+        <span *ngIf="loading"><mat-spinner style="margin: auto;" diameter="25"></mat-spinner></span>
+    </button>
+    <button *ngIf="!listing.renter && !isOwner && !isRenter" (click)="purchaseListing()" class="rent-btn button button--mimas">
+        <span *ngIf="!loading">Rent</span>
+        <span *ngIf="loading"><mat-spinner style="margin: auto;" diameter="25"></mat-spinner></span>
+    </button>
+    <p *ngIf="loading">Transaction in progress...</p>
+</div>

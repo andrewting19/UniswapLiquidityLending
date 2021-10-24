@@ -5,7 +5,7 @@ import { ERC20ABI, myABI, poolABI, NFTMinterABI } from 'src/app/models/abi';
 
 declare const window: any;
 
-const address = "0x215a56BcC26653C554cF63ddefD3fD329ba9Ebd0"; //Address of our custom smart contract
+const address = "0xBa4311A092c426FD83B00F6263824863F06E3E44"; //Address of our custom smart contract
 const NFTMinterAddress = "0xC36442b4a4522E871399CD717aBDD847Ab11FE88"; //Hard coded address of Uniswap NFT Minter contract
 
 @Injectable({
@@ -88,18 +88,18 @@ export class ContractService {
   public getPosition = async (tokenId: number) => {
     await this.getManagerContract();
     try {
-      const position = await this.managerContract.methods.positions(tokenId).call();
+      const position = await this.managerContract.methods.positions(tokenId).call({ from: this.account });
       return {
         tickUpper: position.tickUpper,
         tickLower: position.tickLower,
         liquidity: position.liquidity,
+        fee: position.fee,
         feeGrowth: [position.feeGrowthInside0LastX128, position.feeGrowthInside1LastX128],
         tokensOwed: [position.tokensOwed0, position.tokensOwed1]
       } as Position
-      return true
     } catch (e) {
       console.log("ERROR :: getPosition ::", e);
-      return false
+      return {} as Position
     }
   }
 
@@ -181,7 +181,7 @@ export class ContractService {
     try {
       await this.managerContract.methods.returnNFTToOwner(
         tokenId
-      ).call();
+      ).send({ from: this.account});
       return true;
     } catch (e) {
       console.log("ERROR :: returnRentalToOwner ::", e);
@@ -250,8 +250,10 @@ export class ContractService {
     try {
       const result = await this.managerContract.methods.itemIdToRentInfo(tokenId).call({ from: this.account });
       let makeRentInfo = async (listing: any) => {
-        let pairing: ERC20Token[] = await this.getPairing(listing.tokenId)
-        console.log("Pairing:",pairing)
+        console.log("Listing:",listing)
+        let pairing: ERC20Token[] = await this.getPairing(listing.tokenId);
+        let position: Position = await this.getPosition(listing.tokenId);
+        console.log("Position:", position)
         return {
           tokenId: listing.tokenId,
           originalOwner: listing.originalOwner,
@@ -259,7 +261,8 @@ export class ContractService {
           priceInEther: window.web3.utils.fromWei(listing.price, 'ether'),
           durationInSeconds: listing.duration,
           expiryDate: listing.expiryDate == 0 ? null : new Date(listing.expiryDate*1000),
-          pairing: pairing
+          pairing: pairing,
+          position: position
         } as RentInfo
       }
       return await makeRentInfo(result)

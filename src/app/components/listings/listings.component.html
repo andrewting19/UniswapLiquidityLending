@@ -1,13 +1,6 @@
 <div class="centered listings-div">
     <div class="listing" *ngFor="let listing of listings">
-        <p>NFT {{listing.tokenId}}</p>
-        <p>Owner: {{listing.originalOwner}}</p>
-        <p>Pairing: {{listing.pairing[0].symbol}}-{{listing.pairing[1].symbol}}</p>
-        <p>Duration: {{(listing.durationInSeconds/60/60/24).toFixed(0)}} days</p>
-        <p>Price: {{listing.priceInEther}} ETH</p>
-        <button (click)="purchaseListing(listing)" class="rent-btn button button--mimas">
-            <span>Rent</span>
-        </button>
+        <app-listing [listing]="listing" [isRenter]="false" [isOwner]="false"></app-listing>
     </div>
     <p class="title" *ngIf="!listings.length">No listings :(</p>
     <p *ngIf="loading">Transaction in progress...</p>

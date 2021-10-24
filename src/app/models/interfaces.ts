@@ -7,7 +7,8 @@ export interface RentInfo {
     priceInEther: number;
     durationInSeconds: number; //in seconds
     expiryDate: Date | null;
-    pairing: ERC20Token[]; 
+    pairing: ERC20Token[];
+    position: Position;
 }
 
 export interface ERC20Token {
@@ -20,6 +21,7 @@ export interface Position {
     tickLower: number;
     tickUpper: number;
     liquidity: number;
+    fee: number;
     feeGrowth: number[],
     tokensOwed: number[]
 }

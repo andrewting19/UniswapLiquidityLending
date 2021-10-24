@@ -20,9 +20,7 @@ export class HomeComponent implements OnInit {
     private domSanitizer: DomSanitizer
   ) { }
 
-  ngOnInit(): void {
-    this.refresh();
-    
+  ngOnInit(): void {    
   }
 
   async refresh() {
@@ -41,22 +39,4 @@ export class HomeComponent implements OnInit {
     console.log(await this.contractService.deleteRental(7605));
     // this.nftSvg = await this.getNFTImg(7597) 
   }
-
-  async getNFTImg(tokenId: number) {
-    let result = await this.contractService.getNFTSVG(tokenId);
-    const json = atob(result.substring(29));
-    result = this.domSanitizer.bypassSecurityTrustUrl(JSON.parse(json).image);
-    console.log(result);
-    return result
-  }
-
-  // async enterLottery() {
-  //   this.status = "Trying to enter..."
-  //   await this.contractService.enterLottery(this.amountToEnter);
-  //   this.status = "Entered " + this.amountToEnter.toString() + " ether successfully"
-  //   this.amountToEnter = 0;
-  //   this.refresh();
-  // }
-
-
 }

@@ -10,11 +10,19 @@ import { ContractService } from 'src/app/services/contract.service';
 export class ListingsComponent implements OnInit {
   listings: RentInfo[] = [];
   loading: boolean = false;
+  durationMultiplier: any;
 
   constructor(private contractService: ContractService) { }
 
   ngOnInit(): void {
     this.getListings();
+    this.durationMultiplier = {
+      's': 1,
+      'm': 60,
+      'h': 3600,
+      'd': 86400,
+      'w': 604800
+    }
   }
 
   async getListings() {
@@ -29,8 +37,30 @@ export class ListingsComponent implements OnInit {
     this.getListings();
   }
 
-  secondsToString(seconds: number) {
-    
+  deltaToString(delta: number) {
+    if (delta < 0) {
+      return "Expired"
+    }
+    let prefix: string = " seconds"
+    if (delta > this.durationMultiplier.w) {
+      //seconds to minutes
+      delta = delta/this.durationMultiplier.w;
+      prefix = " weeks"
+    }
+    if (delta > this.durationMultiplier.d) {
+      //minutes to hours
+      delta = delta/this.durationMultiplier.d;
+      prefix = " days"
+    }
+    if (delta > this.durationMultiplier.h) {
+      delta = delta/this.durationMultiplier.h
+      prefix = " hours"
+    }
+    if (delta > this.durationMultiplier.m) {
+      delta = delta/this.durationMultiplier.m
+      prefix = " minutes"
+    }
+    return delta.toFixed(2) + prefix
   }
 
 }
