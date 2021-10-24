@@ -1,6 +1,6 @@
 <div class="centered listings-div">
     <div class="listing" *ngFor="let listing of listings">
-        <app-listing [listing]="listing" [isRenter]="false" [isOwner]="false"></app-listing>
+        <app-listing (updateEvent)="getListings()" [listing]="listing" [isRenter]="false" [isOwner]="false"></app-listing>
     </div>
     <p class="title" *ngIf="!listings.length">No listings :(</p>
     <p *ngIf="loading">Transaction in progress...</p>

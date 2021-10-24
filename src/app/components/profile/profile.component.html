@@ -4,7 +4,7 @@
     <p *ngIf="!ownedListings.length">No owned liquidity :(</p>
     <p class="title" *ngIf="ownedListings.length">Your Liquidity</p>
     <div class="listing" *ngFor="let listing of ownedListings">
-        <app-listing [listing]="listing" [isRenter]="false" [isOwner]="true"></app-listing>
+        <app-listing (updateEvent)="getOwned()" [listing]="listing" [isRenter]="false" [isOwner]="true"></app-listing>
     </div>
     <p *ngIf="loading">Transaction in progress...</p>
 </div>
@@ -13,7 +13,7 @@
     <p *ngIf="!rentedListings.length">No rented liquidity :(</p>
     <p class="title" *ngIf="rentedListings.length">Rented Liquidity</p>
     <div class="listing" *ngFor="let listing of rentedListings">
-        <app-listing [listing]="listing" [isRenter]="true" [isOwner]="false"></app-listing>
+        <app-listing (updateEvent)="getRented()" [listing]="listing" [isRenter]="true" [isOwner]="false"></app-listing>
     </div>
     <p *ngIf="loading">Transaction in progress...</p>
 </div>

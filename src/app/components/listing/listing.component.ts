@@ -99,7 +99,6 @@ export class ListingComponent implements OnInit {
       delta = delta/this.durationMultiplier.m
       prefix = " minutes"
     }
-    console.log(delta)
     return delta.toFixed(2) + prefix
   }
 

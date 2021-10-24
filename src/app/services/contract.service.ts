@@ -57,7 +57,6 @@ export class ContractService {
         myABI,
         address,
       );
-      console.log(this.managerContract)
     }
   }
 
@@ -107,7 +106,7 @@ export class ContractService {
     await this.getManagerContract();
     const NFTMinterContract = await this.getNFTMinterContract();
     try {
-      console.log(await NFTMinterContract.methods.approve(address, tokenId).send({from: this.account}));
+      await NFTMinterContract.methods.approve(address, tokenId).send({from: this.account});
       return true
     } catch (e) {
       console.log("ERROR :: approveTransfer ::", e);
@@ -118,8 +117,7 @@ export class ContractService {
   public createNewRental = async (tokenId: number, priceInEther: number, durationInSeconds: number, poolAddress: string) => {
     await this.getManagerContract();
     try {
-      console.log(await this.approveTransfer(tokenId));
-      console.log("asdfasdf")
+      await this.approveTransfer(tokenId);
       await this.managerContract.methods.putUpNFTForRent(
         tokenId, 
         window.web3.utils.toWei(priceInEther.toString(), 'ether'),
@@ -135,7 +133,6 @@ export class ContractService {
 
   public deleteRental = async (tokenId: number) => {
     await this.getManagerContract();
-    console.log(this.account);
     try {
       await this.managerContract.methods.removeNFTForRent(
         tokenId
@@ -193,7 +190,6 @@ export class ContractService {
     await this.getManagerContract();
     try {
       const tokenIds: any[] = await this.managerContract.methods.getAllItemIds().call();
-      console.log("tokenIds:", tokenIds)
       const allListings: RentInfo[] = await Promise.all(tokenIds.map(this.getRentalListingById));
       return allListings
     } catch (e) {
@@ -246,14 +242,11 @@ export class ContractService {
 
   public getRentalListingById = async (tokenId: number) => {
     await this.getManagerContract();
-    console.log(this.managerContract)
     try {
       const result = await this.managerContract.methods.itemIdToRentInfo(tokenId).call({ from: this.account });
       let makeRentInfo = async (listing: any) => {
-        console.log("Listing:",listing)
         let pairing: ERC20Token[] = await this.getPairing(listing.tokenId);
         let position: Position = await this.getPosition(listing.tokenId);
-        console.log("Position:", position)
         return {
           tokenId: listing.tokenId,
           originalOwner: listing.originalOwner,
@@ -276,49 +269,4 @@ export class ContractService {
     let NFTMinterContract = await this.getNFTMinterContract();
     return await NFTMinterContract.methods.tokenURI(tokenId).call()
   }
-
-  // public getManagerAddress = async () => {
-  //   await this.getLotteryContract();
-  //   return await this.lotteryContract.methods.manager().call();
-  // }
-
-  // public getPlayerAddresses = async () => {
-  //   await this.getLotteryContract();
-  //   return await this.lotteryContract.methods.getPlayers().call();
-
-  // }
-
-  // public getLotteryBalance = async () => {
-  //   await this.getLotteryContract();
-  //   return window.web3.utils.fromWei(await window.web3.eth.getBalance(this.lotteryContract.options.address), 'ether');
-  // }
-
-  // public enterLottery = async (amountInEther: any) => {
-  //   await this.getLotteryContract();
-  //   try {
-  //     console.log(this.account)
-  //     await this.lotteryContract.methods.enter().send({
-  //       from: this.account,
-  //       value: window.web3.utils.toWei(amountInEther, 'ether')
-  //     })
-  //     return true
-  //   } catch (e) {
-  //     console.log("ERROR :: enterLottery ::", e)
-  //     return false
-  //   }
-  // }
-
-  // public tryPickLotteryWinner= async () => {
-  //   await this.getLotteryContract();
-  //   try {
-  //     await this.lotteryContract.methods.pickWinner().send({
-  //       from: this.account
-  //     });
-  //     return true;
-  //   } catch (e) {
-  //     console.log("ERROR :: tryPickLotteryWinner ::", e)
-  //     return false;
-  //   }
-    
-  // }
 }
