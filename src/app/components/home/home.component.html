@@ -1,5 +1,19 @@
 <div>
     <p class="title">Uniswap Liquidity Lending</p>
+    <div class="centered">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Uniswap_Logo_and_Wordmark.svg/800px-Uniswap_Logo_and_Wordmark.svg.png">
+    </div>
+    <p>Rent liquidity from liquidity providers. Lend liquidity to others.</p>
+    <div class="centered">
+        <button routerLink="/rent" class="button button--mimas">
+            <span>See Listings</span>
+        </button>
+    </div>
+    <img *ngIf="nftSvg" [src]="nftSvg">
+</div>
+
+<!-- <div>
+    <p class="title">Uniswap Liquidity Lending</p>
     <p>Rent liquidity from liquidity providers. Lend liquidity to others.</p>
     <div class="centered">
         <p>
@@ -14,5 +28,7 @@
     <p>Manager: {{manager}}</p>
     <p>Players: {{players}}</p>
     <p>Amount to win: {{balance}}</p>
-</div>
+</div> -->
+
+
 
