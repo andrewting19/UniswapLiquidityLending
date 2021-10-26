@@ -5,7 +5,7 @@ import { ERC20ABI, myABI, poolABI, NFTMinterABI } from 'src/app/models/abi';
 
 declare const window: any;
 
-const address = "0xBa4311A092c426FD83B00F6263824863F06E3E44"; //Address of our custom smart contract
+const address = "0xc2e5919C59e0Fd4E4f1671A4527a92ae08faCDA9"; //Address of our custom smart contract
 const NFTMinterAddress = "0xC36442b4a4522E871399CD717aBDD847Ab11FE88"; //Hard coded address of Uniswap NFT Minter contract
 
 @Injectable({
@@ -13,8 +13,8 @@ const NFTMinterAddress = "0xC36442b4a4522E871399CD717aBDD847Ab11FE88"; //Hard co
 })
 export class ContractService {
   window: any;
-  lotteryContract: any = null;
   managerContract: any = null;
+  NFTMinterContract: any = null;
   account: any = null;
 
   constructor() {
@@ -60,8 +60,11 @@ export class ContractService {
     }
   }
 
+
+
+
   public getNFTMinterContract = async () => {
-    return new window.web3.eth.Contract(NFTMinterABI, NFTMinterAddress)
+    this.getNFTMinterContract = new window.web3.eth.Contract(NFTMinterABI, NFTMinterAddress)
   }
 
   public getERC20TokenInfoFromAddress = async (tokenAddress: string) => {
@@ -85,9 +88,9 @@ export class ContractService {
   }
 
   public getPosition = async (tokenId: number) => {
-    await this.getManagerContract();
+    await this.getNFTMinterContract();
     try {
-      const position = await this.managerContract.methods.positions(tokenId).call({ from: this.account });
+      const position = await this.NFTMinterContract.methods.positions(tokenId);
       return {
         tickUpper: position.tickUpper,
         tickLower: position.tickLower,
@@ -106,7 +109,7 @@ export class ContractService {
     await this.getManagerContract();
     const NFTMinterContract = await this.getNFTMinterContract();
     try {
-      await NFTMinterContract.methods.approve(address, tokenId).send({from: this.account});
+      await this.NFTMinterContract.methods.approve(address, tokenId).send({from: this.account});
       return true
     } catch (e) {
       console.log("ERROR :: approveTransfer ::", e);
@@ -122,7 +125,6 @@ export class ContractService {
         tokenId, 
         window.web3.utils.toWei(priceInEther.toString(), 'ether'),
         durationInSeconds,
-        poolAddress
       ).send({from: this.account});
       return true;
     } catch (e) {
@@ -158,6 +160,7 @@ export class ContractService {
         from: this.account,
         value: window.web3.utils.toWei(fee.toString(), 'ether')
       });
+      console.log('')
       return true;
     } catch (e) {
       console.log("ERROR :: rent ::", e);
@@ -278,7 +281,7 @@ export class ContractService {
   }
 
   public getNFTSVG = async (tokenId: number) => {
-    let NFTMinterContract = await this.getNFTMinterContract();
-    return await NFTMinterContract.methods.tokenURI(tokenId).call()
+    await this.getNFTMinterContract();
+    return await this.NFTMinterContract.methods.tokenURI(tokenId).call()
   }
 }
