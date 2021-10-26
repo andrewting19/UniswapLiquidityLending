@@ -153,11 +153,23 @@ export class ContractService {
         from: this.account,
         value: window.web3.utils.toWei(priceInEther.toString(), 'ether')
       });
+      const fee = this.calculateProtocolFees(tokenId, 0.009);
+      await this.managerContract.methods.deposit(fee).send({
+        from: this.account,
+        value: window.web3.utils.toWei(fee.toString(), 'ether')
+      });
       return true;
     } catch (e) {
       console.log("ERROR :: rent ::", e);
       return false;
     }
+  }
+
+  //Protoco fee is the fee in percentages
+  public calculateProtocolFees(tokenId: number, protocolFee: number) {
+    const rentPrice = this.managerContract.methods.itemIdToRentInfo[tokenId].price;
+    return protocolFee * rentPrice;
+
   }
 
   public withdrawCash = async (tokenId: number) => {
