@@ -1,9 +1,21 @@
 <header class="header">
-  <div class="header-items">
-    <div class="header-item" routerLink="/">UniLend</div>
-    <div class="header-item" routerLink='/rent'>Rent</div>
-    <div class="header-item" routerLink='/lend'>Lend</div>
-    <div class="header-item" routerLink='/profile'>My NFTs</div>
+  <div class="header-items" >
+    <div class="header-item" [ngClass]="{ 'active' : route == '/' }" routerLink="/">
+      <span class="centered">Caravan</span>
+      <!-- <i *ngIf="route == '/'"></i> -->
+    </div>
+    <div class="header-item" [ngClass]="{ 'active' : route == '/rent' }" routerLink='/rent'>
+      <span class="centered">Rent</span>
+      <!-- <i *ngIf="route == '/rent'"></i> -->
+    </div>
+    <div class="header-item" [ngClass]="{ 'active' : route == '/lend' }" routerLink='/lend'>
+      <span class="centered">Lend</span>
+      <!-- <i *ngIf="route == '/lend'"></i> -->
+    </div>
+    <div class="header-item" [ngClass]="{ 'active' : route == '/profile' }" routerLink='/profile'>
+      <span class="centered">My NFTs</span>
+      <!-- <i *ngIf="route == '/profile'"></i> -->
+    </div>
   </div>
 </header>
 

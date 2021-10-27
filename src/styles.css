@@ -5,9 +5,10 @@ body {
     line-height: 1.4211;
     font-weight: 400;
     letter-spacing: .012em;
-    font-family: "SF Pro Display","SF Pro Icons","Helvetica Neue","Helvetica","Arial",sans-serif;
-    color: #1d1d1f;
+    font-family: "SF Pro Display","Roboto", "SF Pro Icons","Helvetica Neue","Helvetica","Arial",sans-serif;
+    color: rgb(138,141,153);/*#1d1d1f; */
     margin: 0;
+	background-color: #fefdff !important;
   }
   
   .title {
@@ -16,7 +17,7 @@ body {
     font-weight: 500;
     letter-spacing: -.002em;
     text-align: center;
-    font-family: "SF Pro Display","SF Pro Icons","Helvetica Neue","Helvetica","Arial",sans-serif;
+    font-family: "SF Pro Display", "Roboto", "SF Pro Icons","Helvetica Neue","Helvetica","Arial",sans-serif;
   }
 
   p {
@@ -59,7 +60,7 @@ button:focus-visible {
 
 body {
 	margin: 0;
-	--color-text: #111;
+	--color-text: #1d1d1f;
 	--color-number: #999;
 	--color-bg: #fff;
 	--color-link: #1352d1;

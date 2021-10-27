@@ -2,10 +2,11 @@ import { Injectable } from '@angular/core';
 import Web3 from "web3";
 import { ERC20Token, RentInfo, Position } from 'src/app/models/interfaces';
 import { ERC20ABI, myABI, poolABI, NFTMinterABI } from 'src/app/models/abi';
+import { async } from '@angular/core/testing';
 
 declare const window: any;
 
-const address = "0xbCD0b97554488cb824359Fdd416C2B9f61b150E7"; //Address of our custom smart contract
+const address = "0x8F7B3Bfb473F825e741A830e4CD9A6632e65D255"; //Address of our custom smart contract
 const NFTMinterAddress = "0xC36442b4a4522E871399CD717aBDD847Ab11FE88"; //Hard coded address of Uniswap NFT Minter contract
 
 @Injectable({
@@ -62,6 +63,12 @@ export class ContractService {
 
   public getNFTMinterContract = async () => {
     this.NFTMinterContract = new window.web3.eth.Contract(NFTMinterABI, NFTMinterAddress)
+  }
+
+  public isOwner = async () => {
+    await this.getManagerContract();
+    let owner = await this.managerContract.methods._owner().call();
+    return owner.toLowerCase() == this.account.toLowerCase();
   }
 
   public getERC20TokenInfoFromAddress = async (tokenAddress: string) => {
@@ -196,7 +203,6 @@ export class ContractService {
     await this.getManagerContract();
     try {
       const tokenIds: any[] = await this.managerContract.methods.getAllItemIds().call();
-      console.log("All tokenIds:", tokenIds)
       const allListings: RentInfo[] = await Promise.all(tokenIds.map(this.getRentalListingById));
       return allListings
     } catch (e) {
@@ -248,11 +254,9 @@ export class ContractService {
   }
 
   public getRentalListingById = async (tokenId: number) => {
-    console.log("Trying to fetch rent info for:", tokenId)
     await this.getManagerContract();
     try {
       const result = await this.managerContract.methods.itemIdToRentInfo(tokenId).call({ from: this.account });
-      console.log("Got itemIdToRentInfo:", result)
       let makeRentInfo = async (listing: any) => {
         let pairing: ERC20Token[] = await this.getPairing(listing.tokenId);
         let position: Position = await this.getPosition(listing.tokenId);

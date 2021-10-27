@@ -15,6 +15,7 @@ export class ListingsComponent implements OnInit {
   constructor(private contractService: ContractService) { }
 
   ngOnInit(): void {
+    this.loading = true;
     this.getListings();
     this.durationMultiplier = {
       's': 1,
@@ -27,6 +28,7 @@ export class ListingsComponent implements OnInit {
 
   async getListings() {
     this.listings = await this.contractService.getRentalListings();
+    this.loading = false;
     console.log(this.listings)
   }
 
