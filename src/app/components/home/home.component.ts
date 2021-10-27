@@ -39,4 +39,8 @@ export class HomeComponent implements OnInit {
     console.log(await this.contractService.deleteRental(7605));
     // this.nftSvg = await this.getNFTImg(7597) 
   }
+
+  async collectFees() {
+    console.log(await this.contractService.restrictedWithdraw());
+  }
 }

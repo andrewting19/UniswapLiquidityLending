@@ -37,7 +37,6 @@ export class ListingComponent implements OnInit {
     let result = await this.contractService.getNFTSVG(this.listing.tokenId);
     const json = atob(result.substring(29));
     result = this.domSanitizer.bypassSecurityTrustUrl(JSON.parse(json).image);
-    console.log(result);
     this.nftSvg = result;
   }
 
@@ -60,6 +59,7 @@ export class ListingComponent implements OnInit {
     let result = await this.contractService.deleteRental(this.listing.tokenId);
     console.log("removeListing:",this.listing.tokenId,result);
     this.loading = false;
+    this.updateEvent.emit(true);
   }
 
   async reclaimLiquidity() {
@@ -67,6 +67,7 @@ export class ListingComponent implements OnInit {
     let result = await this.contractService.returnRentalToOwner(this.listing.tokenId);
     console.log("reclaimLiquidity:",this.listing.tokenId,result);
     this.loading = false;
+    this.updateEvent.emit(true);
   }
 
   timedelta(expiry: any) {

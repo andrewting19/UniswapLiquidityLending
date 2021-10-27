@@ -17,7 +17,6 @@ export class NewListingComponent implements OnInit {
   duration = new FormControl('', [Validators.required, Validators.pattern("^[0-9]*$")]);
   durationUnits = new FormControl('d', [Validators.required]);
   durationMultiplier: any;
-  poolAddress = new FormControl('', [Validators.required, Validators.pattern("^0x[a-fA-F0-9]{40}$")]);
   //s = seconds, m = minutes, h = hours, d = days, w = weeks
 
   constructor(private contractService: ContractService) {
@@ -46,8 +45,7 @@ export class NewListingComponent implements OnInit {
       const result = await this.contractService.createNewRental(
         this.tokenId.value, 
         parseFloat(this.priceInEther.value), 
-        parseInt(this.duration.value) * this.durationMultiplier[this.durationUnits.value], 
-        this.poolAddress.value
+        parseInt(this.duration.value) * this.durationMultiplier[this.durationUnits.value]
       );
       console.log(result);
       this.loading = false;
