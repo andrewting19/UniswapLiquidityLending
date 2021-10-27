@@ -6,7 +6,7 @@ import { async } from '@angular/core/testing';
 
 declare const window: any;
 
-const address = "0x8F7B3Bfb473F825e741A830e4CD9A6632e65D255"; //Address of our custom smart contract
+const address = "0xC1a7CFb1e1D5eBD1881ef18Dc7a01cfD638DbD7e"; //Address of our custom smart contract
 const NFTMinterAddress = "0xC36442b4a4522E871399CD717aBDD847Ab11FE88"; //Hard coded address of Uniswap NFT Minter contract
 
 @Injectable({
