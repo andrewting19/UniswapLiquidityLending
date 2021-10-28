@@ -82,7 +82,7 @@ async function getLastXSwaps(poolAddress: string, numSwaps: number) {
             }  
               
           return res;
-      }
+    }
 
 
 
@@ -145,6 +145,47 @@ async function getFeeTierDistribution(token0: string, token1: string) {
       totalValueLockedToken1
     }
   }`;
+  const variables = { "token0": token0, "token1": token1 };
+  const response =  await axios.post(url, JSON.parse(`query: ${query} variables: ${variables}`));
+    try {
+      const token0Data = JSON.parse(response)["data"]["token0"];
+      const token1Data = JSON.parse(response)["data"]["token1"];
+      return { "token0Data": token0Data, "token1Data": token1Data };
+    } catch (error) {
+      console.log(response);
+      throw(error);
+  }  
+}
+
+
+async function getTickRangeInfo(poolAddress: string, tickLower: number, tickHigher: number) {
+  const query = `query ($pool_addr: String!, $tickLower: BigInt!, $tickHigher: BigInt!) {
+    pool(id: $pool_addr){
+      ticks(where: { id_gte: $tickLower, id_lte: $tickHigher})
+      liquidityGross
+      price0
+      price1
+      volumeToken0
+      volumeToken1
+      volumeUSD
+      feesUSD
+      collectedFeesUSD
+      collectedFeesToken0
+      collectedFeesToken1
+        
+    }
+  }`;
+  const variables = { "pool_addr": poolAddress, "tickLower": tickLower, "tickHigher":tickHigher };
+  const response =  await axios.post(url, JSON.parse(`query: ${query} variables: ${variables}`));
+  try {
+    const tickData = JSON.parse(response)["data"]["ticks"];
+    return tickData;
+  } catch (error) {
+    console.log(response);
+    throw(error);
+} 
+
+
 }
 
 
