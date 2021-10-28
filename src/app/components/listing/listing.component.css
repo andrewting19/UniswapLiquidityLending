@@ -8,9 +8,13 @@ p {
     font-weight: 600;
 }
 
+.icon {
+    vertical-align: middle;
+}
+
 .listing {
     background-color: rgba(237,238,242, .9);
-    margin: 0 auto;
+    margin: 10px auto;
     padding: 15px;
     border-radius: 10px;
     width: fit-content;

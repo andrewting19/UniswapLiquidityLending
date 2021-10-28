@@ -95,7 +95,6 @@ export class ContractService {
     await this.getNFTMinterContract();
     try {
       const position = await this.NFTMinterContract.methods.positions(tokenId).call();
-      console.log('position', position);
       return {
         tickUpper: position.tickUpper,
         tickLower: position.tickLower,
