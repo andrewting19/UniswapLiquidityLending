@@ -7,13 +7,14 @@ const url = "https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v3";
 
 
 
-function getLastXSwaps (poolAddress: string, numSwaps: number) : any{
+function getLastXSwaps (poolAddress: string, numSwaps: number) : any {
     const query = `
     query ($max_timestamp: String! $pool_addr: String!) {
       pool(id: $pool_addr){
         swaps(where:{timestamp_lt: $max_timestamp} first:1000 orderBy:timestamp orderDirection:desc){
           amount0
           amount1
+          amountUSD
           timestamp
           tick
         }
@@ -27,8 +28,9 @@ function getLastXSwaps (poolAddress: string, numSwaps: number) : any{
     let total = 0;
     while (!done) {
         const variables = { "max_timestamp": max_timestamp, "pool_id": poolAddress };
-        const req = axios.post(url, JSON.parse(`query: ${query} variables: ${variables}`) ).then(
-            response)=>  {
+        const req = axios.post(url, JSON.parse(`query: ${query} variables: ${variables}`))
+        .then(
+            ((response) as Response) =>  {
                 try {
                     const swaps = JSON.parse(response)["data"]["pool"]["swaps"];
                     res.push(...swaps);
@@ -42,14 +44,42 @@ function getLastXSwaps (poolAddress: string, numSwaps: number) : any{
                     throw(error);
                 }  
                 
-            }
-
-            );
+            
 
         return res;
 
 
+        }
+
     }
+}
+
+
+function getPoolInfo (poolAddress: string) {
+    const query = `
+    query ($pool_addr: String!) {
+        pool(id: $pool_addr){
+            token0
+            token1
+            feeTier
+            liquidity
+            token0price
+            token1price
+            txCount
+            totalValueLockedToken0
+            totalValueLockedToken1
+            totalValueLockedETH
+            totalValueLockedUSD
+            liquidityProviderCount
+            swaps
+
+          
+        }
+      }
+        `;
+    const variables = { "pool_id": poolAddress };
+
+
 
 }
 
