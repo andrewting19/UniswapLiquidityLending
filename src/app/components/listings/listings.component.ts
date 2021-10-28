@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { RentInfo } from 'src/app/models/interfaces';
 import { ContractService } from 'src/app/services/contract.service';
+import { CoingeckoService } from 'src/app/services/coingecko.service';
 
 @Component({
   selector: 'app-listings',
@@ -11,10 +12,15 @@ export class ListingsComponent implements OnInit {
   listings: RentInfo[] = [];
   loading: boolean = false;
   durationMultiplier: any;
+  ethPrice: number = 0;
 
-  constructor(private contractService: ContractService) { }
+  constructor(
+    private contractService: ContractService,
+    private coinGecko: CoingeckoService
+  ) { }
 
   ngOnInit(): void {
+    this.getEthPrice();
     this.loading = true;
     this.getListings();
     this.durationMultiplier = {
@@ -24,6 +30,10 @@ export class ListingsComponent implements OnInit {
       'd': 86400,
       'w': 604800
     }
+  }
+
+  async getEthPrice() {
+    this.ethPrice = await this.coinGecko.getEthPrice();
   }
 
   async getListings() {

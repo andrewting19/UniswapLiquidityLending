@@ -263,6 +263,7 @@ a:focus-visible {
 	overflow: hidden;
 	color: #fff;
 	background: #ff007b;
+	padding: 1.25em 4em;
 }
 
 .button--mimas span {

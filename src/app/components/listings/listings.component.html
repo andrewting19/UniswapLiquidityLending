@@ -2,11 +2,18 @@
     <p *ngIf="loading || listings.length > 0" class="title">
         Liquidity for Rent
     </p>
-    <p class="title" *ngIf="!listings.length && !loading">No listings :(</p>
+    <p class="title" *ngIf="!listings.length && !loading">No Listings :c</p>
 </div>
 <div class="centered listings-div">
     <div class="listing" *ngFor="let listing of listings">
-        <app-listing (updateEvent)="getListings()" [listing]="listing" [isRenter]="false" [isOwner]="false"></app-listing>
+        <app-listing 
+            (updateEvent)="getListings()" 
+            [listing]="listing" 
+            [isRenter]="false" 
+            [isOwner]="false"
+            [ethPrice]="ethPrice"
+        >    
+        </app-listing>
     </div>
     <span *ngIf="loading && !listings.length"><mat-spinner style="margin: auto;" diameter="25"></mat-spinner></span>
     <p *ngIf="loading && listings.length">Transaction in progress...</p>

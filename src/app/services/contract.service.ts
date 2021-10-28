@@ -74,9 +74,9 @@ export class ContractService {
   public getERC20TokenInfoFromAddress = async (tokenAddress: string) => {
     const tokenContract = new window.web3.eth.Contract(ERC20ABI, tokenAddress);
     const symbol = await tokenContract.methods.symbol().call();
-    // const decimals = await tokenContract.methods.decimals().call();
+    const decimals = await tokenContract.methods.decimals().call();
     const name = await tokenContract.methods.name().call();
-    return { address: tokenAddress, symbol: symbol, name: name } as ERC20Token; 
+    return { address: tokenAddress, symbol: symbol, name: name, decimals: decimals } as ERC20Token; 
   }
 
   public getPairing = async (tokenId: number) => {
@@ -95,11 +95,12 @@ export class ContractService {
     await this.getNFTMinterContract();
     try {
       const position = await this.NFTMinterContract.methods.positions(tokenId).call();
+      console.log('position', position);
       return {
         tickUpper: position.tickUpper,
         tickLower: position.tickLower,
         liquidity: position.liquidity,
-        fee: position.fee,
+        fee: position.fee / 10000,
         feeGrowth: [position.feeGrowthInside0LastX128, position.feeGrowthInside1LastX128],
         tokensOwed: [position.tokensOwed0, position.tokensOwed1]
       } as Position
