@@ -7,7 +7,7 @@ const url = "https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v3";
 
 
 
-function getLastXSwaps (poolAddress: string, numSwaps: number) {
+function getLastXSwaps (poolAddress: string, numSwaps: number) : any{
     const query = `
     query ($max_timestamp: String! $pool_addr: String!) {
       pool(id: $pool_addr){
@@ -21,14 +21,14 @@ function getLastXSwaps (poolAddress: string, numSwaps: number) {
     }
     `;
 
-    let res = [];
+    let res = Array<any>();
     let done = false;
     const max_timestamp = "9999999999";
     let total = 0;
     while (!done) {
         const variables = { "max_timestamp": max_timestamp, "pool_id": poolAddress };
         const req = axios.post(url, JSON.parse(`query: ${query} variables: ${variables}`) ).then(
-            response =>  {
+            response)=>  {
                 try {
                     const swaps = JSON.parse(response)["data"]["pool"]["swaps"];
                     res.push(...swaps);
