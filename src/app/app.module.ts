@@ -2,14 +2,19 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
-
+import {MatInputModule} from '@angular/material/input';
 import { AppRoutingModule } from './app-routing.module';
+import { HttpClientModule } from '@angular/common/http';
+import {MatIconModule} from '@angular/material/icon';
+import {MatFormFieldModule} from '@angular/material/form-field';
+
 import { AppComponent } from './app.component';
 import { HomeComponent } from './components/home/home.component';
 import { ProfileComponent } from './components/profile/profile.component';
 import { ListingsComponent } from './components/listings/listings.component';
 import { NewListingComponent } from './components/new-listing/new-listing.component';
 import { ListingComponent } from './components/listing/listing.component';
+import { ListingDetailsComponent } from './components/listing-details/listing-details.component';
 
 @NgModule({
   declarations: [
@@ -18,14 +23,19 @@ import { ListingComponent } from './components/listing/listing.component';
     ProfileComponent,
     ListingsComponent,
     NewListingComponent,
-    ListingComponent
+    ListingComponent,
+    ListingDetailsComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     FormsModule,
     ReactiveFormsModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    HttpClientModule,
+    MatInputModule, 
+    MatIconModule,
+    MatFormFieldModule
   ],
   providers: [],
   bootstrap: [AppComponent]

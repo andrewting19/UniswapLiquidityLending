@@ -2,10 +2,11 @@ import { Injectable } from '@angular/core';
 import Web3 from "web3";
 import { ERC20Token, RentInfo, Position } from 'src/app/models/interfaces';
 import { ERC20ABI, myABI, poolABI, NFTMinterABI } from 'src/app/models/abi';
+import { async } from '@angular/core/testing';
 
 declare const window: any;
 
-const address = "0xBa4311A092c426FD83B00F6263824863F06E3E44"; //Address of our custom smart contract
+const address = "0xC1a7CFb1e1D5eBD1881ef18Dc7a01cfD638DbD7e"; //Address of our custom smart contract
 const NFTMinterAddress = "0xC36442b4a4522E871399CD717aBDD847Ab11FE88"; //Hard coded address of Uniswap NFT Minter contract
 
 @Injectable({
@@ -13,8 +14,8 @@ const NFTMinterAddress = "0xC36442b4a4522E871399CD717aBDD847Ab11FE88"; //Hard co
 })
 export class ContractService {
   window: any;
-  lotteryContract: any = null;
   managerContract: any = null;
+  NFTMinterContract: any = null;
   account: any = null;
 
   constructor() {
@@ -61,15 +62,21 @@ export class ContractService {
   }
 
   public getNFTMinterContract = async () => {
-    return new window.web3.eth.Contract(NFTMinterABI, NFTMinterAddress)
+    this.NFTMinterContract = new window.web3.eth.Contract(NFTMinterABI, NFTMinterAddress)
+  }
+
+  public isOwner = async () => {
+    await this.getManagerContract();
+    let owner = await this.managerContract.methods._owner().call();
+    return owner.toLowerCase() == this.account.toLowerCase();
   }
 
   public getERC20TokenInfoFromAddress = async (tokenAddress: string) => {
     const tokenContract = new window.web3.eth.Contract(ERC20ABI, tokenAddress);
     const symbol = await tokenContract.methods.symbol().call();
-    // const decimals = await tokenContract.methods.decimals().call();
+    const decimals = await tokenContract.methods.decimals().call();
     const name = await tokenContract.methods.name().call();
-    return { address: tokenAddress, symbol: symbol, name: name } as ERC20Token; 
+    return { address: tokenAddress, symbol: symbol, name: name, decimals: decimals } as ERC20Token; 
   }
 
   public getPairing = async (tokenId: number) => {
@@ -85,14 +92,14 @@ export class ContractService {
   }
 
   public getPosition = async (tokenId: number) => {
-    await this.getManagerContract();
+    await this.getNFTMinterContract();
     try {
-      const position = await this.managerContract.methods.positions(tokenId).call({ from: this.account });
+      const position = await this.NFTMinterContract.methods.positions(tokenId).call();
       return {
         tickUpper: position.tickUpper,
         tickLower: position.tickLower,
         liquidity: position.liquidity,
-        fee: position.fee,
+        fee: position.fee / 10000,
         feeGrowth: [position.feeGrowthInside0LastX128, position.feeGrowthInside1LastX128],
         tokensOwed: [position.tokensOwed0, position.tokensOwed1]
       } as Position
@@ -104,9 +111,9 @@ export class ContractService {
 
   public approveTransfer = async (tokenId: number) => {
     await this.getManagerContract();
-    const NFTMinterContract = await this.getNFTMinterContract();
+    await this.getNFTMinterContract();
     try {
-      await NFTMinterContract.methods.approve(address, tokenId).send({from: this.account});
+      await this.NFTMinterContract.methods.approve(address, tokenId).send({from: this.account});
       return true
     } catch (e) {
       console.log("ERROR :: approveTransfer ::", e);
@@ -114,7 +121,7 @@ export class ContractService {
     }
   }
 
-  public createNewRental = async (tokenId: number, priceInEther: number, durationInSeconds: number, poolAddress: string) => {
+  public createNewRental = async (tokenId: number, priceInEther: number, durationInSeconds: number) => {
     await this.getManagerContract();
     try {
       await this.approveTransfer(tokenId);
@@ -122,7 +129,6 @@ export class ContractService {
         tokenId, 
         window.web3.utils.toWei(priceInEther.toString(), 'ether'),
         durationInSeconds,
-        poolAddress
       ).send({from: this.account});
       return true;
     } catch (e) {
@@ -160,10 +166,17 @@ export class ContractService {
     }
   }
 
+  //Protoco fee is the fee in percentages
+  public calculateProtocolFees(tokenId: number, protocolFee: number) {
+    const rentPrice = this.managerContract.methods.itemIdToRentInfo(tokenId).price;
+    return protocolFee * rentPrice;
+
+  }
+
   public withdrawCash = async (tokenId: number) => {
     await this.getManagerContract();
     try {
-      await this.managerContract.methods.withdrawCash(
+      await this.managerContract.methods.withdrawFees(
         tokenId
       ).send({ from: this.account});
       return true;
@@ -266,7 +279,13 @@ export class ContractService {
   }
 
   public getNFTSVG = async (tokenId: number) => {
-    let NFTMinterContract = await this.getNFTMinterContract();
-    return await NFTMinterContract.methods.tokenURI(tokenId).call()
+    await this.getNFTMinterContract();
+    return await this.NFTMinterContract.methods.tokenURI(tokenId).call()
+  }
+
+  public restrictedWithdraw = async () => {
+    await this.getManagerContract();
+    await this.managerContract.methods.withdraw().send({ from: this.account });
+    return true;
   }
 }

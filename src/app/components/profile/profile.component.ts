@@ -11,11 +11,16 @@ export class ProfileComponent implements OnInit {
   ownedListings: RentInfo[] = [];
   rentedListings: RentInfo[] = [];
   loading: boolean = false;
+  ownedLoading: boolean = false;
+  rentedLoading: boolean = false;
+  isOwner: boolean = false;
   durationMultiplier: any;
 
   constructor(private contractService: ContractService) { }
 
   ngOnInit(): void {
+    this.ownedLoading = true;
+    this.rentedLoading = true;
     this.getOwned();
     this.getRented();
     this.durationMultiplier = {
@@ -25,15 +30,26 @@ export class ProfileComponent implements OnInit {
       'd': 86400,
       'w': 604800
     }
+    
+  }
+
+  async collectMarketplaceFees() {
+    console.log(await this.contractService.restrictedWithdraw());
+  }
+
+  async checkIfOwner() {
+    this.isOwner = await this.contractService.isOwner();
   }
 
   async getOwned() {
     this.ownedListings = await this.contractService.getRentalListingsByOwner("");
+    this.ownedLoading = false;
     console.log("Owned:",this.ownedListings)
   }
 
   async getRented() {
     this.rentedListings = await this.contractService.getRentalListingsByRenter("");
+    this.rentedLoading = false;
     console.log("Rented:", this.rentedListings)
   }
 

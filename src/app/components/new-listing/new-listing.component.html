@@ -29,20 +29,16 @@
             </div>
             <p class="error-txt" *ngIf="error && duration.invalid">Duration must be a number. Choose between seconds, minutes, hours, days, or weeks.</p>
         </div>
-        <div class="field" tabindex="4">
-            <label for="poolAddress">
-                <i class="far fa-user"></i>Pool Address for Pairing
-            </label>
-            <input [formControl]="poolAddress" [ngClass]="{ 'error': error && poolAddress.invalid }" name="poolAddress" type="text" placeholder="0x0000000000000000000000000000000000000000"required>
-        </div>
         <div *ngIf="error || postError">
             <p *ngIf="error">Please fill out all of the required fields.</p>
             <p *ngIf="postError">Transaction rejected by smart contract. Please ensure your inputs are correct and you are the owner of the smart contract.</p>
         </div>
         <div class="centered" (click)="submitForm()">
             <button  class="button button--mimas">
-                <span>Create New Listing</span>
-                <!-- <span *ngIf="loading"><mat-spinner style="margin: auto;" diameter="25"></mat-spinner></span> -->
+                <div class="centered">
+                    <span *ngIf="!loading">Create Listing</span>
+                    <span *ngIf="loading"><mat-spinner style="margin: auto;" diameter="25"></mat-spinner></span>
+                </div>
             </button>
         </div>
     </div>

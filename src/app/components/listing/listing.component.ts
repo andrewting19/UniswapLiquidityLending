@@ -10,6 +10,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 })
 export class ListingComponent implements OnInit {
   @Input() listing: RentInfo = {} as RentInfo;
+  @Input() ethPrice: number = 0; 
   @Input() isOwner: boolean = false;
   @Input() isRenter: boolean = false;
   @Output() updateEvent = new EventEmitter<boolean>();
@@ -37,7 +38,6 @@ export class ListingComponent implements OnInit {
     let result = await this.contractService.getNFTSVG(this.listing.tokenId);
     const json = atob(result.substring(29));
     result = this.domSanitizer.bypassSecurityTrustUrl(JSON.parse(json).image);
-    console.log(result);
     this.nftSvg = result;
   }
 
@@ -60,6 +60,7 @@ export class ListingComponent implements OnInit {
     let result = await this.contractService.deleteRental(this.listing.tokenId);
     console.log("removeListing:",this.listing.tokenId,result);
     this.loading = false;
+    this.updateEvent.emit(true);
   }
 
   async reclaimLiquidity() {
@@ -67,6 +68,7 @@ export class ListingComponent implements OnInit {
     let result = await this.contractService.returnRentalToOwner(this.listing.tokenId);
     console.log("reclaimLiquidity:",this.listing.tokenId,result);
     this.loading = false;
+    this.updateEvent.emit(true);
   }
 
   timedelta(expiry: any) {
@@ -99,7 +101,7 @@ export class ListingComponent implements OnInit {
       delta = delta/this.durationMultiplier.m
       prefix = " minutes"
     }
-    return delta.toFixed(2) + prefix
+    return delta.toFixed(0) + prefix
   }
 
 }
