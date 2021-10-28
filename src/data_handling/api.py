@@ -1,4 +1,9 @@
-const url = "https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v3"
+
+import requests
+import json
+
+
+url = "https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v3"
 
 
 def getLastXSwaps(pool_addr, num_swaps):
