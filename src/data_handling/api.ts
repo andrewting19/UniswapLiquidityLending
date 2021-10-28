@@ -1,13 +1,13 @@
 import { execPath } from "process";
 
-const axios = require("axios");
+const axios = require('axios').default;
 
 const url = "https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v3";
 
 
 
 
-function getLastXSwaps (poolAddress: string, numSwaps: number) : any {
+async function getLastXSwaps(poolAddress: string, numSwaps: number) {
     const query = `
     query ($max_timestamp: String! $pool_addr: String!) {
       pool(id: $pool_addr){
@@ -28,9 +28,7 @@ function getLastXSwaps (poolAddress: string, numSwaps: number) : any {
     let total = 0;
     while (!done) {
         const variables = { "max_timestamp": max_timestamp, "pool_id": poolAddress };
-        const req = axios.post(url, JSON.parse(`query: ${query} variables: ${variables}`))
-        .then(
-            ((response) as Response) =>  {
+        const response =  await axios.post(url, JSON.parse(`query: ${query} variables: ${variables}`));
                 try {
                     const swaps = JSON.parse(response)["data"]["pool"]["swaps"];
                     res.push(...swaps);
@@ -38,24 +36,18 @@ function getLastXSwaps (poolAddress: string, numSwaps: number) : any {
                     if (total >= numSwaps || swaps.length < 1000) {
                         done = true;
                     }
-
                 } catch (error) {
                     console.log(res);
                     throw(error);
                 }  
-                
             
-
         return res;
-
 
         }
 
     }
-}
 
-
-function getPoolInfo (poolAddress: string) {
+async function getPoolInfo (poolAddress: string) {
     const query = `
     query ($pool_addr: String!) {
         pool(id: $pool_addr){
@@ -78,6 +70,9 @@ function getPoolInfo (poolAddress: string) {
       }
         `;
     const variables = { "pool_id": poolAddress };
+    const response =  await axios.post(url, JSON.parse(`query: ${query} variables: ${variables}`));
+
+
 
 
 

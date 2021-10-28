@@ -1,7 +1,4 @@
 
-
-
-
 // gets price range in terms of of token2/token1. To get token 1 in terms of token2 take 1/prices
 function getPriceRangesFromTicks(lowTick: number, highTick: number, decimals1: number, decimals2: number): Array<number>{
     const rawPrice1 = 1.0001 ** lowTick;
