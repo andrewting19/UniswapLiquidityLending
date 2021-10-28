@@ -1,12 +1,15 @@
-def getLastXSwaps(pool_id, num_swaps):
-  url = "https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v3"
+const url = "https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v3"
+
+
+def getLastXSwaps(pool_addr, num_swaps):
   query = """
-    query ($max_timestamp: String! $pool_id: String!) {
-      pool(id: $pool_id){
+    query ($max_timestamp: String! $pool_addr: String!) {
+      pool(id: $pool_addr){
         swaps(where:{timestamp_lt: $max_timestamp} first:1000 orderBy:timestamp orderDirection:desc){
           amount0
           amount1
           timestamp
+          tick
         }
       }
     }
@@ -18,7 +21,7 @@ def getLastXSwaps(pool_id, num_swaps):
     r = requests.post(url, json={"query": query , "variables": variables})
     try: temp = json.loads(r.text)["data"]["pool"]["swaps"]
     except: print("ERROR", r.text)
-    res.extend(i)
+    res.extend(temp)
     last_time_stamp = temp[-1]["timestamp"]
     total += len(temp)
     if total >= num_swaps or len(temp) < num_swaps
@@ -29,15 +32,16 @@ def getLastXSwaps(pool_id, num_swaps):
 
 
 
-  def getSwapsFromLastXDays(pool_id,num_days, curr_time): #curr_time is current block time in epoch seconds
-  url = "https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v3"
+
+def getSwapsFromLastXDays(pool_addr,num_days, curr_time): #curr_time is current block time in epoch seconds
   query = """
-    query ($max_timestamp: String! $pool_id: String!) {
-      pool(id: $pool_id){
+    query ($max_timestamp: String! $pool_addr: String!) {
+      pool(id: $pool_addr){
         swaps(where:{timestamp_lt: $max_timestamp} first:1000 orderBy:timestamp orderDirection:desc){
           amount0
           amount1
           timestamp
+          tick
         }
       }
     }
@@ -51,7 +55,7 @@ def getLastXSwaps(pool_id, num_swaps):
     r = requests.post(url, json={"query": query , "variables": variables})
     try: temp = json.loads(r.text)["data"]["pool"]["swaps"]
     except: print("ERROR", r.text)
-    res.extend(i)
+    res.extend(temp)
     last_time_stamp = temp[-1]["timestamp"]
     total += len(temp)
     l
@@ -61,6 +65,62 @@ def getLastXSwaps(pool_id, num_swaps):
       max_timestamp = last_time_stamp
   return res
 
+
+#get liqudiity by tick Index of pool
+def getPoolData(pool_addr, skip):
+    query = """
+    allV3Ticks($pool_addr: String!, $skip: Int!) {
+            ticks(first: 1000, skip: $skip, where: { poolAddress: $pool_addr }, orderBy: tickIdx) {
+              tickIdx
+              liquidityNet
+              price0
+              price1
+            }
+          }
+        """
+    variables = {"max_timestamp": max_timestamp, "pool_id": pool_id}
+    r = requests.post(url, json={"query": query , "variables": variables})
+    try: res = json.loads(r.text)["data"]["pool"]
+    except: print("ERROR", r.text)
+    return res
+
+
+#Get fee tier distribution of total value locked of token0 and token1 
+def getFeeTierDistribution(token_0, token_1):
+    query = """
+    feeTierDistribution($token0: String!, $token1: String!) {
+            _meta {
+              block {
+                number
+              }
+            }
+            asToken0: pools(
+              orderBy: totalValueLockedToken0
+              orderDirection: desc
+              where: { token0: $token0, token1: $token1 }
+            ) {
+              feeTier
+              totalValueLockedToken0
+              totalValueLockedToken1
+            }
+            asToken1: pools(
+              orderBy: totalValueLockedToken0
+              orderDirection: desc
+              where: { token0: $token1, token1: $token0 }
+            ) {
+              feeTier
+              totalValueLockedToken0
+              totalValueLockedToken1
+            }
+          }
+    """
+    variables = {"max_timestamp": max_timestamp, "pool_id": pool_id}
+    r = requests.post(url, json={"query": query , "variables": variables})
+    try: token0Data = json.loads(r.text)["data"]["token0"]
+    except: print("ERROR", r.text)
+    try: token1Data = json.loads(r.text)["data"]["token1"]
+    except: print("ERROR", r.text)
+    return token0Data, token1Data
 
 
 def getTokenData():
@@ -84,6 +144,9 @@ def getTokenData():
         symbol
         id
         decimals
+        volume
+        volumeUSD
+        feesUSD
         derivedETH
       }
     }
