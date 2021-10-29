@@ -53,9 +53,9 @@ public async getLastXSwaps(poolAddress: string, numSwaps: number) {
 
 public async getSwapsFromLastXDays(poolAddress: string, numDays: number, currTime: number) {
     const query = `
-    query ($min_timestamp: String! $pool_addr: String!) {
+    query ($min_timestamp: BigInt! $pool_addr: String!) {
       pool(id: $pool_addr){
-        swaps(where:{timestamp_gt: $min_timestamp} orderBy:timestamp orderDirection:desc){
+        swaps(where:{timestamp_gte: $min_timestamp} orderBy:timestamp orderDirection:desc){
           amount0
           amount1
           amountUSD
@@ -67,13 +67,15 @@ public async getSwapsFromLastXDays(poolAddress: string, numDays: number, currTim
     `;
 
     let res = Array<any>();
-    let done = false;
-    let min_timestamp = currTime - (86400 * numDays) 
+    let min_timestamp =  BigInt(Math.floor(currTime - (86400 * numDays)));
     if (min_timestamp < 0) {
-      min_timestamp = 0;
+      min_timestamp = BigInt(0);
     }
-    const variables = { "min_timestamp": min_timestamp, "pool_id": poolAddress };
+    console.log(min_timestamp);
+    const variables = { "min_timestamp": min_timestamp.toString().trim(), "pool_addr": poolAddress };
+    console.log("VARIABLES:", variables);
     const response =  await axios.post(this.url,{ "query": query, "variables":variables});
+    console.log(response.data);
     try {
             const swaps = response.data.data.pool.swaps;
             res = swaps
@@ -108,10 +110,10 @@ public async getPoolInfo (poolAddress: string) {
       }
     }
       `;
-  const variables = { "pool_id": poolAddress };
+  const variables = { "pool_addr": poolAddress };
   const response =  await axios.post(this.url,{ "query": query, "variables":variables});
   try {
-    const poolData = response.data.data.dpool;
+    const poolData = response.data.data.pool;
     return poolData;
   } catch (error) {
     console.log(response);
