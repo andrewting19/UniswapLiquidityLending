@@ -1,5 +1,3 @@
-import * as internal from "stream";
-
 export interface RentInfo {
     tokenId: number;
     originalOwner: string;
@@ -15,6 +13,7 @@ export interface ERC20Token {
     address: string;
     symbol: string;
     name: string;
+    decimals: number;
 }
 
 export interface Position {
@@ -23,5 +22,11 @@ export interface Position {
     liquidity: number;
     fee: number;
     feeGrowth: number[],
-    tokensOwed: number[]
+    tokensOwed: number[],
+    priceRange: PriceRange[]
+}
+
+export interface PriceRange {
+    lower: number;
+    upper: number;
 }

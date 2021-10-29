@@ -8,6 +8,4 @@ function getPriceRangesFromTicks(lowTick: number, highTick: number, decimals1: n
 
     const ret = Array<number>(priceAdjusted1, priceAdjusted2);
     return ret;
-
-
 }

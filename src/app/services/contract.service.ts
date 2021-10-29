@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import Web3 from "web3";
-import { ERC20Token, RentInfo, Position } from 'src/app/models/interfaces';
+import { ERC20Token, RentInfo, Position, PriceRange } from 'src/app/models/interfaces';
 import { ERC20ABI, myABI, poolABI, NFTMinterABI } from 'src/app/models/abi';
 import { async } from '@angular/core/testing';
 
@@ -74,9 +74,9 @@ export class ContractService {
   public getERC20TokenInfoFromAddress = async (tokenAddress: string) => {
     const tokenContract = new window.web3.eth.Contract(ERC20ABI, tokenAddress);
     const symbol = await tokenContract.methods.symbol().call();
-    // const decimals = await tokenContract.methods.decimals().call();
+    const decimals = await tokenContract.methods.decimals().call();
     const name = await tokenContract.methods.name().call();
-    return { address: tokenAddress, symbol: symbol, name: name } as ERC20Token; 
+    return { address: tokenAddress, symbol: symbol, name: name, decimals: decimals } as ERC20Token; 
   }
 
   public getPairing = async (tokenId: number) => {
@@ -91,23 +91,41 @@ export class ContractService {
     }
   }
 
-  public getPosition = async (tokenId: number) => {
+  public getPosition = async (tokenId: number, pairing: ERC20Token[]) => {
     await this.getNFTMinterContract();
     try {
       const position = await this.NFTMinterContract.methods.positions(tokenId).call();
+      let pricesInTermsOfToken2 = this.getPriceRangesFromTicks(position.tickLower, position.tickUpper, pairing[0].decimals, pairing[1].decimals);
       return {
         tickUpper: position.tickUpper,
         tickLower: position.tickLower,
         liquidity: position.liquidity,
-        fee: position.fee,
+        fee: position.fee / 10000,
         feeGrowth: [position.feeGrowthInside0LastX128, position.feeGrowthInside1LastX128],
-        tokensOwed: [position.tokensOwed0, position.tokensOwed1]
+        tokensOwed: [position.tokensOwed0, position.tokensOwed1],
+        priceRange: [
+          {lower: 1/pricesInTermsOfToken2[0], upper: 1/pricesInTermsOfToken2[1]} as PriceRange, 
+          {lower: pricesInTermsOfToken2[0], upper: pricesInTermsOfToken2[1]} as PriceRange]
       } as Position
     } catch (e) {
       console.log("ERROR :: getPosition ::", e);
       return {} as Position
     }
   }
+
+  public getPriceRangesFromTicks = (lowTick: number, highTick: number, decimals1: number, decimals2: number): Array<number> => {
+    console.log(lowTick, highTick, decimals1, decimals2)
+    const rawPrice1 = 1.0001 ** lowTick;
+    const rawPrice2 = 1.0001 ** highTick;
+    const priceAdjusted1 = rawPrice1 **(decimals1 - decimals2);
+    const priceAdjusted2 = rawPrice2 **(decimals1 - decimals2);
+    console.log(priceAdjusted1, priceAdjusted2)
+
+    const ret = Array<number>(priceAdjusted1, priceAdjusted2);
+    console.log(ret)
+    return ret;
+}
+
 
   public approveTransfer = async (tokenId: number) => {
     await this.getManagerContract();
@@ -259,7 +277,7 @@ export class ContractService {
       const result = await this.managerContract.methods.itemIdToRentInfo(tokenId).call({ from: this.account });
       let makeRentInfo = async (listing: any) => {
         let pairing: ERC20Token[] = await this.getPairing(listing.tokenId);
-        let position: Position = await this.getPosition(listing.tokenId);
+        let position: Position = await this.getPosition(listing.tokenId, pairing);
         return {
           tokenId: listing.tokenId,
           originalOwner: listing.originalOwner,
