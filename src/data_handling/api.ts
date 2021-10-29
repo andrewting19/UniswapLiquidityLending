@@ -15,9 +15,9 @@ export default class graphAPI {
 
 public async getLastXSwaps(poolAddress: string, numSwaps: number) {
   const query = `
-  query ($max_timestamp: String! $pool_addr: String!) {
+  query ($max_timestamp: String! $pool_addr: String! $num_swaps: Int!) {
     pool(id: $pool_addr){
-      swaps(where:{timestamp_lt: $max_timestamp} first:1000 orderBy:timestamp orderDirection:desc){
+      swaps(where:{timestamp_lt: $max_timestamp} first:$num_swaps orderBy:timestamp orderDirection:desc){
         amount0
         amount1
         amountUSD
@@ -32,26 +32,20 @@ public async getLastXSwaps(poolAddress: string, numSwaps: number) {
   let done = false;
   const max_timestamp = "9999999999";
   let total = 0;
-  while (!done) {
-      const variables = { "max_timestamp": max_timestamp, "pool_id": poolAddress };
-      const response =  await axios.post(this.url, JSON.parse(`query: ${query} variables: ${variables}`));
-              try {
-                  const swaps = JSON.parse(response)["data"]["pool"]["swaps"];
-                  res.push(...swaps);
-                  total += swaps.length;
-                  if (total >= numSwaps || swaps.length < 1000) {
-                      done = true;
-                  }
-              } catch (error) {
-                  console.log(response);
-                  throw(error);
-              }  
+  const variables = { "max_timestamp": max_timestamp, "pool_addr": poolAddress, "num_swaps": numSwaps };
+  const response =  await axios.post(this.url,{ "query": query, "variables":variables});
+
+    try {            
+        const swaps = response.data.data.pool.swaps;
+        res.push(...swaps);
+        total += swaps.length;
+        return res;
+      } catch (error) {
+        console.log(response);
+        throw(error);
+      }  
           
-      return res;
-
-      }
-
-      return null;
+      
 
   }
 
