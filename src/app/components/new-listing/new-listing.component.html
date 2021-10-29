@@ -35,8 +35,10 @@
         </div>
         <div class="centered" (click)="submitForm()">
             <button  class="button button--mimas">
-                <span *ngIf="!loading">Create New Listing</span>
-                <span *ngIf="loading"><mat-spinner style="margin: auto; padding: 0 20px 0 20px;" diameter="25"></mat-spinner></span>
+                <div class="centered">
+                    <span *ngIf="!loading">Create Listing</span>
+                    <span *ngIf="loading"><mat-spinner style="margin: auto;" diameter="25"></mat-spinner></span>
+                </div>
             </button>
         </div>
     </div>

@@ -10,6 +10,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 })
 export class ListingComponent implements OnInit {
   @Input() listing: RentInfo = {} as RentInfo;
+  @Input() ethPrice: number = 0; 
   @Input() isOwner: boolean = false;
   @Input() isRenter: boolean = false;
   @Output() updateEvent = new EventEmitter<boolean>();
@@ -100,7 +101,7 @@ export class ListingComponent implements OnInit {
       delta = delta/this.durationMultiplier.m
       prefix = " minutes"
     }
-    return delta.toFixed(2) + prefix
+    return delta.toFixed(0) + prefix
   }
 
 }
