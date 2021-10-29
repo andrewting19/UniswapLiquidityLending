@@ -94,25 +94,30 @@ public async getPoolInfo (poolAddress: string) {
   const query = `
   query ($pool_addr: String!) {
       pool(id: $pool_addr){
-          token0
-          token1
+          token0 {
+            name
+          }
+          token1{
+            name
+          }
           feeTier
           liquidity
-          token0price
-          token1price
+          token0Price
+          token1Price
           txCount
           totalValueLockedToken0
           totalValueLockedToken1
           totalValueLockedETH
           totalValueLockedUSD
           liquidityProviderCount
-          swaps
+        
       }
     }
       `;
   const variables = { "pool_addr": poolAddress };
   const response =  await axios.post(this.url,{ "query": query, "variables":variables});
   try {
+    console.log(response.data);
     const poolData = response.data.data.pool;
     return poolData;
   } catch (error) {
@@ -164,7 +169,7 @@ const response =  await axios.post(this.url,{ "query": query, "variables":variab
 public async getTickRangeInfo(poolAddress: string, tickLower: number, tickHigher: number) {
 const query = `query ($pool_addr: String!, $tickLower: BigInt!, $tickHigher: BigInt!) {
   pool(id: $pool_addr){
-    ticks(where: { id_gte: $tickLower, id_lte: $tickHigher})
+    ticks(where: { tickIdx_gte: $tickLower, tickIdx_lte: $tickHigher}){
     liquidityGross
     price0
     price1
@@ -175,13 +180,15 @@ const query = `query ($pool_addr: String!, $tickLower: BigInt!, $tickHigher: Big
     collectedFeesUSD
     collectedFeesToken0
     collectedFeesToken1
+    }
       
   }
 }`;
 const variables = { "pool_addr": poolAddress, "tickLower": tickLower, "tickHigher":tickHigher };
 const response =  await axios.post(this.url,{ "query": query, "variables":variables});
 try {
-  const tickData = response.data.data.ticks;
+  console.log(response.data);
+  const tickData = response.data.data.pool.ticks;
   return tickData;
 } catch (error) {
   console.log(response);
