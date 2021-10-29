@@ -22,5 +22,11 @@ export interface Position {
     liquidity: number;
     fee: number;
     feeGrowth: number[],
-    tokensOwed: number[]
+    tokensOwed: number[],
+    priceRange: PriceRange[]
+}
+
+export interface PriceRange {
+    lower: number;
+    upper: number;
 }
