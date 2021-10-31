@@ -2,8 +2,12 @@ import { execPath } from "process";
 
 const axios = require('axios').default;
 
+<<<<<<< HEAD
 jest.setTimeout(10000)
 
+=======
+export const graphAPIURL = "https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v3"
+>>>>>>> 3306014781b95ab5e57ead5e6dc647df9f238376
 
 export default class graphAPI {
 
@@ -165,6 +169,7 @@ const query = `query($token0: String!, $token1: String!) {
 }`;
 const variables = { "token0": token0, "token1": token1};
 const response =  await axios.post(this.url,{ "query": query, "variables":variables});
+console.log(response)
   try {
 
     return response.data.data
