@@ -72,6 +72,7 @@ export class ContractService {
   }
 
   public getERC20TokenInfoFromAddress = async (tokenAddress: string) => {
+    console.log(tokenAddress)
     const tokenContract = new window.web3.eth.Contract(ERC20ABI, tokenAddress);
     const symbol = await tokenContract.methods.symbol().call();
     const decimals = await tokenContract.methods.decimals().call();
@@ -114,15 +115,11 @@ export class ContractService {
   }
 
   public getPriceRangesFromTicks = (lowTick: number, highTick: number, decimals1: number, decimals2: number): Array<number> => {
-    console.log(lowTick, highTick, decimals1, decimals2)
     const rawPrice1 = 1.0001 ** lowTick;
     const rawPrice2 = 1.0001 ** highTick;
-    const priceAdjusted1 = rawPrice1 **(decimals1 - decimals2);
-    const priceAdjusted2 = rawPrice2 **(decimals1 - decimals2);
-    console.log(priceAdjusted1, priceAdjusted2)
-
+    const priceAdjusted1 = rawPrice1 * 10**(decimals1 - decimals2);
+    const priceAdjusted2 = rawPrice2 * 10**(decimals1 - decimals2);
     const ret = Array<number>(priceAdjusted1, priceAdjusted2);
-    console.log(ret)
     return ret;
 }
 

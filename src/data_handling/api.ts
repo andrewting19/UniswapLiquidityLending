@@ -2,6 +2,7 @@ import { execPath } from "process";
 
 const axios = require('axios').default;
 
+export const graphAPIURL = "https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v3"
 
 export default class graphAPI {
 
@@ -155,6 +156,7 @@ const query = `feeTierDistribution($token0: String!, $token1: String!) {
 }`;
 const variables = { "token0": token0, "token1": token1 };
 const response =  await axios.post(this.url,{ "query": query, "variables":variables});
+console.log(response)
   try {
     const token0Data = response.data.data.token0;
     const token1Data = response.data.data.token1;
