@@ -273,7 +273,11 @@ a:focus-visible {
 .button--mimas::before {
 	content: '';
 	background: #000;
+<<<<<<< HEAD
 	width: 150%;
+=======
+	width: 120%;
+>>>>>>> jnj_historical_data
 	height: 120%;
 	left: -10%;
 	transform: skew(30deg);
