@@ -2,6 +2,8 @@ import { execPath } from "process";
 
 const axios = require('axios').default;
 
+jest.setTimeout(10000)
+
 
 export default class graphAPI {
 
@@ -41,7 +43,7 @@ public async getLastXSwaps(poolAddress: string, numSwaps: number) {
         total += swaps.length;
         return res;
       } catch (error) {
-        console.log(response);
+        console.log(response.data);
         throw(error);
       }  
           
@@ -55,7 +57,7 @@ public async getSwapsFromLastXDays(poolAddress: string, numDays: number, currTim
     const query = `
     query ($min_timestamp: BigInt! $pool_addr: String!) {
       pool(id: $pool_addr){
-        swaps(where:{timestamp_gte: $min_timestamp} orderBy:timestamp orderDirection:desc){
+        swaps(where:{timestamp_gte: $min_timestamp} orderBy:timestamp orderDirection:asc first:1000){
           amount0
           amount1
           amountUSD
@@ -71,18 +73,26 @@ public async getSwapsFromLastXDays(poolAddress: string, numDays: number, currTim
     if (min_timestamp < 0) {
       min_timestamp = BigInt(0);
     }
-    console.log(min_timestamp);
-    const variables = { "min_timestamp": min_timestamp.toString().trim(), "pool_addr": poolAddress };
-    console.log("VARIABLES:", variables);
-    const response =  await axios.post(this.url,{ "query": query, "variables":variables});
-    console.log(response.data);
-    try {
-            const swaps = response.data.data.pool.swaps;
-            res = swaps
-            } catch (error) {
-                console.log(response);
-                throw(error);
-          }  
+    let done = false;
+    
+    while(!done) {
+      const variables = { "min_timestamp": min_timestamp.toString().trim(), "pool_addr": poolAddress };
+      const response =  await axios.post(this.url,{ "query": query, "variables":variables});  
+      try {
+        const swaps = response.data.data.pool.swaps;
+        res.push(...swaps);
+        min_timestamp = swaps[swaps.length - 1].timestamp;
+        if (swaps.length < 1000) {
+          done = true;
+        }
+        } catch (error) {
+            console.log(response.data);
+            throw(error);
+      }
+
+
+    }
+     
             
         return res;
   }
@@ -117,50 +127,50 @@ public async getPoolInfo (poolAddress: string) {
   const variables = { "pool_addr": poolAddress };
   const response =  await axios.post(this.url,{ "query": query, "variables":variables});
   try {
-    console.log(response.data);
     const poolData = response.data.data.pool;
     return poolData;
   } catch (error) {
-    console.log(response);
+    console.log(response.data);
     throw(error);
 }  
 
 }
 
+
+//Takes in token Addrs
 public async getFeeTierDistribution(token0: string, token1: string) {
-const query = `feeTierDistribution($token0: String!, $token1: String!) {
-  _meta {
-    block {
-      number
-    }
-  }
+const query = `query($token0: String!, $token1: String!) {
   asToken0: pools(
     orderBy: totalValueLockedToken0
     orderDirection: desc
-    where: { token0: $token0, token1: $token1 }
+    token0: $token0
+    token1: $token1
   ) {
     feeTier
+    feesUSD
     totalValueLockedToken0
     totalValueLockedToken1
   }
   asToken1: pools(
     orderBy: totalValueLockedToken0
     orderDirection: desc
-    where: { token0: $token1, token1: $token0 }
+    token0: $token1
+    token1: $token0
   ) {
     feeTier
+    feesUSD
     totalValueLockedToken0
     totalValueLockedToken1
   }
 }`;
-const variables = { "token0": token0, "token1": token1 };
+const variables = { "token0": token0, "token1": token1};
 const response =  await axios.post(this.url,{ "query": query, "variables":variables});
   try {
-    const token0Data = response.data.data.token0;
-    const token1Data = response.data.data.token1;
-    return { "token0Data": token0Data, "token1Data": token1Data };
+
+    return response.data.data
+
   } catch (error) {
-    console.log(response);
+    console.log(response.data);
     throw(error);
 }  
 }
@@ -187,11 +197,10 @@ const query = `query ($pool_addr: String!, $tickLower: BigInt!, $tickHigher: Big
 const variables = { "pool_addr": poolAddress, "tickLower": tickLower, "tickHigher":tickHigher };
 const response =  await axios.post(this.url,{ "query": query, "variables":variables});
 try {
-  console.log(response.data);
   const tickData = response.data.data.pool.ticks;
   return tickData;
 } catch (error) {
-  console.log(response);
+  console.log(response.data);
   throw(error);
 } 
 
