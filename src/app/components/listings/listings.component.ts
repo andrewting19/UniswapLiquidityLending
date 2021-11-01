@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { RentInfo } from 'src/app/models/interfaces';
-import { ContractService } from 'src/app/services/contract.service';
+import { RentInfo } from 'src/app/models/rentInterfaces';
+import { RenterContractService } from 'src/app/services/contracts/renterContract.service';
 import { CoingeckoService } from 'src/app/services/coingecko.service';
 
 @Component({
@@ -32,7 +32,7 @@ export class ListingsComponent implements OnInit {
   }
 
   constructor(
-    private contractService: ContractService,
+    private renterContractService: RenterContractService,
     private coinGecko: CoingeckoService
   ) { }
 
@@ -54,7 +54,7 @@ export class ListingsComponent implements OnInit {
   }
 
   async getListings() {
-    this.listings = await this.contractService.getRentalListings();
+    this.listings = await this.renterContractService.getRentalListings();
     this.visibleListings = [...this.listings];
     this.search();
     this.loading = false;
@@ -63,7 +63,7 @@ export class ListingsComponent implements OnInit {
 
   async purchaseListing(listing: RentInfo) {
     this.loading = true;
-    let result = await this.contractService.rent(listing.tokenId, listing.priceInEther);
+    let result = await this.renterContractService.rent(listing.tokenId, listing.priceInEther);
     this.loading = false;
     this.getListings();
   }

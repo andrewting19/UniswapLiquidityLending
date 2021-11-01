@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { RentInfo } from 'src/app/models/interfaces';
-import { ContractService } from 'src/app/services/contract.service';
+import { RentInfo } from 'src/app/models/rentInterfaces';
+import { RenterContractService } from 'src/app/services/contracts/renterContract.service';
 import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
@@ -19,7 +19,7 @@ export class ListingComponent implements OnInit {
   nftSvg: any;
 
   constructor(
-    private contractService: ContractService,
+    private renterContractService: RenterContractService,
     private domSanitizer: DomSanitizer
   ) { }
 
@@ -35,7 +35,7 @@ export class ListingComponent implements OnInit {
   }
 
   async getNFTImg() {
-    let result = await this.contractService.getNFTSVG(this.listing.tokenId);
+    let result = await this.renterContractService.getNFTSVG(this.listing.tokenId);
     const json = atob(result.substring(29));
     result = this.domSanitizer.bypassSecurityTrustUrl(JSON.parse(json).image);
     this.nftSvg = result;
@@ -43,21 +43,21 @@ export class ListingComponent implements OnInit {
 
   async purchaseListing() {
     this.loading = true;
-    let result = await this.contractService.rent(this.listing.tokenId, this.listing.priceInEther);
+    let result = await this.renterContractService.rent(this.listing.tokenId, this.listing.priceInEther);
     this.loading = false;
     this.updateEvent.emit(true);
   }
 
   async collectFees() {
     this.loading = true;
-    let result = await this.contractService.withdrawCash(this.listing.tokenId)
+    let result = await this.renterContractService.withdrawCash(this.listing.tokenId)
     console.log("collectFees:",this.listing.tokenId,result)
     this.loading = false;
   }
 
   async removeListing() {
     this.loading = true;
-    let result = await this.contractService.deleteRental(this.listing.tokenId);
+    let result = await this.renterContractService.deleteRental(this.listing.tokenId);
     console.log("removeListing:",this.listing.tokenId,result);
     this.loading = false;
     this.updateEvent.emit(true);
@@ -65,7 +65,7 @@ export class ListingComponent implements OnInit {
 
   async reclaimLiquidity() {
     this.loading = true;
-    let result = await this.contractService.returnRentalToOwner(this.listing.tokenId);
+    let result = await this.renterContractService.returnRentalToOwner(this.listing.tokenId);
     console.log("reclaimLiquidity:",this.listing.tokenId,result);
     this.loading = false;
     this.updateEvent.emit(true);

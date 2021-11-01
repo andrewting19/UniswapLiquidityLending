@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import Web3 from "web3";
 import { ERC20Token, Position, PriceRange } from 'src/app/models/utilInterfaces';
 import { RentInfo } from 'src/app/models/rentInterfaces';
-import { ERC20ABI, myABI, poolABI, NFTMinterABI } from 'src/app/models/abi';
+import { ERC20ABI, poolABI, NFTMinterABI, rentABI } from 'src/app/models/abi';
 import { async } from '@angular/core/testing';
 
 declare const window: any;
@@ -56,7 +56,7 @@ export class RenterContractService {
     }
     if (!this.renterContract) {
       this.renterContract = new window.web3.eth.Contract(
-        myABI,
+        rentABI,
         RenterContractAddress,
       );
     }

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { RentInfo } from 'src/app/models/interfaces';
-import { ContractService } from 'src/app/services/contract.service';
+import { RentInfo } from 'src/app/models/rentInterfaces';
+import { RenterContractService } from 'src/app/services/contracts/renterContract.service';
 
 @Component({
   selector: 'app-profile',
@@ -16,7 +16,7 @@ export class ProfileComponent implements OnInit {
   isOwner: boolean = false;
   durationMultiplier: any;
 
-  constructor(private contractService: ContractService) { }
+  constructor(    private renterContractService: RenterContractService) { }
 
   ngOnInit(): void {
     this.ownedLoading = true;
@@ -34,21 +34,21 @@ export class ProfileComponent implements OnInit {
   }
 
   async collectMarketplaceFees() {
-    console.log(await this.contractService.restrictedWithdraw());
+    console.log(await this.renterContractService.restrictedWithdraw());
   }
 
   async checkIfOwner() {
-    this.isOwner = await this.contractService.isOwner();
+    this.isOwner = await this.renterContractService.isOwner();
   }
 
   async getOwned() {
-    this.ownedListings = await this.contractService.getRentalListingsByOwner("");
+    this.ownedListings = await this.renterContractService.getRentalListingsByOwner("");
     this.ownedLoading = false;
     console.log("Owned:",this.ownedListings)
   }
 
   async getRented() {
-    this.rentedListings = await this.contractService.getRentalListingsByRenter("");
+    this.rentedListings = await this.renterContractService.getRentalListingsByRenter("");
     this.rentedLoading = false;
     console.log("Rented:", this.rentedListings)
   }
@@ -87,21 +87,21 @@ export class ProfileComponent implements OnInit {
 
   async collectFees(tokenId: number) {
     this.loading = true;
-    let result = await this.contractService.withdrawCash(tokenId)
+    let result = await this.renterContractService.withdrawCash(tokenId)
     console.log("collectFees:",tokenId,result)
     this.loading = false;
   }
 
   async removeListing(tokenId: number) {
     this.loading = true;
-    let result = await this.contractService.deleteRental(tokenId);
+    let result = await this.renterContractService.deleteRental(tokenId);
     console.log("removeListing:",tokenId,result);
     this.loading = false;
   }
 
   async reclaimLiquidity(tokenId: number) {
     this.loading = true;
-    let result = await this.contractService.returnRentalToOwner(tokenId);
+    let result = await this.renterContractService.returnRentalToOwner(tokenId);
     console.log("reclaimLiquidity:",tokenId,result);
     this.loading = false;
   }
