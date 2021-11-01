@@ -1,20 +1,21 @@
 import { Injectable } from '@angular/core';
 import Web3 from "web3";
-import { ERC20Token, RentInfo, Position, PriceRange } from 'src/app/models/interfaces';
-import { ERC20ABI, myABI, poolABI, NFTMinterABI } from 'src/app/models/abi';
+import { ERC20Token, Position, PriceRange } from 'src/app/models/utilInterfaces';
+import { SaleInfo } from 'src/app/models/salesInterfaces';
+import { ERC20ABI, salesABI, NFTMinterABI } from 'src/app/models/abi';
 import { async } from '@angular/core/testing';
 
 declare const window: any;
 
-const address = "0xC1a7CFb1e1D5eBD1881ef18Dc7a01cfD638DbD7e"; //Address of our custom smart contract
+const SalesContractAddress = "0xC1a7CFb1e1D5eBD1881ef18Dc7a01cfD638DbD7e"; //Address of our custom smart contract
 const NFTMinterAddress = "0xC36442b4a4522E871399CD717aBDD847Ab11FE88"; //Hard coded address of Uniswap NFT Minter contract
 
 @Injectable({
   providedIn: 'root'
 })
-export class ContractService {
+export class SalesContractService {
   window: any;
-  managerContract: any = null;
+  salesContract: any = null;
   NFTMinterContract: any = null;
   account: any = null;
 
@@ -45,18 +46,18 @@ export class ContractService {
             return false;
           }
       }
-      this.getManagerContract();
+      this.getSalesContract();
       return addresses.length ? addresses[0] : null;
   };
 
-  public getManagerContract = async () => {
+  public getSalesContract = async () => {
     if (!this.account) {
       this.account = await this.openMetamask();
     }
-    if (!this.managerContract) {
-      this.managerContract = new window.web3.eth.Contract(
-        myABI,
-        address,
+    if (!this.salesContract) {
+      this.salesContract = new window.web3.eth.Contract(
+        salesABI,
+        SalesContractAddress,
       );
     }
   }
@@ -66,8 +67,8 @@ export class ContractService {
   }
 
   public isOwner = async () => {
-    await this.getManagerContract();
-    let owner = await this.managerContract.methods._owner().call();
+    await this.getSalesContract();
+    let owner = await this.salesContract.methods._owner().call();
     return owner.toLowerCase() == this.account.toLowerCase();
   }
 
@@ -81,9 +82,9 @@ export class ContractService {
   }
 
   public getPairing = async (tokenId: number) => {
-    await this.getManagerContract();
+    await this.getSalesContract();
     try {
-      const tokens = await this.managerContract.methods.itemIdToTokenAddrs(tokenId).call();
+      const tokens = await this.salesContract.methods.itemIdToTokenAddrs(tokenId).call();
       const tokenInfo: ERC20Token[] = [await this.getERC20TokenInfoFromAddress(tokens.token0Addr), await this.getERC20TokenInfoFromAddress(tokens.token1Addr)]
       return tokenInfo;
     } catch (e) {
@@ -125,10 +126,10 @@ export class ContractService {
 
 
   public approveTransfer = async (tokenId: number) => {
-    await this.getManagerContract();
+    await this.getSalesContract();
     await this.getNFTMinterContract();
     try {
-      await this.NFTMinterContract.methods.approve(address, tokenId).send({from: this.account});
+      await this.NFTMinterContract.methods.approve(SalesContractAddress, tokenId).send({from: this.account});
       return true
     } catch (e) {
       console.log("ERROR :: approveTransfer ::", e);
@@ -136,39 +137,38 @@ export class ContractService {
     }
   }
 
-  public createNewRental = async (tokenId: number, priceInEther: number, durationInSeconds: number) => {
-    await this.getManagerContract();
+  public createNewSellOffer = async (tokenId: number, priceInEther: number) => {
+    await this.getSalesContract();
     try {
       await this.approveTransfer(tokenId);
-      await this.managerContract.methods.putUpNFTForRent(
+      await this.salesContract.methods.putUpNFTForSale(
         tokenId, 
         window.web3.utils.toWei(priceInEther.toString(), 'ether'),
-        durationInSeconds,
       ).send({from: this.account});
       return true;
     } catch (e) {
-      console.log("ERROR :: createNewRental ::", e);
+      console.log("ERROR :: createNewSellOffer ::", e);
       return false;
     }
   }
 
-  public deleteRental = async (tokenId: number) => {
-    await this.getManagerContract();
+  public deleteSale = async (tokenId: number) => {
+    await this.getSalesContract();
     try {
-      await this.managerContract.methods.removeNFTForRent(
+      await this.salesContract.methods.removeNFTForSale(
         tokenId
       ).send({ from: this.account });
       return true;
     } catch (e) {
-      console.log("ERROR :: deleteRental ::", e);
+      console.log("ERROR :: deleteSale ::", e);
       return false;
     }
   }
 
-  public rent = async (tokenId: number, priceInEther: number) => {
-    await this.getManagerContract();
+  public buy = async (tokenId: number, priceInEther: number) => {
+    await this.getSalesContract();
     try {
-      await this.managerContract.methods.rentNFT(
+      await this.salesContract.methods.buyNFT(
         tokenId
       ).send({
         from: this.account,
@@ -176,22 +176,22 @@ export class ContractService {
       });
       return true;
     } catch (e) {
-      console.log("ERROR :: rent ::", e);
+      console.log("ERROR :: buy ::", e);
       return false;
     }
   }
 
   //Protoco fee is the fee in percentages
   public calculateProtocolFees(tokenId: number, protocolFee: number) {
-    const rentPrice = this.managerContract.methods.itemIdToRentInfo(tokenId).price;
-    return protocolFee * rentPrice;
+    const salesPrice = this.salesContract.methods.itemIdToSaleInfo(tokenId).price;
+    return protocolFee * salesPrice;
 
   }
 
   public withdrawCash = async (tokenId: number) => {
-    await this.getManagerContract();
+    await this.getSalesContract();
     try {
-      await this.managerContract.methods.withdrawFees(
+      await this.salesContract.methods.withdrawFees(
         tokenId
       ).send({ from: this.account});
       return true;
@@ -201,24 +201,24 @@ export class ContractService {
     }
   }
 
-  public returnRentalToOwner = async (tokenId: number) => {
-    await this.getManagerContract();
+  public returnSaleToOwner = async (tokenId: number) => {
+    await this.getSalesContract();
     try {
-      await this.managerContract.methods.returnNFTToOwner(
+      await this.salesContract.methods.returnNFTToOwner(
         tokenId
       ).send({ from: this.account});
       return true;
     } catch (e) {
-      console.log("ERROR :: returnRentalToOwner ::", e);
+      console.log("ERROR :: returnSaleToOwner ::", e);
       return false;
     }
   }
 
   public getAllListings = async () => {
-    await this.getManagerContract();
+    await this.getSalesContract();
     try {
-      const tokenIds: any[] = await this.managerContract.methods.getAllItemIds().call();
-      const allListings: RentInfo[] = await Promise.all(tokenIds.map(this.getRentalListingById));
+      const tokenIds: any[] = await this.salesContract.methods.getAllItemIds().call();
+      const allListings: SaleInfo[] = await Promise.all(tokenIds.map(this.getSalesListingById));
       return allListings
     } catch (e) {
       console.log("ERROR :: getAllListings ::", e);
@@ -226,70 +226,42 @@ export class ContractService {
     }
   }
 
-  public getRentalListings = async () => {
-    await this.getManagerContract();
-    try {
-      const allListings: RentInfo[] = await this.getAllListings();
-      const availableListings: RentInfo[] = allListings.filter(listing => listing.renter == null)
-      return availableListings
-    } catch (e) {
-      console.log("ERROR :: getRentalListings ::", e);
-      return []
-    }
-  }
 
-  public getRentalListingsByOwner = async (ownerAddress: string) => {
-    await this.getManagerContract();
+  public getSalesListingsByOwner = async (ownerAddress: string) => {
+    await this.getSalesContract();
     if (ownerAddress == "") {
       ownerAddress = this.account;
     }
     try {
-      const allListings: RentInfo[] = await this.getAllListings();
-      const ownedListings: RentInfo[] = allListings.filter(listing => listing.originalOwner?.toLowerCase() == ownerAddress.toLowerCase())
+      const allListings: SaleInfo[] = await this.getAllListings();
+      const ownedListings: SaleInfo[] = allListings.filter(listing => listing.originalOwner?.toLowerCase() == ownerAddress.toLowerCase())
       return ownedListings
     } catch (e) {
-      console.log("ERROR :: getRentalListingsByOwner ::", e);
+      console.log("ERROR :: getSalesListingsByOwner ::", e);
       return []
     }
   }
 
-  public getRentalListingsByRenter = async (renterAddress: string) => {
-    await this.getManagerContract();
-    if (renterAddress == "") {
-      renterAddress = this.account;
-    }
-    try {
-      const allListings: RentInfo[] = await this.getAllListings();
-      const rentedListings: RentInfo[] = allListings.filter(listing => listing.renter?.toLowerCase() == renterAddress.toLowerCase())
-      return rentedListings
-    } catch (e) {
-      console.log("ERROR :: getRentalListingsByRenter ::", e);
-      return []
-    }
-  }
 
-  public getRentalListingById = async (tokenId: number) => {
-    await this.getManagerContract();
+  public getSalesListingById = async (tokenId: number) => {
+    await this.getSalesContract();
     try {
-      const result = await this.managerContract.methods.itemIdToRentInfo(tokenId).call({ from: this.account });
-      let makeRentInfo = async (listing: any) => {
+      const result = await this.salesContract.methods.itemIdToSaleInfo(tokenId).call({ from: this.account });
+      let makeSalesInfo = async (listing: any) => {
         let pairing: ERC20Token[] = await this.getPairing(listing.tokenId);
         let position: Position = await this.getPosition(listing.tokenId, pairing);
         return {
           tokenId: listing.tokenId,
           originalOwner: listing.originalOwner,
-          renter: listing.renter == "0x0000000000000000000000000000000000000000" ? null : listing.renter,
           priceInEther: window.web3.utils.fromWei(listing.price, 'ether'),
-          durationInSeconds: listing.duration,
-          expiryDate: listing.expiryDate == 0 ? null : new Date(listing.expiryDate*1000),
           pairing: pairing,
           position: position
-        } as RentInfo
+        } as SaleInfo
       }
-      return await makeRentInfo(result)
+      return await makeSalesInfo(result)
     } catch (e) {
-      console.log("ERROR :: getRentalListingById ::", e);
-      return {} as RentInfo
+      console.log("ERROR :: getSalesListingById ::", e);
+      return {} as SaleInfo
     }
   }
 
@@ -299,8 +271,11 @@ export class ContractService {
   }
 
   public restrictedWithdraw = async () => {
-    await this.getManagerContract();
-    await this.managerContract.methods.withdraw().send({ from: this.account });
+    await this.getSalesContract();
+    await this.salesContract.methods.withdraw().send({ from: this.account });
     return true;
   }
+
+
+
 }
