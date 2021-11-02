@@ -39,8 +39,10 @@ export class HomeComponent implements OnInit {
     // console.log("getSwapsLast1Day", await this.graphAPI.getSwapsFromLastXDays(pooladdr, 2, (new Date()).getTime() / 1000))
     // console.log("getFeeTierDistribution", await this.graphAPI.getFeeTierDistribution(t1, t2))
 
-    console.log(await this.salesContractService.createNewSellOffer(7812, 0.001));
-    console.log(await this.salesContractService.deleteSale(7812));
+    // console.log(await this.salesContractService.createNewSellOffer(8161, 0.001));
+    // // console.log(await this.salesContractService.deleteSale(7812));
+    // console.log(await this.salesContractService.getAllListings());
+    // console.log(await this.salesContractService.buy(8161, 0.001));
 
   }
 
