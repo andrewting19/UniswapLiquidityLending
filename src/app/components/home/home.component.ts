@@ -3,6 +3,7 @@ import { RenterContractService } from 'src/app/services/contracts/renterContract
 import { SalesContractService } from 'src/app/services/contracts/salesContract.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import graphAPI, { graphAPIURL } from 'src/data_handling/api';
+import { AuctionContractService } from 'src/app/services/contracts/auctionContract.service';
 
 @Component({
   selector: 'app-home',
@@ -21,6 +22,7 @@ export class HomeComponent implements OnInit {
   constructor( 
     private renterContractService: RenterContractService,
     private salesContractService: SalesContractService,
+    private auctionContractService: AuctionContractService,
     private domSanitizer: DomSanitizer
   ) { }
 
@@ -38,6 +40,13 @@ export class HomeComponent implements OnInit {
     // console.log("PoolInfo", await this.graphAPI.getPoolInfo('0xc2e9f25be6257c210d7adf0d4cd6e3e881ba25f8')) 
     // console.log("getSwapsLast1Day", await this.graphAPI.getSwapsFromLastXDays(pooladdr, 2, (new Date()).getTime() / 1000))
     // console.log("getFeeTierDistribution", await this.graphAPI.getFeeTierDistribution(t1, t2))
+    // console.log(await this.auctionContractService.createNewAuction(8258, 0.001, 120));
+    // console.log(await this.auctionContractService.getAllListings());
+    // console.log(await this.auctionContractService.bid(8258, 0.0011));
+    console.log(await this.auctionContractService.sendPositionToHighestBidder(8258));
+    // console.log(await this.auctionContractService.getAllListings());
+    // console.log(await this.auctionContractService.returnAssetToOwner(8258));
+    // console.log(await this.auctionContractService.getAllListings());
 
     // console.log(await this.salesContractService.createNewSellOffer(8161, 0.001));
     // // console.log(await this.salesContractService.deleteSale(7812));
