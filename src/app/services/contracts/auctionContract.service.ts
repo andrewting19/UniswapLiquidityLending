@@ -1,21 +1,21 @@
 import { Injectable } from '@angular/core';
 import Web3 from "web3";
 import { ERC20Token, Position, PriceRange } from 'src/app/models/utilInterfaces';
-import { SaleInfo } from 'src/app/models/salesInterfaces';
-import { ERC20ABI, salesABI, NFTMinterABI } from 'src/app/models/abi';
+import { AuctionInfo } from 'src/app/models/auctionInterfaces';
+import { ERC20ABI, auctionABI, NFTMinterABI } from 'src/app/models/abi';
 import { async } from '@angular/core/testing';
 
 declare const window: any;
 
-const SalesContractAddress = "0xF89213dCE33edaA0CFe3cF2871EB5525E55e8aCb"; //Address of our custom smart contract
+const AuctionContractAddress = "0x7873dED9A53f8e41C56A0B7DEf5b6Cc1D8F7C0B7"; //Address of our custom smart contract
 const NFTMinterAddress = "0xC36442b4a4522E871399CD717aBDD847Ab11FE88"; //Hard coded address of Uniswap NFT Minter contract
 
 @Injectable({
   providedIn: 'root'
 })
-export class SalesContractService {
+export class AuctionContractService {
   window: any;
-  salesContract: any = null;
+  auctionContract: any = null;
   NFTMinterContract: any = null;
   account: any = null;
 
@@ -46,18 +46,18 @@ export class SalesContractService {
             return false;
           }
       }
-      this.getSalesContract();
+      this.getAuctionContract();
       return addresses.length ? addresses[0] : null;
   };
 
-  public getSalesContract = async () => {
+  public getAuctionContract = async () => {
     if (!this.account) {
       this.account = await this.openMetamask();
     }
-    if (!this.salesContract) {
-      this.salesContract = new window.web3.eth.Contract(
-        salesABI,
-        SalesContractAddress,
+    if (!this.auctionContract) {
+      this.auctionContract = new window.web3.eth.Contract(
+        auctionABI,
+        AuctionContractAddress,
       );
     }
   }
@@ -67,8 +67,8 @@ export class SalesContractService {
   }
 
   public isOwner = async () => {
-    await this.getSalesContract();
-    let owner = await this.salesContract.methods._owner().call();
+    await this.getAuctionContract();
+    let owner = await this.auctionContract.methods._owner().call();
     return owner.toLowerCase() == this.account.toLowerCase();
   }
 
@@ -82,9 +82,9 @@ export class SalesContractService {
   }
 
   public getPairing = async (tokenId: number) => {
-    await this.getSalesContract();
+    await this.getAuctionContract();
     try {
-      const tokens = await this.salesContract.methods.itemIdToTokenAddrs(tokenId).call();
+      const tokens = await this.auctionContract.methods.itemIdToTokenAddrs(tokenId).call();
       const tokenInfo: ERC20Token[] = [await this.getERC20TokenInfoFromAddress(tokens.token0Addr), await this.getERC20TokenInfoFromAddress(tokens.token1Addr)]
       return tokenInfo;
     } catch (e) {
@@ -126,10 +126,10 @@ export class SalesContractService {
 
 
   public approveTransfer = async (tokenId: number) => {
-    await this.getSalesContract();
+    await this.getAuctionContract();
     await this.getNFTMinterContract();
     try {
-      await this.NFTMinterContract.methods.approve(SalesContractAddress, tokenId).send({from: this.account});
+      await this.NFTMinterContract.methods.approve(AuctionContractAddress, tokenId).send({from: this.account});
       return true
     } catch (e) {
       console.log("ERROR :: approveTransfer ::", e);
@@ -137,61 +137,84 @@ export class SalesContractService {
     }
   }
 
-  public createNewSellOffer = async (tokenId: number, priceInEther: number) => {
-    await this.getSalesContract();
+  public createNewAuction = async (tokenId: number, minBidInEther: number, duration: number, ) => {
+    await this.getAuctionContract();
     try {
       await this.approveTransfer(tokenId);
-      await this.salesContract.methods.putUpNFTForSale(
+      await this.auctionContract.methods.putUpNFTForAuction(
         tokenId, 
-        window.web3.utils.toWei(priceInEther.toString(), 'ether'),
+        window.web3.utils.toWei(minBidInEther.toString(), 'ether'),
+        duration,
       ).send({from: this.account});
       return true;
     } catch (e) {
-      console.log("ERROR :: createNewSellOffer ::", e);
+      console.log("ERROR :: createNewAuction ::", e);
       return false;
     }
   }
 
-  public deleteSale = async (tokenId: number) => {
-    await this.getSalesContract();
+  public deleteAuction = async (tokenId: number) => {
+    await this.getAuctionContract();
     try {
-      await this.salesContract.methods.removeNFTForSale(
+      await this.auctionContract.methods.removeNFTForAuction(
         tokenId
       ).send({ from: this.account });
       return true;
     } catch (e) {
-      console.log("ERROR :: deleteSale ::", e);
+      console.log("ERROR :: deleteAuction ::", e);
       return false;
     }
   }
 
-  public buy = async (tokenId: number, priceInEther: number) => {
-    await this.getSalesContract();
+  public bid = async (tokenId: number, bidInEther: number) => {
+    await this.getAuctionContract();
     try {
-      await this.salesContract.methods.buyNFT(
+      // console.log(this.auctionContract.methods.itemIdToAuctionInfo(tokenId).toString());
+      console.log(this.account);
+      console.log(bidInEther);
+        
+      await this.auctionContract.methods.bidOnNFT(
         tokenId
       ).send({
         from: this.account,
-        value: window.web3.utils.toWei(priceInEther.toString(), 'ether')
+        value: window.web3.utils.toWei(bidInEther.toString(), 'ether')
       });
+      console.log(this.auctionContract.methods.itemIdToTokenAddrs[tokenId])
+      return true;
+      
+    } catch (e) {
+      console.log("ERROR :: bid ::", e);
+      return false;
+    }
+  }
+
+  public sendPositionToHighestBidder = async (tokenId: number) => {
+    await this.getAuctionContract();
+    try {
+      // console.log(this.auctionContract.methods.itemIdToAuctionInfo(tokenId).toString());
+      // await this.approveTransfer(tokenId);
+      await this.auctionContract.methods.sendNFTToHighestBidder(
+        tokenId
+      ).send({
+        from: this.account});
       return true;
     } catch (e) {
-      console.log("ERROR :: buy ::", e);
+      console.log("ERROR :: sendPositionToHighestBidder ::", e);
       return false;
     }
   }
 
   //Protoco fee is the fee in percentages
   public calculateProtocolFees(tokenId: number, protocolFee: number) {
-    const salesPrice = this.salesContract.methods.itemIdToSaleInfo(tokenId).price;
+    const salesPrice = this.auctionContract.methods.itemIdToSaleInfo(tokenId).price;
     return protocolFee * salesPrice;
 
   }
 
   public withdrawCash = async (tokenId: number) => {
-    await this.getSalesContract();
+    await this.getAuctionContract();
     try {
-      await this.salesContract.methods.withdrawFees(
+      await this.auctionContract.methods.withdrawFees(
         tokenId
       ).send({ from: this.account});
       return true;
@@ -201,24 +224,24 @@ export class SalesContractService {
     }
   }
 
-  public returnSaleToOwner = async (tokenId: number) => {
-    await this.getSalesContract();
+  public returnAssetToOwner = async (tokenId: number) => {
+    await this.getAuctionContract();
     try {
-      await this.salesContract.methods.returnNFTToOwner(
+      await this.auctionContract.methods.returnNFTToOwner(
         tokenId
       ).send({ from: this.account});
       return true;
     } catch (e) {
-      console.log("ERROR :: returnSaleToOwner ::", e);
+      console.log("ERROR :: returnAssetToOwner ::", e);
       return false;
     }
   }
 
   public getAllListings = async () => {
-    await this.getSalesContract();
+    await this.getAuctionContract();
     try {
-      const tokenIds: any[] = await this.salesContract.methods.getAllItemIds().call();
-      const allListings: SaleInfo[] = await Promise.all(tokenIds.map(this.getSalesListingById));
+      const tokenIds: any[] = await this.auctionContract.methods.getAllItemIds().call();
+      const allListings: AuctionInfo[] = await Promise.all(tokenIds.map(this.getAuctionListingById));
       return allListings
     } catch (e) {
       console.log("ERROR :: getAllListings ::", e);
@@ -227,41 +250,44 @@ export class SalesContractService {
   }
 
 
-  public getSalesListingsByOwner = async (ownerAddress: string) => {
-    await this.getSalesContract();
+  public getAuctionListingsByOwner = async (ownerAddress: string) => {
+    await this.getAuctionContract();
     if (ownerAddress == "") {
       ownerAddress = this.account;
     }
     try {
-      const allListings: SaleInfo[] = await this.getAllListings();
-      const ownedListings: SaleInfo[] = allListings.filter(listing => listing.originalOwner?.toLowerCase() == ownerAddress.toLowerCase())
+      const allListings: AuctionInfo[] = await this.getAllListings();
+      const ownedListings: AuctionInfo[] = allListings.filter(listing => listing.originalOwner?.toLowerCase() == ownerAddress.toLowerCase())
       return ownedListings
     } catch (e) {
-      console.log("ERROR :: getSalesListingsByOwner ::", e);
+      console.log("ERROR :: getAuctionListingsByOwner ::", e);
       return []
     }
   }
 
 
-  public getSalesListingById = async (tokenId: number) => {
-    await this.getSalesContract();
+  public getAuctionListingById = async (tokenId: number) => {
+    await this.getAuctionContract();
     try {
-      const result = await this.salesContract.methods.itemIdToSaleInfo(tokenId).call({ from: this.account });
-      let makeSalesInfo = async (listing: any) => {
+      const result = await this.auctionContract.methods.itemIdToAuctionInfo(tokenId).call({ from: this.account });
+      let makeAuctionInfo = async (listing: any) => {
         let pairing: ERC20Token[] = await this.getPairing(listing.tokenId);
         let position: Position = await this.getPosition(listing.tokenId, pairing);
         return {
           tokenId: listing.tokenId,
           originalOwner: listing.originalOwner,
-          priceInEther: window.web3.utils.fromWei(listing.price, 'ether'),
+          minBid: window.web3.utils.fromWei(listing.minBidInEther, 'ether'),
           pairing: pairing,
-          position: position
-        } as SaleInfo
+          position: position,
+          highestBidder: listing.highestBidder,
+          expiryDate: listing.expiryDate,
+          durationInSeconds: listing.duration
+        } as AuctionInfo
       }
-      return await makeSalesInfo(result)
+      return await makeAuctionInfo(result)
     } catch (e) {
       console.log("ERROR :: getSalesListingById ::", e);
-      return {} as SaleInfo
+      return {} as AuctionInfo
     }
   }
 
@@ -271,8 +297,8 @@ export class SalesContractService {
   }
 
   public restrictedWithdraw = async () => {
-    await this.getSalesContract();
-    await this.salesContract.methods.withdraw().send({ from: this.account });
+    await this.getAuctionContract();
+    await this.auctionContract.methods.withdraw().send({ from: this.account });
     return true;
   }
 
