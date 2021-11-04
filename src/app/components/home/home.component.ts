@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ContractService } from 'src/app/services/contract.service';
 import { DomSanitizer } from '@angular/platform-browser';
+import graphAPI, { graphAPIURL } from 'src/data_handling/api';
 
 @Component({
   selector: 'app-home',
@@ -14,6 +15,7 @@ export class HomeComponent implements OnInit {
   amountToEnter: number = 0;
   status: string = "";
   nftSvg: any;
+  graphAPI: any;
 
   constructor( 
     private contractService: ContractService,
@@ -21,23 +23,19 @@ export class HomeComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {    
+    this.graphAPI = new graphAPI(graphAPIURL);
+    this.refresh();
   }
 
   async refresh() {
-    // this.manager = await this.contractService.getManagerAddress();
-    // this.players = await this.contractService.getPlayerAddresses();
-    // this.balance = await this.contractService.getLotteryBalance();
-    // console.log(this.manager, this.players, this.balance)
-    let poolAddr = "0xc2e9f25be6257c210d7adf0d4cd6e3e881ba25f8";
-    // await this.contractService.approveTransfer(7595);
-    // console.log(await this.contractService.createNewRental(7600, .0001, 100000, poolAddr));
-    // console.log(await this.contractService.withdrawCash(7600));
-    // console.log(await this.contractService.getRentalListingById(7602));
-    // console.log(await this.contractService.rent(7600, 0.0001));
-    // console.log(await this.contractService.getRentalListingById(7595));
-    // console.log(await this.contractService.getRentalListingById(7586));
-    console.log(await this.contractService.deleteRental(7605));
-    // this.nftSvg = await this.getNFTImg(7597) 
+    let pooladdr = "0xc2e9f25be6257c210d7adf0d4cd6e3e881ba25f8";
+    let t1 = "0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984";
+    let t2 = "0xc778417E063141139Fce010982780140Aa0cD5Ab";
+    console.log("TickRange", await this.graphAPI.getTickRangeInfo('0xc2e9f25be6257c210d7adf0d4cd6e3e881ba25f8', 308160, 309720))
+    console.log("PoolInfo", await this.graphAPI.getPoolInfo('0xc2e9f25be6257c210d7adf0d4cd6e3e881ba25f8')) 
+    console.log("getSwapsLast1Day", await this.graphAPI.getSwapsFromLastXDays(pooladdr, 2, (new Date()).getTime() / 1000))
+    console.log("getFeeTierDistribution", await this.graphAPI.getFeeTierDistribution(t1, t2))
+
   }
 
   async collectFees() {
