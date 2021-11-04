@@ -43,7 +43,7 @@ export class HomeComponent implements OnInit {
     // console.log(await this.auctionContractService.createNewAuction(8258, 0.001, 120));
     // console.log(await this.auctionContractService.getAllListings());
     // console.log(await this.auctionContractService.bid(8258, 0.0011));
-    console.log(await this.auctionContractService.sendPositionToHighestBidder(8258));
+    // console.log(await this.auctionContractService.sendPositionToHighestBidder(8258));
     // console.log(await this.auctionContractService.getAllListings());
     // console.log(await this.auctionContractService.returnAssetToOwner(8258));
     // console.log(await this.auctionContractService.getAllListings());
