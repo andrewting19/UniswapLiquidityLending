@@ -4,6 +4,7 @@ import { SalesContractService } from 'src/app/services/contracts/salesContract.s
 import { DomSanitizer } from '@angular/platform-browser';
 import graphAPI, { graphAPIURL } from 'src/data_handling/api';
 import { AuctionContractService } from 'src/app/services/contracts/auctionContract.service';
+import { SwapperContractService } from 'src/app/services/contracts/swapContract.service';
 
 @Component({
   selector: 'app-home',
@@ -23,6 +24,7 @@ export class HomeComponent implements OnInit {
     private renterContractService: RenterContractService,
     private salesContractService: SalesContractService,
     private auctionContractService: AuctionContractService,
+    private swapContractService: SwapperContractService,
     private domSanitizer: DomSanitizer
   ) { }
 
@@ -43,14 +45,28 @@ export class HomeComponent implements OnInit {
     // console.log(await this.auctionContractService.createNewAuction(8258, 0.001, 120));
     // console.log(await this.auctionContractService.getAllListings());
     // console.log(await this.auctionContractService.bid(8258, 0.0011));
-<<<<<<< HEAD
     // console.log(await this.auctionContractService.sendPositionToHighestBidder(8258));
-=======
-    console.log(await this.auctionContractService.sendPositionToHighestBidder(8258));
->>>>>>> 1b5892cef3ac833a762cb4bca9c10c8231cbb7e0
     // console.log(await this.auctionContractService.getAllListings());
     // console.log(await this.auctionContractService.returnAssetToOwner(8258));
     // console.log(await this.auctionContractService.getAllListings());
+
+    // console.log(await this.swapContractService.createNewSwap(8302,120));
+    // console.log(await this.swapContractService.getAllListings());
+    // console.log(await this.swapContractService.createNewSwap(8303,120));
+    // console.log(await this.swapContractService.getAllListings());
+    // console.log(await this.swapContractService.makeSwapOffer(8302, 8303));
+    // console.log(await this.swapContractService.acceptSwapOffer(8302, 8303));
+    // console.log(await this.swapContractService.getAllListings());
+    // console.log(await this.swapContractService.withdrawCash(8303));
+    // console.log(await this.swapContractService.getAllListings());
+    // console.log(await this.swapContractService.returnSwapToOwner(8302));
+    // console.log(await this.swapContractService.getAllListings());
+    // console.log(await this.swapContractService.getAllListings());
+
+
+    // console.log(await this.swapContractService.returnSwapToOwner(8277));
+
+
 
     // console.log(await this.salesContractService.createNewSellOffer(8161, 0.001));
     // // console.log(await this.salesContractService.deleteSale(7812));
