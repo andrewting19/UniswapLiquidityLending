@@ -68,7 +68,8 @@ export class HomeComponent implements OnInit {
 
 
 
-    // console.log(await this.salesContractService.createNewSellOffer(8161, 0.001));
+    console.log(await this.salesContractService.createNewSellOffer(8302, 0.001));
+    console.log(await this.salesContractService.getAllListings());
     // // console.log(await this.salesContractService.deleteSale(7812));
     // console.log(await this.salesContractService.getAllListings());
     // console.log(await this.salesContractService.buy(8161, 0.001));
