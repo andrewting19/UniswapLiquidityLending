@@ -18,7 +18,7 @@
                 <mat-icon [inline]="true">schedule</mat-icon>
                 &nbsp;{{timedelta(listing.expiryDate)}} remaining</p>
             <!-- <p>{{listing.position.tickLower}} - {{listing.position.tickUpper}}</p> -->
-            <p *ngIf="listing.renter">Rented by {{listing.renter}}</p>
+            <!-- <p *ngIf="listing.renter && isOwner">Rental in Progress</p> -->
             <p>#{{listing.tokenId}}</p>
         </div>
     </div>
