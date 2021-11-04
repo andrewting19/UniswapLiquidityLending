@@ -11,7 +11,7 @@
                 {{listing.priceInEther}} (${{(listing.priceInEther * ethPrice).toFixed(2)}})
             </p>
             <p>{{listing.position.priceRange[0].lower}} - {{listing.position.priceRange[0].upper}}</p>
-            <p *ngIf="listing.seller">Rented by {{listing.originalOwner}}</p>
+            <p *ngIf="listing.seller">Owned by {{listing.originalOwner}}</p>
             <p>#{{listing.tokenId}}</p>
         </div>
     </div>
@@ -26,7 +26,7 @@
         </button>
        
         <button *ngIf="!isOwner" (click)="purchaseListing()" class="sales-btn button button--mimas">
-            <span *ngIf="!loading">Rent</span>
+            <span *ngIf="!loading">Buy</span>
             <span *ngIf="loading"><mat-spinner style="margin: auto;" diameter="25"></mat-spinner></span>
         </button>
         <p *ngIf="loading">Transaction in progress...</p>

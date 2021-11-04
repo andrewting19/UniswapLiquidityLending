@@ -8,7 +8,7 @@ import { DomSanitizer } from '@angular/platform-browser';
   templateUrl: './listing.component.html',
   styleUrls: ['./listing.component.css']
 })
-export class ListingComponent implements OnInit {
+export class RentalListingComponent implements OnInit {
   @Input() listing: RentInfo = {} as RentInfo;
   @Input() ethPrice: number = 0; 
   @Input() isOwner: boolean = false;
