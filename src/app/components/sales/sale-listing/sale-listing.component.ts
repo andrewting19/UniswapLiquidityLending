@@ -4,9 +4,9 @@ import { SalesContractService } from 'src/app/services/contracts/salesContract.s
 import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
-  selector: 'app-listing',
-  templateUrl: './listing.component.html',
-  styleUrls: ['./listing.component.css']
+  selector: 'app-sale-listing',
+  templateUrl: './sale-listing.component.html',
+  styleUrls: ['./sale-listing.component.css']
 })
 export class SaleListingComponent implements OnInit {
   @Input() listing: SaleInfo = {} as SaleInfo;
@@ -40,12 +40,6 @@ export class SaleListingComponent implements OnInit {
     this.updateEvent.emit(true);
   }
 
-  async collectFees() {
-    this.loading = true;
-    let result = await this.salesContractService.withdrawCash(this.listing.tokenId)
-    console.log("collectFees:",this.listing.tokenId,result)
-    this.loading = false;
-  }
 
   async removeListing() {
     this.loading = true;

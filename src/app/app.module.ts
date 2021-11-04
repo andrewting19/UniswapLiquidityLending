@@ -11,20 +11,28 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 import { AppComponent } from './app.component';
 import { HomeComponent } from './components/home/home.component';
 import { ProfileComponent } from './components/profile/profile.component';
-import { ListingsComponent } from './components/rentals/rental-listings/rental-listings.component';
-import { NewListingComponent } from './components/rentals/new-rental-listing/new-rental-listing.component';
+import { RentalListingsComponent } from './components/rentals/rental-listings/rental-listings.component';
+import { NewRentalListingComponent } from './components/rentals/new-rental-listing/new-rental-listing.component';
 import { RentalListingComponent } from './components/rentals/rental-listing/rental-listing.component';
-import { ListingDetailsComponent } from './components/rentals/rental-listing-details/rental-listing-details.component';
+import { RentalListingDetailsComponent } from './components/rentals/rental-listing-details/rental-listing-details.component';
+import { SaleListingsComponent } from './components/sales/sale-listings/sale-listings.component';
+import { SaleListingDetailsComponent } from './components/sales/sale-listing-details/sale-listing-details.component';
+import { NewSaleListingComponent } from './components/sales/new-sale-listing/new-sale-listing.component';
+import { SaleListingComponent } from './components/sales/sale-listing/sale-listing.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
     ProfileComponent,
-    ListingsComponent,
-    NewListingComponent,
+    RentalListingsComponent,
+    NewRentalListingComponent,
     RentalListingComponent,
-    ListingDetailsComponent
+    RentalListingDetailsComponent,
+    SaleListingComponent,
+    SaleListingsComponent,
+    SaleListingDetailsComponent,
+    NewSaleListingComponent
   ],
   imports: [
     BrowserModule,

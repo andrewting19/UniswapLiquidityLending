@@ -4,11 +4,11 @@ import { RenterContractService } from 'src/app/services/contracts/renterContract
 import { CoingeckoService } from 'src/app/services/coingecko.service';
 
 @Component({
-  selector: 'app-listings',
-  templateUrl: './listings.component.html',
-  styleUrls: ['./listings.component.css']
+  selector: 'app-rental-listings',
+  templateUrl: './rental-listings.component.html',
+  styleUrls: ['./rental-listings.component.css']
 })
-export class ListingsComponent implements OnInit {
+export class RentalListingsComponent implements OnInit {
   listings: RentInfo[] = [];
   visibleListings: RentInfo[] = [];
   loading: boolean = false;

@@ -4,9 +4,9 @@ import { SalesContractService } from 'src/app/services/contracts/salesContract.s
 import { CoingeckoService } from 'src/app/services/coingecko.service';
 
 @Component({
-  selector: 'app-listings',
-  templateUrl: './listings.component.html',
-  styleUrls: ['./listings.component.css']
+  selector: 'app-sale-listings',
+  templateUrl: './sale-listings.component.html',
+  styleUrls: ['./sale-listings.component.css']
 })
 export class SaleListingsComponent implements OnInit {
   listings: SaleInfo[] = [];

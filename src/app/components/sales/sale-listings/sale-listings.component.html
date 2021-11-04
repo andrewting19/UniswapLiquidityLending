@@ -12,7 +12,6 @@
                 <th>Token 2</th>
                 <th>Fee</th>
                 <th>Price (ETH)</th>
-                <th>Duration</th>
                 <th>ID</th>
             </tr>
         </thead>
@@ -78,13 +77,13 @@
 </div>
 <div class="centered listings-div">
     <div class="listing" *ngFor="let listing of visibleListings">
-        <app-listing 
+        <app-sale-listing
             (updateEvent)="getListings()" 
             [listing]="listing" 
             [isOwner]="false"
             [ethPrice]="ethPrice"
         >    
-        </app-listing>
+        </app-sale-listing>
     </div>
     <span *ngIf="loading && !listings.length"><mat-spinner style="margin: auto;" diameter="25"></mat-spinner></span>
     <p *ngIf="loading && listings.length">Transaction in progress...</p>

@@ -78,14 +78,14 @@
 </div>
 <div class="centered listings-div">
     <div class="listing" *ngFor="let listing of visibleListings">
-        <app-listing 
+        <app-rental-listing 
             (updateEvent)="getListings()" 
             [listing]="listing" 
             [isRenter]="false" 
             [isOwner]="false"
             [ethPrice]="ethPrice"
         >    
-        </app-listing>
+        </app-rental-listing>
     </div>
     <span *ngIf="loading && !listings.length"><mat-spinner style="margin: auto;" diameter="25"></mat-spinner></span>
     <p *ngIf="loading && listings.length">Transaction in progress...</p>

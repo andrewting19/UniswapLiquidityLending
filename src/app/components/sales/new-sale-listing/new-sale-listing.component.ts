@@ -3,9 +3,9 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { SalesContractService } from 'src/app/services/contracts/salesContract.service';
 
 @Component({
-  selector: 'app-new-listing',
-  templateUrl: './new-listing.component.html',
-  styleUrls: ['./new-listing.component.css']
+  selector: 'app-new-sale-listing',
+  templateUrl: './new-sale-listing.component.html',
+  styleUrls: ['./new-sale-listing.component.css']
 })
 export class NewSaleListingComponent implements OnInit {
   error: boolean = false;

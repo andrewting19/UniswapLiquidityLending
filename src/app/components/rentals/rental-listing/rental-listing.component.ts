@@ -4,9 +4,9 @@ import { RenterContractService } from 'src/app/services/contracts/renterContract
 import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
-  selector: 'app-listing',
-  templateUrl: './listing.component.html',
-  styleUrls: ['./listing.component.css']
+  selector: 'app-rental-listing',
+  templateUrl: './rental-listing.component.html',
+  styleUrls: ['./rental-listing.component.css']
 })
 export class RentalListingComponent implements OnInit {
   @Input() listing: RentInfo = {} as RentInfo;

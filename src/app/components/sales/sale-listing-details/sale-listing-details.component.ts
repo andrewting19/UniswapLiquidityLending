@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'app-listing-details',
-  templateUrl: './listing-details.component.html',
-  styleUrls: ['./listing-details.component.css']
+  selector: 'app-sale-listing-details',
+  templateUrl: './sale-listing-details.component.html',
+  styleUrls: ['./sale-listing-details.component.css']
 })
 export class SaleListingDetailsComponent implements OnInit {
 

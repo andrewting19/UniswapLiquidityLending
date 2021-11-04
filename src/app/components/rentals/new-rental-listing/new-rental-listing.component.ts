@@ -3,11 +3,11 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { RenterContractService } from 'src/app/services/contracts/renterContract.service';
 
 @Component({
-  selector: 'app-new-listing',
-  templateUrl: './new-listing.component.html',
-  styleUrls: ['./new-listing.component.css']
+  selector: 'app-new-rental-listing',
+  templateUrl: './new-rental-listing.component.html',
+  styleUrls: ['./new-rental-listing.component.css']
 })
-export class NewListingComponent implements OnInit {
+export class NewRentalListingComponent implements OnInit {
   error: boolean = false;
   postError: boolean = false;
   loading: boolean = false;
