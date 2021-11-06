@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { ContractService } from 'src/app/services/contract.service';
+import { RenterContractService } from 'src/app/services/contracts/renterContract.service';
 
 @Component({
-  selector: 'app-new-listing',
-  templateUrl: './new-listing.component.html',
-  styleUrls: ['./new-listing.component.css']
+  selector: 'app-new-rental-listing',
+  templateUrl: './new-rental-listing.component.html',
+  styleUrls: ['./new-rental-listing.component.css']
 })
-export class NewListingComponent implements OnInit {
+export class NewRentalListingComponent implements OnInit {
   error: boolean = false;
   postError: boolean = false;
   loading: boolean = false;
@@ -19,7 +19,7 @@ export class NewListingComponent implements OnInit {
   durationMultiplier: any;
   //s = seconds, m = minutes, h = hours, d = days, w = weeks
 
-  constructor(private contractService: ContractService) {
+  constructor(private renterContractService: RenterContractService) {
   }
 
   ngOnInit(): void {
@@ -36,13 +36,13 @@ export class NewListingComponent implements OnInit {
       duration: this.duration,
       durationUnits: this.durationUnits
     })
-    // console.log(await this.contractService.createNewRental(7597, .5, 100000, poolAddr));
+    // console.log(await this.renterContractService.createNewRental(7597, .5, 100000, poolAddr));
   }
 
   submitForm() {
     let submit = async () => {
       this.loading = true;
-      const result = await this.contractService.createNewRental(
+      const result = await this.renterContractService.createNewRental(
         this.tokenId.value, 
         parseFloat(this.priceInEther.value), 
         parseInt(this.duration.value) * this.durationMultiplier[this.durationUnits.value]

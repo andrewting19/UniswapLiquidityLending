@@ -1,0 +1,29 @@
+<p class="title">Sell Liquidity</p>
+<div class="container">
+    <div class="form">
+        <div class="field" tabindex="1">
+            <label for="tokenId">
+                <i class="far fa-user"></i>Token ID
+            </label>
+            <input [formControl]="tokenId" [ngClass]="{ 'error': error && tokenId.invalid }" name="tokenId" type="text" placeholder="12345" required>
+        </div>
+        <div class="field" tabindex="2">
+            <label for="priceInEther">
+                <i class="far fa-user"></i>Price (in Ether)
+            </label>
+            <input [formControl]="priceInEther" [ngClass]="{ 'error': error && priceInEther.invalid }" name="priceInEther" type="text" placeholder="0.01" required>
+        </div>
+        <div *ngIf="error || postError">
+            <p *ngIf="error">Please fill out all of the required fields.</p>
+            <p *ngIf="postError">Transaction rejected by smart contract. Please ensure your inputs are correct and you are the owner of the smart contract.</p>
+        </div>
+        <div class="centered" (click)="submitForm()">
+            <button  class="button button--mimas">
+                <div class="centered">
+                    <span *ngIf="!loading">Create Listing</span>
+                    <span *ngIf="loading"><mat-spinner style="margin: auto;" diameter="25"></mat-spinner></span>
+                </div>
+            </button>
+        </div>
+    </div>
+</div>
