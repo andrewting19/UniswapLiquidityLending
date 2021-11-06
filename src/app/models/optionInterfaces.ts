@@ -3,7 +3,8 @@ import { ERC20Token, Position } from "./utilInterfaces";
 export interface OptionInfo {
     tokenId: number;
     currentOwner: string;
-    price: number;
+    premium: number; //in Eth
+    costToExcersize: number; //in paymentToken
     tokenLong: string;
     forSale: boolean;
     paymentToken: string;

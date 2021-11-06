@@ -3,17 +3,16 @@ import Web3 from "web3";
 import { ERC20Token, Position, PriceRange } from 'src/app/models/utilInterfaces';
 import { OptionInfo } from 'src/app/models/optionInterfaces';
 import { ERC20ABI, NFTMinterABI, optionABI } from 'src/app/models/abi';
-import { async } from '@angular/core/testing';
 
 declare const window: any;
 
-const OptionContractAddress = "0xD053A324113aD7014F9bAbaF50DC305F515ED96F"; //Address of our custom smart contract
+const OptionContractAddress = "0x4E81963bC0ca7672B245C26fDDcB3EFd4e6011aA"; //Address of our custom smart contract
 const NFTMinterAddress = "0xC36442b4a4522E871399CD717aBDD847Ab11FE88"; //Hard coded address of Uniswap NFT Minter contract
 
 @Injectable({
   providedIn: 'root'
 })
-export class RenterContractService {
+export class OptionContractService {
   window: any;
   optionContract: any = null;
   NFTMinterContract: any = null;
@@ -159,13 +158,13 @@ public approveERC20Transfer = async (tokenAddr: string, amount: number) => {
     return true;
   }
 
-  public createNewLongOption = async (tokenId: number, price: number,tokenToLong: string, durationInSeconds: number) => {
+  public createNewLongOption = async (tokenId: number, priceInEther: number,tokenToLong: string, durationInSeconds: number) => {
     await this.getOptionContract();
     try {
-      await this.approveNFTTransfer(tokenId);
+      console.log(await this.approveNFTTransfer(tokenId));
       await this.optionContract.methods.createLongOption(
         tokenId, 
-        price,
+        window.web3.utils.toWei(priceInEther.toString(), 'ether'),
         durationInSeconds,
         tokenToLong,
       ).send({from: this.account});
@@ -176,14 +175,27 @@ public approveERC20Transfer = async (tokenAddr: string, amount: number) => {
     }
   }
 
-  public buyOption = async (tokenId: number, price: number, paymentToken: string) => {
+  public listOptionForSale = async (tokenId: number) => {
     await this.getOptionContract();
     try {
-    await this.approveERC20Transfer(paymentToken, price);
+      console.log(await this.optionContract.methods.putUpOptionForSale(tokenId)
+      .send({from: this.account}));
+      return true
+    } catch (e) {
+      console.log("ERROR :: listOptionForSale ::", e);
+      return false;
+    }
+
+  }
+
+  public buyOption = async (tokenId: number, priceInEther: number) => {
+    await this.getOptionContract();
+    try {
       await this.optionContract.methods.buyOption(
         tokenId
       ).send({
-        from: this.account
+        from: this.account,
+        value: window.web3.utils.toWei(priceInEther.toString(), 'ether')
       });
       return true;
     } catch (e) {
@@ -261,11 +273,14 @@ public approveERC20Transfer = async (tokenAddr: string, amount: number) => {
         let position: Position = await this.getPosition(listing.tokenId, pairing);
         return {
           tokenId: listing.tokenId,
+          originalOwner: listing.originalOwner,
           currentOwner: listing.currentOwner,
-          price: listing.price,
+          premium: listing.premium,
+          costToExcersize: listing.costToExcersize,
           expiryDate: listing.expiryDate == 0 ? null : new Date(listing.expiryDate*1000),
           paymentToken: listing.paymentToken,
           tokenLong: listing.tokenLong,
+          forSale: listing.forSale,
           pairing: pairing,
           position: position
         } as OptionInfo

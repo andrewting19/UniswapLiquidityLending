@@ -1032,11 +1032,11 @@ export const optionABI = [
       },
       {
         "internalType": "uint256",
-        "name": "newPrice",
+        "name": "newpremium",
         "type": "uint256"
       }
     ],
-    "name": "changeOptionPrice",
+    "name": "changeOptionPremium",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -1050,7 +1050,7 @@ export const optionABI = [
       },
       {
         "internalType": "uint256",
-        "name": "price",
+        "name": "premium",
         "type": "uint256"
       },
       {
@@ -1060,7 +1060,7 @@ export const optionABI = [
       },
       {
         "internalType": "address",
-        "name": "tokenToLong",
+        "name": "tokenLong",
         "type": "address"
       }
     ],
@@ -1120,6 +1120,11 @@ export const optionABI = [
     "outputs": [
       {
         "internalType": "address payable",
+        "name": "originalOwner",
+        "type": "address"
+      },
+      {
+        "internalType": "address payable",
         "name": "currentOwner",
         "type": "address"
       },
@@ -1139,14 +1144,24 @@ export const optionABI = [
         "type": "uint256"
       },
       {
+        "internalType": "uint160",
+        "name": "costToexcersize",
+        "type": "uint160"
+      },
+      {
         "internalType": "uint256",
-        "name": "price",
+        "name": "premium",
         "type": "uint256"
       },
       {
         "internalType": "uint256",
         "name": "expiryDate",
         "type": "uint256"
+      },
+      {
+        "internalType": "bool",
+        "name": "forSale",
+        "type": "bool"
       }
     ],
     "stateMutability": "view",
@@ -1328,6 +1343,8 @@ export const optionABI = [
     "type": "function"
   }
 ]
+
+
 
 
 export const swapABI = [
