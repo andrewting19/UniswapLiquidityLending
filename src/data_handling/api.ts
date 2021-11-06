@@ -2,7 +2,7 @@ import { execPath } from "process";
 
 const axios = require('axios').default;
 
-jest.setTimeout(10000)
+// jest.setTimeout(10000)
 
 export const graphAPIURL = "https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v3"
 

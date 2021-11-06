@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import Web3 from "web3";
 import { ERC20Token, RentInfo, Position, PriceRange } from 'src/app/models/interfaces';
 import { ERC20ABI, myABI, poolABI, NFTMinterABI } from 'src/app/models/abi';
-import { async } from '@angular/core/testing';
 
 declare const window: any;
 
