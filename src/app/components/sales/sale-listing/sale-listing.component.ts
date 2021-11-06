@@ -1,41 +1,33 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { RentInfo } from 'src/app/models/interfaces';
-import { ContractService } from 'src/app/services/contract.service';
+import { SaleInfo } from 'src/app/models/salesInterfaces';
+import { SalesContractService } from 'src/app/services/contracts/salesContract.service';
 import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
-  selector: 'app-listing',
-  templateUrl: './listing.component.html',
-  styleUrls: ['./listing.component.css']
+  selector: 'app-sale-listing',
+  templateUrl: './sale-listing.component.html',
+  styleUrls: ['./sale-listing.component.css']
 })
-export class ListingComponent implements OnInit {
-  @Input() listing: RentInfo = {} as RentInfo;
+export class SaleListingComponent implements OnInit {
+  @Input() listing: SaleInfo = {} as SaleInfo;
   @Input() ethPrice: number = 0; 
   @Input() isOwner: boolean = false;
-  @Input() isRenter: boolean = false;
   @Output() updateEvent = new EventEmitter<boolean>();
   loading: boolean = false;
   durationMultiplier: any;
   nftSvg: any;
 
   constructor(
-    private contractService: ContractService,
+    private salesContractService: SalesContractService,
     private domSanitizer: DomSanitizer
   ) { }
 
   ngOnInit(): void {
-    this.durationMultiplier = {
-      's': 1,
-      'm': 60,
-      'h': 3600,
-      'd': 86400,
-      'w': 604800
-    }
     this.getNFTImg();
   }
 
   async getNFTImg() {
-    let result = await this.contractService.getNFTSVG(this.listing.tokenId);
+    let result = await this.salesContractService.getNFTSVG(this.listing.tokenId);
     const json = atob(result.substring(29));
     result = this.domSanitizer.bypassSecurityTrustUrl(JSON.parse(json).image);
     this.nftSvg = result;
@@ -43,21 +35,15 @@ export class ListingComponent implements OnInit {
 
   async purchaseListing() {
     this.loading = true;
-    let result = await this.contractService.rent(this.listing.tokenId, this.listing.priceInEther);
+    let result = await this.salesContractService.buy(this.listing.tokenId, this.listing.priceInEther);
     this.loading = false;
     this.updateEvent.emit(true);
   }
 
-  async collectFees() {
-    this.loading = true;
-    let result = await this.contractService.withdrawCash(this.listing.tokenId)
-    console.log("collectFees:",this.listing.tokenId,result)
-    this.loading = false;
-  }
 
   async removeListing() {
     this.loading = true;
-    let result = await this.contractService.deleteRental(this.listing.tokenId);
+    let result = await this.salesContractService.deleteSale(this.listing.tokenId);
     console.log("removeListing:",this.listing.tokenId,result);
     this.loading = false;
     this.updateEvent.emit(true);
@@ -65,17 +51,13 @@ export class ListingComponent implements OnInit {
 
   async reclaimLiquidity() {
     this.loading = true;
-    let result = await this.contractService.returnRentalToOwner(this.listing.tokenId);
+    let result = await this.salesContractService.returnSaleToOwner(this.listing.tokenId);
     console.log("reclaimLiquidity:",this.listing.tokenId,result);
     this.loading = false;
     this.updateEvent.emit(true);
   }
 
-  timedelta(expiry: any) {
-    let now = new Date();
-    let delta: number = expiry.getTime()/1000 - now.getTime()/1000;
-    return this.deltaToString(delta)
-  }
+
 
   deltaToString(delta: number) {
     delta = parseFloat(delta.toString())

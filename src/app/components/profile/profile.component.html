@@ -5,10 +5,10 @@
 </div>
 <div class="centered listings-div">
     <p class="title">Your Liquidity</p>
-    <p *ngIf="!ownedLoading && !ownedListings.length">No owned liquidity :(</p>
-    <span *ngIf="ownedLoading && !ownedListings.length"><mat-spinner style="margin: auto;" diameter="25"></mat-spinner></span>
-    <div class="listing" *ngFor="let listing of ownedListings">
-        <app-listing (updateEvent)="getOwned()" [listing]="listing" [isRenter]="false" [isOwner]="true"></app-listing>
+    <p *ngIf="!ownedRentalLoading && !ownedRentalListings.length">No owned liquidity :(</p>
+    <span *ngIf="ownedRentalLoading && !ownedRentalListings.length"><mat-spinner style="margin: auto;" diameter="25"></mat-spinner></span>
+    <div class="listing" *ngFor="let listing of ownedRentalListings">
+        <app-rental-listing (updateEvent)="getOwnedRental()" [listing]="listing" [isRenter]="false" [isOwner]="true"></app-rental-listing>
     </div>
     <p *ngIf="loading">Transaction in progress...</p>
 </div>
@@ -17,7 +17,16 @@
     <p class="title">Rented Liquidity</p>
     <p *ngIf="!rentedLoading && !rentedListings.length">No rented liquidity :(</p>
     <span *ngIf="rentedLoading && !rentedListings.length"><mat-spinner style="margin: auto;" diameter="25"></mat-spinner></span>    <div class="listing" *ngFor="let listing of rentedListings">
-        <app-listing (updateEvent)="getRented()" [listing]="listing" [isRenter]="true" [isOwner]="false"></app-listing>
+        <app-rental-listing (updateEvent)="getRented()" [listing]="listing" [isRenter]="true" [isOwner]="false"></app-rental-listing>
+    </div>
+    <p *ngIf="loading">Transaction in progress...</p>
+</div>
+
+<div class="centered listings-div">
+    <p class="title">Your Liquidity On Sale</p>
+    <p *ngIf="!ownedSalesLoading && !ownedSalesListings.length">No liquidity on sale :(</p>
+    <span *ngIf="ownedSalesLoading && !ownedSalesListings.length"><mat-spinner style="margin: auto;" diameter="25"></mat-spinner></span>    <div class="listing" *ngFor="let listing of rentedListings">
+        <app-sale-listing (updateEvent)="getOwnedForSale()" [listing]="listing"  [isOwner]="true"></app-sale-listing>
     </div>
     <p *ngIf="loading">Transaction in progress...</p>
 </div>

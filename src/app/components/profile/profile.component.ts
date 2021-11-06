@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { RentInfo } from 'src/app/models/interfaces';
-import { ContractService } from 'src/app/services/contract.service';
+import { RentInfo } from 'src/app/models/rentInterfaces';
+import { SaleInfo } from 'src/app/models/salesInterfaces';
+import { RenterContractService } from 'src/app/services/contracts/renterContract.service';
+import { SalesContractService } from 'src/app/services/contracts/salesContract.service';
 
 @Component({
   selector: 'app-profile',
@@ -8,20 +10,26 @@ import { ContractService } from 'src/app/services/contract.service';
   styleUrls: ['./profile.component.css']
 })
 export class ProfileComponent implements OnInit {
-  ownedListings: RentInfo[] = [];
-  rentedListings: RentInfo[] = [];
+  ownedRentalListings: RentInfo[] = [];
+  ownedSalesListings: SaleInfo[] = [];
   loading: boolean = false;
-  ownedLoading: boolean = false;
+
+  rentedListings: RentInfo[] = [];
+  ownedRentalloading: boolean = false;
+  ownedSalesLoading: boolean = false;
+  ownedRentalLoading: boolean = false;
   rentedLoading: boolean = false;
   isOwner: boolean = false;
   durationMultiplier: any;
 
-  constructor(private contractService: ContractService) { }
+  constructor(    private renterContractService: RenterContractService,
+    private salesContractService: SalesContractService) { }
 
   ngOnInit(): void {
-    this.ownedLoading = true;
+    this.ownedRentalLoading = true;
     this.rentedLoading = true;
-    this.getOwned();
+    this.getOwnedRental();
+    this.getOwnedForSale();
     this.getRented();
     this.durationMultiplier = {
       's': 1,
@@ -34,21 +42,27 @@ export class ProfileComponent implements OnInit {
   }
 
   async collectMarketplaceFees() {
-    console.log(await this.contractService.restrictedWithdraw());
+    console.log(await this.renterContractService.restrictedWithdraw());
   }
 
   async checkIfOwner() {
-    this.isOwner = await this.contractService.isOwner();
+    this.isOwner = await this.renterContractService.isOwner();
   }
 
-  async getOwned() {
-    this.ownedListings = await this.contractService.getRentalListingsByOwner("");
-    this.ownedLoading = false;
-    console.log("Owned:",this.ownedListings)
+  async getOwnedRental() {
+    this.ownedRentalListings = await this.renterContractService.getRentalListingsByOwner("");
+    this.ownedRentalLoading = false;
+    console.log("Owned for Rent:",this.ownedRentalListings)
+  }
+
+  async getOwnedForSale() {
+    this.ownedSalesListings = await this.salesContractService.getSalesListingsByOwner("");
+    this.ownedSalesLoading = false;
+    console.log("Owned For Sale:",this.ownedSalesListings)
   }
 
   async getRented() {
-    this.rentedListings = await this.contractService.getRentalListingsByRenter("");
+    this.rentedListings = await this.renterContractService.getRentalListingsByRenter("");
     this.rentedLoading = false;
     console.log("Rented:", this.rentedListings)
   }
@@ -85,23 +99,23 @@ export class ProfileComponent implements OnInit {
     return delta.toFixed(2) + prefix
   }
 
-  async collectFees(tokenId: number) {
+  async collectRentedFees(tokenId: number) {
     this.loading = true;
-    let result = await this.contractService.withdrawCash(tokenId)
+    let result = await this.renterContractService.withdrawCash(tokenId)
     console.log("collectFees:",tokenId,result)
     this.loading = false;
   }
 
-  async removeListing(tokenId: number) {
+  async removeRentalListing(tokenId: number) {
     this.loading = true;
-    let result = await this.contractService.deleteRental(tokenId);
+    let result = await this.renterContractService.deleteRental(tokenId);
     console.log("removeListing:",tokenId,result);
     this.loading = false;
   }
 
-  async reclaimLiquidity(tokenId: number) {
+  async reclaimRentalLiquidity(tokenId: number) {
     this.loading = true;
-    let result = await this.contractService.returnRentalToOwner(tokenId);
+    let result = await this.renterContractService.returnRentalToOwner(tokenId);
     console.log("reclaimLiquidity:",tokenId,result);
     this.loading = false;
   }

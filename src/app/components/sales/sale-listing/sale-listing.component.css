@@ -1,0 +1,54 @@
+p {
+    font-size: 14px;
+    text-align: left;
+    margin: 5px 0;
+}
+
+.bold {
+    font-weight: 600;
+}
+
+.icon {
+    vertical-align: middle;
+}
+
+.listing {
+    background-color: rgba(237,238,242, .9);
+    margin: 10px auto;
+    padding: 15px;
+    border-radius: 10px;
+    width: fit-content;
+}
+
+.sale-btn {
+    margin: 10px;
+}
+
+.listing-fields {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.listing-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding-left: 15px;
+}
+
+.image-div {
+    width: 100px;
+}
+
+.nft-image {
+    width: 100%;
+    height: auto;
+}
+
+.eth-logo {
+    height: 1.3em;
+    width: auto;
+    vertical-align: middle;
+    margin-top: -1px;
+}
