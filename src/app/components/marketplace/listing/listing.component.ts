@@ -1,14 +1,14 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { RentInfo } from 'src/app/models/rentInterfaces';
+import { RentInfo } from 'src/app/models/interfaces';
 import { RenterContractService } from 'src/app/services/contracts/renterContract.service';
 import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
-  selector: 'app-rental-listing',
-  templateUrl: './rental-listing.component.html',
-  styleUrls: ['./rental-listing.component.css']
+  selector: 'app-listing',
+  templateUrl: './listing.component.html',
+  styleUrls: ['./listing.component.css']
 })
-export class RentalListingComponent implements OnInit {
+export class ListingComponent implements OnInit {
   @Input() listing: RentInfo = {} as RentInfo;
   @Input() ethPrice: number = 0; 
   @Input() isOwner: boolean = false;

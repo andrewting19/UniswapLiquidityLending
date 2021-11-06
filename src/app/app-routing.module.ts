@@ -1,17 +1,17 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './components/home/home.component';
-import { RentalListingDetailsComponent } from './components/rentals/rental-listing-details/rental-listing-details.component';
-import { RentalListingsComponent } from './components/rentals/rental-listings/rental-listings.component';
-import { NewRentalListingComponent } from './components/rentals/new-rental-listing/new-rental-listing.component';
+import { RentalListingDetailsComponent } from './components/marketplace/rental-listing-details/rental-listing-details.component';
+import { RentalListingsComponent } from './components/marketplace/rental-listings/rental-listings.component';
+import { NewListingComponent } from './components/marketplace/new-listing/new-listing.component';
 import { ProfileComponent } from './components/profile/profile.component';
 import { SaleListingsComponent } from './components/sales/sale-listings/sale-listings.component';
 import { NewSaleListingComponent } from './components/sales/new-sale-listing/new-sale-listing.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
-  { path: 'rent', component: RentalListingsComponent },
-  { path: 'lend', component: NewRentalListingComponent },
+  { path: 'listings', component: RentalListingsComponent },
+  { path: 'new', component: NewListingComponent },
   { path: 'profile', component: ProfileComponent },
   { path: 'listing/:id', component: RentalListingDetailsComponent },
   { path: 'buy', component: SaleListingsComponent },

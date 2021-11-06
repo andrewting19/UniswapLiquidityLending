@@ -1,9 +1,7 @@
 import { Injectable } from '@angular/core';
 import Web3 from "web3";
-import { ERC20Token, Position, PriceRange } from 'src/app/models/utilInterfaces';
-import { AuctionInfo } from 'src/app/models/auctionInterfaces';
+import { ERC20Token, Position, PriceRange, AuctionInfo } from 'src/app/models/interfaces';
 import { ERC20ABI, auctionABI, NFTMinterABI } from 'src/app/models/abi';
-import { async } from '@angular/core/testing';
 
 declare const window: any;
 
@@ -206,7 +204,7 @@ export class AuctionContractService {
 
   //Protoco fee is the fee in percentages
   public calculateProtocolFees(tokenId: number, protocolFee: number) {
-    const salesPrice = this.auctionContract.methods.itemIdToSaleInfo(tokenId).price;
+    const salesPrice = this.auctionContract.methods.itemIdToListingInfo(tokenId).price;
     return protocolFee * salesPrice;
 
   }
@@ -257,7 +255,7 @@ export class AuctionContractService {
     }
     try {
       const allListings: AuctionInfo[] = await this.getAllListings();
-      const ownedListings: AuctionInfo[] = allListings.filter(listing => listing.originalOwner?.toLowerCase() == ownerAddress.toLowerCase())
+      const ownedListings: AuctionInfo[] = allListings.filter(listing => listing.seller?.toLowerCase() == ownerAddress.toLowerCase())
       return ownedListings
     } catch (e) {
       console.log("ERROR :: getAuctionListingsByOwner ::", e);
@@ -275,7 +273,7 @@ export class AuctionContractService {
         let position: Position = await this.getPosition(listing.tokenId, pairing);
         return {
           tokenId: listing.tokenId,
-          originalOwner: listing.originalOwner,
+          seller: listing.originalOwner,
           minBid: window.web3.utils.fromWei(listing.minBidInEther, 'ether'),
           pairing: pairing,
           position: position,

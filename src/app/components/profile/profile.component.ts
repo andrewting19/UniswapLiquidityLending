@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { RentInfo } from 'src/app/models/rentInterfaces';
-import { SaleInfo } from 'src/app/models/salesInterfaces';
+import { RentInfo, ListingInfo} from 'src/app/models/interfaces';
 import { RenterContractService } from 'src/app/services/contracts/renterContract.service';
 import { SalesContractService } from 'src/app/services/contracts/salesContract.service';
 
@@ -11,7 +10,7 @@ import { SalesContractService } from 'src/app/services/contracts/salesContract.s
 })
 export class ProfileComponent implements OnInit {
   ownedRentalListings: RentInfo[] = [];
-  ownedSalesListings: SaleInfo[] = [];
+  ownedSalesListings: ListingInfo[] = [];
   loading: boolean = false;
 
   rentedListings: RentInfo[] = [];

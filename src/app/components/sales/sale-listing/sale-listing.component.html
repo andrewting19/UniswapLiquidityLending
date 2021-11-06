@@ -11,7 +11,7 @@
                 {{listing.priceInEther}} (${{(listing.priceInEther * ethPrice).toFixed(2)}})
             </p>
             <p>{{listing.position.priceRange[0].lower}} - {{listing.position.priceRange[0].upper}}</p>
-            <p *ngIf="listing.originalOwner">Owned by {{listing.originalOwner}}</p>
+            <p *ngIf="listing.seller">Owned by {{listing.seller}}</p>
             <p>#{{listing.tokenId}}</p>
         </div>
     </div>

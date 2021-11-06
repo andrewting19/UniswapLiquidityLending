@@ -35,7 +35,7 @@
             <span *ngIf="!loading">Harvest</span>
             <span *ngIf="loading"><mat-spinner style="margin: auto;" diameter="25"></mat-spinner></span>
         </button>
-        <button *ngIf="!listing.renter && !isOwner && !isRenter" (click)="purchaseListing()" class="rent-btn button button--mimas">
+        <button *ngIf="!listing.buyer && !isOwner && !isRenter" (click)="purchaseListing()" class="rent-btn button button--mimas">
             <span *ngIf="!loading">Rent</span>
             <span *ngIf="loading"><mat-spinner style="margin: auto;" diameter="25"></mat-spinner></span>
         </button>

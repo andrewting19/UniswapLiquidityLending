@@ -76,10 +76,10 @@ export class HomeComponent implements OnInit {
     // console.log(await this.salesContractService.getAllListings());
     // console.log(await this.salesContractService.buy(8161, 0.001));
     // console.log(await this.optionContractService.createNewLongOption(8559,0.0001,"0xc7AD46e0b8a400Bb3C915120d284AafbA8fc4735", 180));
-    console.log(await this.optionContractService.getAllListings());
-    // console.log(await this.optionContractService.listOptionForSale(8559));
-    console.log(await this.optionContractService.buyOption(8559, 0.0001));
-    console.log(await this.optionContractService.getAllListings());
+    // console.log(await this.optionContractService.getAllListings());
+    // // console.log(await this.optionContractService.listOptionForSale(8559));
+    // console.log(await this.optionContractService.buyOption(8559, 0.0001));
+    // console.log(await this.optionContractService.getAllListings());
   }
 
   async collectFees() {

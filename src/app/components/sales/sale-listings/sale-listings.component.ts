@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { SaleInfo } from 'src/app/models/salesInterfaces';
+import { ListingInfo } from 'src/app/models/interfaces';
 import { SalesContractService } from 'src/app/services/contracts/salesContract.service';
 import { CoingeckoService } from 'src/app/services/coingecko.service';
 
@@ -9,8 +9,8 @@ import { CoingeckoService } from 'src/app/services/coingecko.service';
   styleUrls: ['./sale-listings.component.css']
 })
 export class SaleListingsComponent implements OnInit {
-  listings: SaleInfo[] = [];
-  visibleListings: SaleInfo[] = [];
+  listings: ListingInfo[] = [];
+  visibleListings: ListingInfo[] = [];
   loading: boolean = false;
   durationMultiplier: any;
   ethPrice: number = 0;
@@ -61,7 +61,7 @@ export class SaleListingsComponent implements OnInit {
     console.log(this.listings)
   }
 
-  async purchaseListing(listing: SaleInfo) {
+  async purchaseListing(listing: ListingInfo) {
     this.loading = true;
     let result = await this.salesContractService.buy(listing.tokenId, listing.priceInEther);
     this.loading = false;
@@ -97,7 +97,7 @@ export class SaleListingsComponent implements OnInit {
   search() {
     if (!this.listings.length) return;
     let fields = this.searchFields.map((f: any) => f.trim());
-    this.visibleListings = this.listings.filter((listing: SaleInfo) => {
+    this.visibleListings = this.listings.filter((listing: ListingInfo) => {
       let result = true;
       if (fields[3] != '') {
         result = result && this.operatorMap(this.operators[0], listing.priceInEther, parseFloat(fields[3]));

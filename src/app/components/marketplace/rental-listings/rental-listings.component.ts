@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { RentInfo } from 'src/app/models/rentInterfaces';
+import { RentInfo } from 'src/app/models/interfaces';
 import { RenterContractService } from 'src/app/services/contracts/renterContract.service';
 import { CoingeckoService } from 'src/app/services/coingecko.service';
 
 @Component({
-  selector: 'app-rental-listings',
+  selector: 'app-listings',
   templateUrl: './rental-listings.component.html',
   styleUrls: ['./rental-listings.component.css']
 })

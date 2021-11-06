@@ -1,9 +1,7 @@
 import { Injectable } from '@angular/core';
 import Web3 from "web3";
-import { ERC20Token, Position, PriceRange } from 'src/app/models/utilInterfaces';
-import { SwapInfo } from 'src/app/models/swapInterfaces';
+import { ERC20Token, Position, PriceRange, SwapInfo} from 'src/app/models/interfaces';
 import { ERC20ABI, poolABI, NFTMinterABI, swapABI } from 'src/app/models/abi';
-import { async } from '@angular/core/testing';
 
 declare const window: any;
 
@@ -230,83 +228,83 @@ export class SwapperContractService {
     }
   }
 
-  public getAllListings = async () => {
-    await this.getSwapperContract();
-    try {
-      const tokenIds: any[] = await this.swapperContract.methods.getAllItemIds().call();
-      const allListings: SwapInfo[] = await Promise.all(tokenIds.map(this.getSwapListingById));
-      return allListings
-    } catch (e) {
-      console.log("ERROR :: getAllListings ::", e);
-      return []
-    }
-  }
+  // public getAllListings = async () => {
+  //   await this.getSwapperContract();
+  //   try {
+  //     const tokenIds: any[] = await this.swapperContract.methods.getAllItemIds().call();
+  //     const allListings: SwapInfo[] = await Promise.all(tokenIds.map(this.getSwapListingById));
+  //     return allListings
+  //   } catch (e) {
+  //     console.log("ERROR :: getAllListings ::", e);
+  //     return []
+  //   }
+  // }
 
-  public getSwapListings = async () => {
-    await this.getSwapperContract();
-    try {
-      const allListings: SwapInfo[] = await this.getAllListings();
-      const availableListings: SwapInfo[] = allListings.filter(listing => listing.renter == null)
-      return availableListings
-    } catch (e) {
-      console.log("ERROR :: getSwapListings ::", e);
-      return []
-    }
-  }
+  // public getSwapListings = async () => {
+  //   await this.getSwapperContract();
+  //   try {
+  //     const allListings: SwapInfo[] = await this.getAllListings();
+  //     const availableListings: SwapInfo[] = allListings.filter(listing => listing.buyer == null)
+  //     return availableListings
+  //   } catch (e) {
+  //     console.log("ERROR :: getSwapListings ::", e);
+  //     return []
+  //   }
+  // }
 
-  public getSwapListingsByOwner = async (ownerAddress: string) => {
-    await this.getSwapperContract();
-    if (ownerAddress == "") {
-      ownerAddress = this.account;
-    }
-    try {
-      const allListings: SwapInfo[] = await this.getAllListings();
-      const ownedListings: SwapInfo[] = allListings.filter(listing => listing.originalOwner?.toLowerCase() == ownerAddress.toLowerCase())
-      return ownedListings
-    } catch (e) {
-      console.log("ERROR :: getSwapListingsByOwner ::", e);
-      return []
-    }
-  }
+  // public getSwapListingsByOwner = async (ownerAddress: string) => {
+  //   await this.getSwapperContract();
+  //   if (ownerAddress == "") {
+  //     ownerAddress = this.account;
+  //   }
+  //   try {
+  //     const allListings: SwapInfo[] = await this.getAllListings();
+  //     const ownedListings: SwapInfo[] = allListings.filter(listing => listing.seller?.toLowerCase() == ownerAddress.toLowerCase())
+  //     return ownedListings
+  //   } catch (e) {
+  //     console.log("ERROR :: getSwapListingsByOwner ::", e);
+  //     return []
+  //   }
+  // }
 
-  public getSwapListingsByRenter = async (renterAddress: string) => {
-    await this.getSwapperContract();
-    if (renterAddress == "") {
-      renterAddress = this.account;
-    }
-    try {
-      const allListings: SwapInfo[] = await this.getAllListings();
-      const rentedListings: SwapInfo[] = allListings.filter(listing => listing.renter?.toLowerCase() == renterAddress.toLowerCase())
-      return rentedListings
-    } catch (e) {
-      console.log("ERROR :: getSwapListingsByRenter ::", e);
-      return []
-    }
-  }
+  // public getSwapListingsByRenter = async (renterAddress: string) => {
+  //   await this.getSwapperContract();
+  //   if (renterAddress == "") {
+  //     renterAddress = this.account;
+  //   }
+  //   try {
+  //     const allListings: SwapInfo[] = await this.getAllListings();
+  //     const rentedListings: SwapInfo[] = allListings.filter(listing => listing.buyer?.toLowerCase() == renterAddress.toLowerCase())
+  //     return rentedListings
+  //   } catch (e) {
+  //     console.log("ERROR :: getSwapListingsByRenter ::", e);
+  //     return []
+  //   }
+  // }
 
-  public getSwapListingById = async (tokenId: number) => {
-    await this.getSwapperContract();
-    try {
-      const result = await this.swapperContract.methods.itemIdToSwapInfo(tokenId).call({ from: this.account });
-      let makeSwapInfo = async (listing: any) => {
-        let pairing: ERC20Token[] = await this.getPairing(listing.tokenId);
-        let position: Position = await this.getPosition(listing.tokenId, pairing);
-        return {
-          tokenId: listing.tokenId,
-          originalOwner: listing.originalOwner,
-          renter: listing.renter == "0x0000000000000000000000000000000000000000" ? null : listing.renter,
-          durationInSeconds: listing.duration,
-          expiryDate: listing.expiryDate == 0 ? null : new Date(listing.expiryDate*1000),
-          pairing: pairing,
-          position: position
-        } as SwapInfo
-      }
-      return await makeSwapInfo(result)
-    } catch (e) {
-      console.log("ERROR :: getSwapListingById ::", e);
-      return {} as SwapInfo
-    }
-  }
+  // public getSwapListingById = async (tokenId: number) => {
+  //   await this.getSwapperContract();
+  //   try {
+  //     const result = await this.swapperContract.methods.itemIdToSwapInfo(tokenId).call({ from: this.account });
+  //     let makeSwapInfo = async (listing: any) => {
+  //       let pairing: ERC20Token[] = await this.getPairing(listing.tokenId);
+  //       let position: Position = await this.getPosition(listing.tokenId, pairing);
+  //       return {
+  //         tokenId: listing.tokenId,
+  //         seller: listing.originalOwner,
+  //         buyer: listing.renter == "0x0000000000000000000000000000000000000000" ? null : listing.renter,
+  //         durationInSeconds: listing.duration,
+  //         expiryDate: listing.expiryDate == 0 ? null : new Date(listing.expiryDate*1000),
+  //         pairing: pairing,
+  //         position: position
+  //       } as SwapInfo
+  //     }
+  //     return await makeSwapInfo(result)
+  //   } catch (e) {
+  //     console.log("ERROR :: getSwapListingById ::", e);
+  //     return {} as SwapInfo
+  //   }
+  // }
 
   public getNFTSVG = async (tokenId: number) => {
     await this.getNFTMinterContract();

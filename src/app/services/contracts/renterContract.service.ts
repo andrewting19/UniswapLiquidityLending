@@ -1,14 +1,7 @@
 import { Injectable } from '@angular/core';
 import Web3 from "web3";
-<<<<<<< HEAD:src/app/services/contract.service.ts
-import { ERC20Token, RentInfo, Position, PriceRange } from 'src/app/models/interfaces';
-import { ERC20ABI, myABI, poolABI, NFTMinterABI } from 'src/app/models/abi';
-=======
-import { ERC20Token, Position, PriceRange } from 'src/app/models/utilInterfaces';
-import { RentInfo } from 'src/app/models/rentInterfaces';
+import { ERC20Token, Position, PriceRange, RentInfo } from 'src/app/models/interfaces';
 import { ERC20ABI, poolABI, NFTMinterABI, rentABI } from 'src/app/models/abi';
-import { async } from '@angular/core/testing';
->>>>>>> ade260fe37d433d2e3dcb6c2962c359da8439960:src/app/services/contracts/renterContract.service.ts
 
 declare const window: any;
 
@@ -236,7 +229,7 @@ export class RenterContractService {
     await this.getRenterContract();
     try {
       const allListings: RentInfo[] = await this.getAllListings();
-      const availableListings: RentInfo[] = allListings.filter(listing => listing.renter == null)
+      const availableListings: RentInfo[] = allListings.filter(listing => listing.buyer == null)
       return availableListings
     } catch (e) {
       console.log("ERROR :: getRentalListings ::", e);
@@ -251,7 +244,7 @@ export class RenterContractService {
     }
     try {
       const allListings: RentInfo[] = await this.getAllListings();
-      const ownedListings: RentInfo[] = allListings.filter(listing => listing.originalOwner?.toLowerCase() == ownerAddress.toLowerCase())
+      const ownedListings: RentInfo[] = allListings.filter(listing => listing.seller?.toLowerCase() == ownerAddress.toLowerCase())
       return ownedListings
     } catch (e) {
       console.log("ERROR :: getRentalListingsByOwner ::", e);
@@ -266,7 +259,7 @@ export class RenterContractService {
     }
     try {
       const allListings: RentInfo[] = await this.getAllListings();
-      const rentedListings: RentInfo[] = allListings.filter(listing => listing.renter?.toLowerCase() == renterAddress.toLowerCase())
+      const rentedListings: RentInfo[] = allListings.filter(listing => listing.buyer?.toLowerCase() == renterAddress.toLowerCase())
       return rentedListings
     } catch (e) {
       console.log("ERROR :: getRentalListingsByRenter ::", e);
@@ -283,8 +276,8 @@ export class RenterContractService {
         let position: Position = await this.getPosition(listing.tokenId, pairing);
         return {
           tokenId: listing.tokenId,
-          originalOwner: listing.originalOwner,
-          renter: listing.renter == "0x0000000000000000000000000000000000000000" ? null : listing.renter,
+          seller: listing.originalOwner,
+          buyer: listing.renter == "0x0000000000000000000000000000000000000000" ? null : listing.renter,
           priceInEther: window.web3.utils.fromWei(listing.price, 'ether'),
           durationInSeconds: listing.duration,
           expiryDate: listing.expiryDate == 0 ? null : new Date(listing.expiryDate*1000),

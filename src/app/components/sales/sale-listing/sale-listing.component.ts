@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { SaleInfo } from 'src/app/models/salesInterfaces';
+import { ListingInfo } from 'src/app/models/interfaces';
 import { SalesContractService } from 'src/app/services/contracts/salesContract.service';
 import { DomSanitizer } from '@angular/platform-browser';
 
@@ -9,7 +9,7 @@ import { DomSanitizer } from '@angular/platform-browser';
   styleUrls: ['./sale-listing.component.css']
 })
 export class SaleListingComponent implements OnInit {
-  @Input() listing: SaleInfo = {} as SaleInfo;
+  @Input() listing: ListingInfo = {} as ListingInfo;
   @Input() ethPrice: number = 0; 
   @Input() isOwner: boolean = false;
   @Output() updateEvent = new EventEmitter<boolean>();

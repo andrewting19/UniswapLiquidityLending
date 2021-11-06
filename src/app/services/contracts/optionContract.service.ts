@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import Web3 from "web3";
-import { ERC20Token, Position, PriceRange } from 'src/app/models/utilInterfaces';
-import { OptionInfo } from 'src/app/models/optionInterfaces';
+import { ERC20Token, Position, PriceRange, OptionInfo } from 'src/app/models/interfaces';
 import { ERC20ABI, NFTMinterABI, optionABI } from 'src/app/models/abi';
 
 declare const window: any;
@@ -225,72 +224,72 @@ public approveERC20Transfer = async (tokenAddr: string, amount: number) => {
   }
 
 
-  public getAllListings = async () => {
-    await this.getOptionContract();
-    try {
-      const tokenIds: any[] = await this.optionContract.methods.getAllItemIds().call();
-      const allListings: OptionInfo[] = await Promise.all(tokenIds.map(this.getOptionListingById));
-      return allListings
-    } catch (e) {
-      console.log("ERROR :: getAllListings ::", e);
-      return []
-    }
-  }
+  // public getAllListings = async () => {
+  //   await this.getOptionContract();
+  //   try {
+  //     const tokenIds: any[] = await this.optionContract.methods.getAllItemIds().call();
+  //     const allListings: OptionInfo[] = await Promise.all(tokenIds.map(this.getOptionListingById));
+  //     return allListings
+  //   } catch (e) {
+  //     console.log("ERROR :: getAllListings ::", e);
+  //     return []
+  //   }
+  // }
 
-  public getListingsForSale = async () => {
-    await this.getOptionContract();
-    try {
-      const allListings: OptionInfo[] = await this.getAllListings();
-      const availableListings: OptionInfo[] = allListings.filter(listing => listing.forSale == true);
-      return availableListings
-    } catch (e) {
-      console.log("ERROR :: getListingsForSale ::", e);
-      return []
-    }
-  }
+  // public getListingsForSale = async () => {
+  //   await this.getOptionContract();
+  //   try {
+  //     const allListings: OptionInfo[] = await this.getAllListings();
+  //     const availableListings: OptionInfo[] = allListings.filter(listing => listing.forSale == true);
+  //     return availableListings
+  //   } catch (e) {
+  //     console.log("ERROR :: getListingsForSale ::", e);
+  //     return []
+  //   }
+  // }
 
-  public getOptionListingsByOwner = async (ownerAddress: string) => {
-    await this.getOptionContract();
-    if (ownerAddress == "") {
-      ownerAddress = this.account;
-    }
-    try {
-      const allListings:OptionInfo[] = await this.getAllListings();
-      const ownedListings: OptionInfo[] = allListings.filter(listing => listing.currentOwner?.toLowerCase() == ownerAddress.toLowerCase())
-      return ownedListings
-    } catch (e) {
-      console.log("ERROR :: getOptionListingsByOwner ::", e);
-      return []
-    }
-  }
+  // public getOptionListingsByOwner = async (ownerAddress: string) => {
+  //   await this.getOptionContract();
+  //   if (ownerAddress == "") {
+  //     ownerAddress = this.account;
+  //   }
+  //   try {
+  //     const allListings:OptionInfo[] = await this.getAllListings();
+  //     const ownedListings: OptionInfo[] = allListings.filter(listing => listing.currentOwner?.toLowerCase() == ownerAddress.toLowerCase())
+  //     return ownedListings
+  //   } catch (e) {
+  //     console.log("ERROR :: getOptionListingsByOwner ::", e);
+  //     return []
+  //   }
+  // }
 
-  public getOptionListingById = async (tokenId: number) => {
-    await this.getOptionContract();
-    try {
-      const result = await this.optionContract.methods.itemIdToOptionInfo(tokenId).call({ from: this.account });
-      let makeOptionInfo = async (listing: any) => {
-        let pairing: ERC20Token[] = await this.getPairing(listing.tokenId);
-        let position: Position = await this.getPosition(listing.tokenId, pairing);
-        return {
-          tokenId: listing.tokenId,
-          originalOwner: listing.originalOwner,
-          currentOwner: listing.currentOwner,
-          premium: listing.premium,
-          costToExcersize: listing.costToExcersize,
-          expiryDate: listing.expiryDate == 0 ? null : new Date(listing.expiryDate*1000),
-          paymentToken: listing.paymentToken,
-          tokenLong: listing.tokenLong,
-          forSale: listing.forSale,
-          pairing: pairing,
-          position: position
-        } as OptionInfo
-      }
-      return await makeOptionInfo(result)
-    } catch (e) {
-      console.log("ERROR :: getOptionListingById ::", e);
-      return {} as OptionInfo
-    }
-  }
+  // public getOptionListingById = async (tokenId: number) => {
+  //   await this.getOptionContract();
+  //   try {
+  //     const result = await this.optionContract.methods.itemIdToOptionInfo(tokenId).call({ from: this.account });
+  //     let makeOptionInfo = async (listing: any) => {
+  //       let pairing: ERC20Token[] = await this.getPairing(listing.tokenId);
+  //       let position: Position = await this.getPosition(listing.tokenId, pairing);
+  //       return {
+  //         tokenId: listing.tokenId,
+  //         seller: listing.originalOwner,
+  //         currentOwner: listing.currentOwner,
+  //         premium: listing.premium,
+  //         costToExercise: listing.costToExercise,
+  //         expiryDate: listing.expiryDate == 0 ? null : new Date(listing.expiryDate*1000),
+  //         paymentToken: listing.paymentToken,
+  //         tokenLong: listing.tokenLong,
+  //         forSale: listing.forSale,
+  //         pairing: pairing,
+  //         position: position
+  //       } as OptionInfo
+  //     }
+  //     return await makeOptionInfo(result)
+  //   } catch (e) {
+  //     console.log("ERROR :: getOptionListingById ::", e);
+  //     return {} as OptionInfo
+  //   }
+  // }
 
   public getNFTSVG = async (tokenId: number) => {
     await this.getNFTMinterContract();
