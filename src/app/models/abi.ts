@@ -387,7 +387,7 @@ export const salesABI = [
         "type": "uint256"
       }
     ],
-    "name": "buyNFT",
+    "name": "buyOption",
     "outputs": [],
     "stateMutability": "payable",
     "type": "function"
@@ -409,6 +409,52 @@ export const salesABI = [
     "inputs": [
       {
         "internalType": "uint256",
+        "name": "tokenId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "newpremium",
+        "type": "uint256"
+      }
+    ],
+    "name": "changeOptionPremium",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "tokenId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "premium",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "duration",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "tokenLong",
+        "type": "address"
+      }
+    ],
+    "name": "createLongOption",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
         "name": "amount",
         "type": "uint256"
       }
@@ -416,6 +462,19 @@ export const salesABI = [
     "name": "deposit",
     "outputs": [],
     "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "tokenId",
+        "type": "uint256"
+      }
+    ],
+    "name": "excersizeOption",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -439,309 +498,7 @@ export const salesABI = [
         "type": "uint256"
       }
     ],
-    "name": "itemIdToListingInfo",
-    "outputs": [
-      {
-        "internalType": "address payable",
-        "name": "originalOwner",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "tokenId",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "price",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "name": "itemIds",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "marketplaceFee",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "bytes[]",
-        "name": "data",
-        "type": "bytes[]"
-      }
-    ],
-    "name": "multicall",
-    "outputs": [
-      {
-        "internalType": "bytes[]",
-        "name": "results",
-        "type": "bytes[]"
-      }
-    ],
-    "stateMutability": "payable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "operator",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "from",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "tokenId",
-        "type": "uint256"
-      },
-      {
-        "internalType": "bytes",
-        "name": "data",
-        "type": "bytes"
-      }
-    ],
-    "name": "onERC721Received",
-    "outputs": [
-      {
-        "internalType": "bytes4",
-        "name": "",
-        "type": "bytes4"
-      }
-    ],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "tokenId",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "price",
-        "type": "uint256"
-      }
-    ],
-    "name": "putUpNFTForSale",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "tokenId",
-        "type": "uint256"
-      }
-    ],
-    "name": "putUpNFTForSale",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "tokenId",
-        "type": "uint256"
-      }
-    ],
-    "name": "removeNFTForSale",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "tokenId",
-        "type": "uint256"
-      }
-    ],
-    "name": "returnNFTToOwner",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address payable",
-        "name": "newOwner",
-        "type": "address"
-      }
-    ],
-    "name": "setOwner",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "withdraw",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "tokenId",
-        "type": "uint256"
-      }
-    ],
-    "name": "withdrawFees",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  }
-]
-
-
-export const auctionABI =  [
-  {
-    "inputs": [
-      {
-        "internalType": "address payable",
-        "name": "currOwner",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "fee",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "nonpayable",
-    "type": "constructor"
-  },
-  {
-    "inputs": [],
-    "name": "UniswapNFTManager",
-    "outputs": [
-      {
-        "internalType": "contract INonfungiblePositionManager",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "_owner",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "tokenId",
-        "type": "uint256"
-      }
-    ],
-    "name": "bidOnNFT",
-    "outputs": [],
-    "stateMutability": "payable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "fee",
-        "type": "uint256"
-      }
-    ],
-    "name": "changeFee",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
-      }
-    ],
-    "name": "deposit",
-    "outputs": [],
-    "stateMutability": "payable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "getAllItemIds",
-    "outputs": [
-      {
-        "internalType": "uint256[]",
-        "name": "",
-        "type": "uint256[]"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "name": "itemIdToAuctionInfo",
+    "name": "itemIdToOptionInfo",
     "outputs": [
       {
         "internalType": "address payable",
@@ -750,12 +507,32 @@ export const auctionABI =  [
       },
       {
         "internalType": "address payable",
-        "name": "highestBidder",
+        "name": "currentOwner",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "tokenLong",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "paymentToken",
         "type": "address"
       },
       {
         "internalType": "uint256",
         "name": "tokenId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "costToExcersize",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "premium",
         "type": "uint256"
       },
       {
@@ -764,9 +541,33 @@ export const auctionABI =  [
         "type": "uint256"
       },
       {
+        "internalType": "bool",
+        "name": "forSale",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "uint256",
-        "name": "highestBid",
+        "name": "",
         "type": "uint256"
+      }
+    ],
+    "name": "itemIdToTokenAddrs",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "token0Addr",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "token1Addr",
+        "type": "address"
       }
     ],
     "stateMutability": "view",
@@ -863,19 +664,9 @@ export const auctionABI =  [
         "internalType": "uint256",
         "name": "tokenId",
         "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "minBid",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "duration",
-        "type": "uint256"
       }
     ],
-    "name": "putUpNFTForAuction",
+    "name": "putUpOptionForSale",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -888,7 +679,7 @@ export const auctionABI =  [
         "type": "uint256"
       }
     ],
-    "name": "removeNFTForAuction",
+    "name": "removeOptionForSale",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -901,20 +692,7 @@ export const auctionABI =  [
         "type": "uint256"
       }
     ],
-    "name": "returnNFTToOwner",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "tokenId",
-        "type": "uint256"
-      }
-    ],
-    "name": "sendNFTToHighestBidder",
+    "name": "returnToOriginalOwner",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -935,6 +713,13 @@ export const auctionABI =  [
   {
     "inputs": [],
     "name": "withdraw",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "withdrawAllTokens",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
