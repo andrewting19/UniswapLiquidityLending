@@ -54,15 +54,18 @@ export interface AuctionInfo extends ListingInfo {
     expiryDate: Date | null;
 }
 
-export interface OptionInfo extends ListingInfo {
+export interface OptionInfo {
+    tokenId: number;
     premium: number; //in Eth
+    currentOwner: string;
     costToExercise: number; //in paymentToken
-    tokenLong: string;
+    longToken: ERC20Token;
     forSale: boolean;
-    paymentToken: string;
+    paymentToken: ERC20Token;
     expiryDate: Date | null;
     pairing: ERC20Token[];
     position: Position;
+    pairingIndex: number;
 }
 
 export interface SwapInfo extends ListingInfo {

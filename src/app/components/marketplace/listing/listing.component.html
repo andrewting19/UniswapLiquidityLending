@@ -4,7 +4,7 @@
             <img class="nft-image" *ngIf="nftSvg" [src]="nftSvg">
         </div>
         <div class="listing-info">
-            <ul class="grid1">
+            <ul *ngIf="!isOption" class="grid1">
                 <li class="bold">{{listing.pairing[0].symbol}} / {{listing.pairing[1].symbol}}&nbsp;&nbsp;|&nbsp;&nbsp;{{listing.position.fee}}%</li>
                 <li>
                     <img class="eth-logo" src="/assets/eth_logo.svg">
@@ -13,27 +13,40 @@
                     {{listing.priceInEther}} (${{(listing.priceInEther * ethPrice).toFixed(2)}})
                 </li>
             </ul>
-            <ul class="grid1">
-                <li>#{{listing.tokenId}}</li>
-                <li *ngIf="isRental">
-                    <mat-icon [inline]="true">schedule</mat-icon>
+            <ul *ngIf="isOption" class="grid1">
+                <li class="bold">{{listing.longToken.symbol}} Call&nbsp;&nbsp;|&nbsp;&nbsp;{{listing.position.priceRange[listing.pairingIndex].upper}}</li>
+                <li>
+                    <img class="eth-logo" src="/assets/eth_logo.svg">
                 </li>
-                <li *ngIf="isRental">
-                    {{deltaToString(listing.durationInSeconds)}}
+                <li>
+                    {{listing.premium}} (${{(listing.premium * ethPrice).toFixed(2)}})
                 </li>
             </ul>
-            <ul class="grid2">
+            <ul class="grid1">
+                <li>#{{listing.tokenId}}</li>
+                <li *ngIf="isRental || isOption">
+                    <mat-icon [inline]="true">schedule</mat-icon>
+                </li>
+                <li *ngIf="isRental || isOption">
+                    {{isRental ? deltaToString(listing.durationInSeconds) : listing.expiryDate}}
+                </li>
+            </ul>
+            <ul class="grid2" *ngIf="!isOption">
                 <li>{{getPriceRange(true, true)}} <-> {{getPriceRange(true, false)}}</li>
                 <li>{{listing.pairing[listing.position.rangeToShow].symbol}} per {{listing.pairing[(listing.position.rangeToShow - 1)*-1].symbol}}</li>
             </ul>
-            <ul class="grid2">
+            <ul class="grid2" *ngIf="!isOption">
                 <li>{{listing.position.tokensDeposited[0].toFixed(4)}} {{listing.pairing[0].symbol}}</li>
                 <li>{{listing.position.tokensDeposited[1].toFixed(4)}} {{listing.pairing[1].symbol}}</li>
             </ul>
             <div>
                 <div class="rent-btn">
-                    <button [routerLink]="'/listing/' + listing.tokenId" class=" details-btn button button--mimas">
+                    <button *ngIf="!isOption" [routerLink]="'/listing/' + listing.tokenId" class=" details-btn button button--mimas">
                         <span>Details</span>
+                    </button>
+                    <button *ngIf="isOwner && isOption" (click)="exercise()" class="button button--mimas">
+                        <span *ngIf="!loading">Exercise</span>
+                        <span *ngIf="loading"><mat-spinner style="margin: auto;" diameter="20"></mat-spinner></span>
                     </button>
                     <button *ngIf="isOwner && !listing.expiryDate" (click)="removeListing()" class="button button--mimas">
                         <span *ngIf="!loading">Remove</span>

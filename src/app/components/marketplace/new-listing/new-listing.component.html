@@ -3,11 +3,12 @@
     <div class="form">
         <div class="field" tabindex="1">
             <label for="type">
-                <i class="far fa-envelope"></i>Rental or Sale
+                <i class="far fa-envelope"></i>Listing Type:
             </label>
-            <select class="listing-type" [(ngModel)]="isRental">
-                <option [ngValue]="true" selected>Rental</option>
-                <option [ngValue]="false" >Sale</option>
+            <select class="listing-type" [(ngModel)]="listingType">
+                <option [ngValue]="getListingType(0)" selected>Rental</option>
+                <option [ngValue]="getListingType(1)" >Sale</option>
+                <option [ngValue]="getListingType(2)" >Option Sale</option>
             </select>
         </div>
         <div class="field" tabindex="2">
@@ -22,9 +23,9 @@
             </label>
             <input [formControl]="priceInEther" [ngClass]="{ 'error': error && priceInEther.invalid }" name="priceInEther" type="text" placeholder="0.01" required>
         </div>
-        <div *ngIf="isRental" class="field" tabindex="4">
+        <div *ngIf="!isSale()" class="field" tabindex="4">
             <label for="duration">
-                <i class="far fa-envelope"></i>Rental Duration
+                <i class="far fa-envelope"></i>{{isRental() ? "Rental Duration" : "Option Duration"}}
             </label>
             <div class="runtime">
                 <input [formControl]="duration" [ngClass]="{ 'error': error && duration.invalid }" name="duration" type="text" placeholder="30" required>
@@ -37,6 +38,12 @@
                 </select>
             </div>
             <p class="error-txt" *ngIf="error && duration.invalid">Duration must be a number. Choose between seconds, minutes, hours, days, or weeks.</p>
+        </div>
+        <div *ngIf="isOption()" class="field" tabindex="5">
+            <label for="tokenAddress">
+                <i class="far fa-user"></i>Long Token Address 
+            </label>
+            <input [formControl]="tokenAddress" [ngClass]="{ 'error': error && tokenAddress.invalid }" name="tokenAddress" type="text" placeholder="0x00000..." required>
         </div>
         <div *ngIf="error || postError">
             <p *ngIf="error">Please fill out all of the required fields.</p>

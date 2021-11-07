@@ -1,8 +1,9 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { ListingTypes, RentInfo } from 'src/app/models/interfaces';
+import { ListingTypes, OptionInfo, RentInfo } from 'src/app/models/interfaces';
 import { RenterContractService } from 'src/app/services/contracts/renterContract.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { SalesContractService } from 'src/app/services/contracts/salesContract.service';
+import { OptionContractService } from 'src/app/services/contracts/optionContract.service';
 
 @Component({
   selector: 'app-listing',
@@ -10,8 +11,9 @@ import { SalesContractService } from 'src/app/services/contracts/salesContract.s
   styleUrls: ['./listing.component.css']
 })
 export class ListingComponent implements OnInit {
-  @Input() listing: RentInfo = {} as RentInfo;
+  @Input() listing: any;
   @Input() isRental: boolean = true;
+  @Input() isOption: boolean = false;
   @Input() listingType: ListingTypes = ListingTypes.Rental;
   @Input() ethPrice: number = 0; 
   @Input() isOwner: boolean = false;
@@ -23,6 +25,7 @@ export class ListingComponent implements OnInit {
 
   constructor(
     private renterContractService: RenterContractService,
+    private optionContractService: OptionContractService,
     private salesContractService: SalesContractService,
     private domSanitizer: DomSanitizer
   ) { }
@@ -47,7 +50,9 @@ export class ListingComponent implements OnInit {
 
   async purchaseListing() {
     this.loading = true;
-    if (this.isRental) {
+    if (this.isOption) {
+      let result = await this.optionContractService.buyOption(this.listing.tokenId, this.listing.premium);
+    } else if (this.isRental) {
       let result = await this.renterContractService.rent(this.listing.tokenId, this.listing.priceInEther);
     } else {
       let result = await this.salesContractService.buy(this.listing.tokenId, this.listing.priceInEther);
@@ -132,6 +137,10 @@ export class ListingComponent implements OnInit {
     } else {
       return p.toFixed(4)
     }
+  }
+
+  exercise() {
+    
   }
 
 }

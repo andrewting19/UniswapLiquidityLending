@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { RentInfo, ListingTypes } from 'src/app/models/interfaces';
+import { RentInfo, OptionInfo, ListingTypes } from 'src/app/models/interfaces';
 import { RenterContractService } from 'src/app/services/contracts/renterContract.service';
 import { CoingeckoService } from 'src/app/services/coingecko.service';
 import { SalesContractService } from 'src/app/services/contracts/salesContract.service';
+import { OptionContractService } from 'src/app/services/contracts/optionContract.service';
 
 @Component({
   selector: 'app-listings',
@@ -12,6 +13,7 @@ import { SalesContractService } from 'src/app/services/contracts/salesContract.s
 export class ListingsComponent implements OnInit {
   listings: RentInfo[] = [];
   visibleListings: RentInfo[] = [];
+  optionListings: OptionInfo[] = [];
   loading: boolean = false;
   showRentals: boolean = true;
   durationMultiplier: any;
@@ -28,6 +30,7 @@ export class ListingsComponent implements OnInit {
     '0', //index of listing.priceRange to use for range calculation 
   ]
   operators = ['<', '<'] //initial values for each operator
+  listingType: ListingTypes = ListingTypes.Rental;
   operatorMap = (op: string, x: number, y: number) => {
     if (op == "=") return x == y
     else if (op == "<") return x < y
@@ -38,6 +41,7 @@ export class ListingsComponent implements OnInit {
   constructor(
     private renterContractService: RenterContractService,
     private salesContractService: SalesContractService,
+    private optionContractService: OptionContractService,
     private coinGecko: CoingeckoService
   ) { }
 
@@ -76,8 +80,9 @@ export class ListingsComponent implements OnInit {
     }
     this.visibleListings = [...this.listings];
     this.search();
+    this.optionListings = await this.optionContractService.getAllListings();
     this.loading = false;
-    console.log(this.listings)
+    console.log(this.optionListings)
   }
 
   deltaToString(delta: number) {
@@ -127,6 +132,6 @@ export class ListingsComponent implements OnInit {
   }
 
   getType() {
-    return ListingTypes.Rental;
+    return ListingTypes.Option;
   }
 }
