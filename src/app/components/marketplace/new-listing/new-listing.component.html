@@ -1,19 +1,28 @@
-<p class="title">Lend Liquidity</p>
+<p class="title">Create Listing</p>
 <div class="container">
     <div class="form">
         <div class="field" tabindex="1">
+            <label for="type">
+                <i class="far fa-envelope"></i>Rental or Sale
+            </label>
+            <select class="listing-type" [(ngModel)]="isRental">
+                <option [ngValue]="true" selected>Rental</option>
+                <option [ngValue]="false" >Sale</option>
+            </select>
+        </div>
+        <div class="field" tabindex="2">
             <label for="tokenId">
                 <i class="far fa-user"></i>Token ID
             </label>
             <input [formControl]="tokenId" [ngClass]="{ 'error': error && tokenId.invalid }" name="tokenId" type="text" placeholder="12345" required>
         </div>
-        <div class="field" tabindex="2">
+        <div class="field" tabindex="3">
             <label for="priceInEther">
-                <i class="far fa-user"></i>Rental Price (in Ether)
+                <i class="far fa-user"></i>Price (in Ether)
             </label>
             <input [formControl]="priceInEther" [ngClass]="{ 'error': error && priceInEther.invalid }" name="priceInEther" type="text" placeholder="0.01" required>
         </div>
-        <div class="field" tabindex="3">
+        <div *ngIf="isRental" class="field" tabindex="4">
             <label for="duration">
                 <i class="far fa-envelope"></i>Rental Duration
             </label>

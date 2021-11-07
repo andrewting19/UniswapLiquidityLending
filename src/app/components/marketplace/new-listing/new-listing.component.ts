@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { RenterContractService } from 'src/app/services/contracts/renterContract.service';
+import { SalesContractService } from 'src/app/services/contracts/salesContract.service';
 
 @Component({
   selector: 'app-new-listing',
@@ -12,14 +13,17 @@ export class NewListingComponent implements OnInit {
   postError: boolean = false;
   loading: boolean = false;
   form: any;
+  isRental: boolean = true;
   tokenId = new FormControl('', [Validators.required]);
   priceInEther = new FormControl('', [Validators.required, Validators.pattern("^([0-9]+\.?[0-9]*|\.[0-9]+)$")]);
-  duration = new FormControl('', [Validators.required, Validators.pattern("^[0-9]*$")]);
+  duration = new FormControl('', [Validators.pattern("^[0-9]*$")]);
   durationUnits = new FormControl('d', [Validators.required]);
   durationMultiplier: any;
   //s = seconds, m = minutes, h = hours, d = days, w = weeks
 
-  constructor(private renterContractService: RenterContractService) {
+  constructor(private renterContractService: RenterContractService,
+    private salesContractService: SalesContractService
+    ) {
   }
 
   ngOnInit(): void {
@@ -42,18 +46,26 @@ export class NewListingComponent implements OnInit {
   submitForm() {
     let submit = async () => {
       this.loading = true;
-      const result = await this.renterContractService.createNewRental(
-        this.tokenId.value, 
-        parseFloat(this.priceInEther.value), 
-        parseInt(this.duration.value) * this.durationMultiplier[this.durationUnits.value]
-      );
+      let result;
+      if (this.isRental) {
+        result = await this.renterContractService.createNewRental(
+          this.tokenId.value, 
+          parseFloat(this.priceInEther.value), 
+          parseInt(this.duration.value) * this.durationMultiplier[this.durationUnits.value]
+        );
+      } else {
+        result = await this.salesContractService.createNewSellOffer(
+          this.tokenId.value, 
+          parseFloat(this.priceInEther.value)
+        );
+      }
       console.log(result);
       this.loading = false;
       if (!result) {
         this.postError = true;
       }
     }
-    if (this.form.invalid) {
+    if ((!this.isRental && this.tokenId.invalid && this.priceInEther.invalid) || (this.isRental && this.form.invalid)) {
       console.log("Form has validation errors");
       this.error = true;
       return

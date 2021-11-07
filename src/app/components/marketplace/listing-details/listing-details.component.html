@@ -12,7 +12,7 @@
                 <img class="eth-logo" src="/assets/eth_logo.svg">
                 {{listing.priceInEther}} (${{(listing.priceInEther * ethPrice).toFixed(2)}})
             </p>
-            <p>
+            <p *ngIf="listing.durationInSeconds != -1">
                 <mat-icon [inline]="true">schedule</mat-icon>
                     &nbsp;
                     {{deltaToString(listing.durationInSeconds)}}

@@ -87,9 +87,10 @@ export class ListingDetailsComponent implements OnInit {
     let result = await this.salesContractService.getSalesListingById(this.tokenId);
     if (result.tokenId != null && result.tokenId != 0) {
       this.listingType = ListingTypes.Sale;
-      // this.listing = result;
+      this.listing = result;
       this.contractService = this.salesContractService;
       this.loading = false;
+      this.onGetListingInfo();
     }
   }
 

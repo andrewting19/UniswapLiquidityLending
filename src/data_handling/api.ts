@@ -2,8 +2,8 @@ import { execPath } from "process";
 
 const axios = require('axios').default;
 
-export const prodAPIURL = "https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v3";
-export const graphAPIURL = "https://api.thegraph.com/subgraphs/name/mtahon/uniswap-v3-rinkeby";
+export const graphAPIURL = "https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v3";
+// export const graphAPIURL = "https://api.thegraph.com/subgraphs/name/mtahon/uniswap-v3-rinkeby";
 
 export default class graphAPI {
 

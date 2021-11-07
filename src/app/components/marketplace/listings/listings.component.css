@@ -55,3 +55,8 @@ th, td {
 .fill {
     width: -webkit-fill-available;
 }
+
+.greyed-out {
+    color: rgba(0,0,0,.6);
+    cursor: pointer;
+}

@@ -63,6 +63,7 @@ export class ListingsComponent implements OnInit {
       this.listings = await this.renterContractService.getRentalListings();
     } else {
       this.listings = await this.salesContractService.getAllListings();
+      console.log(this.listings)
     }
     this.visibleListings = [...this.listings];
     this.search();
@@ -113,6 +114,7 @@ export class ListingsComponent implements OnInit {
         listing.position.fee == parseFloat(fields[2]) &&
         listing.tokenId.toString().includes(fields[6])
     });
+    console.log(this.visibleListings)
   }
 
   getType() {

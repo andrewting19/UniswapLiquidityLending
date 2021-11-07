@@ -50,6 +50,8 @@ export class ProfileComponent implements OnInit {
 
   async getOwnedRental() {
     this.ownedRentalListings = await this.renterContractService.getRentalListingsByOwner("");
+    let selling = await this.salesContractService.getSalesListingsByOwner("")
+    this.ownedRentalListings = [...this.ownedRentalListings, ...selling]
     this.ownedRentalLoading = false;
     console.log("Owned for Rent:",this.ownedRentalListings)
   }

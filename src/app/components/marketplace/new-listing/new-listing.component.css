@@ -100,3 +100,8 @@ body, i {
       display:flex;
       flex-direction: row;
   }
+
+  .listing-type {
+    margin-left: auto;
+    height: 32px;
+  }

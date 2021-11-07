@@ -468,6 +468,30 @@ export const salesABI = [
         "type": "uint256"
       }
     ],
+    "name": "itemIdToTokenAddrs",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "token0Addr",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "token1Addr",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
     "name": "itemIds",
     "outputs": [
       {
@@ -571,19 +595,6 @@ export const salesABI = [
         "type": "uint256"
       }
     ],
-    "name": "putUpNFTForSale",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "tokenId",
-        "type": "uint256"
-      }
-    ],
     "name": "removeNFTForSale",
     "outputs": [],
     "stateMutability": "nonpayable",
@@ -636,6 +647,8 @@ export const salesABI = [
     "type": "function"
   }
 ]
+
+
 
 
 export const auctionABI =  [
