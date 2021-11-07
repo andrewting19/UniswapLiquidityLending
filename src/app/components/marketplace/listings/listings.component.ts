@@ -13,7 +13,7 @@ export class ListingsComponent implements OnInit {
   listings: RentInfo[] = [];
   visibleListings: RentInfo[] = [];
   loading: boolean = false;
-  showRentals: boolean = false;
+  showRentals: boolean = true;
   durationMultiplier: any;
   ethPrice: number = 0;
   value = ""
@@ -56,6 +56,15 @@ export class ListingsComponent implements OnInit {
 
   async getEthPrice() {
     this.ethPrice = await this.coinGecko.getEthPrice();
+  }
+
+  switchListings(showRentals: boolean) {
+    if (showRentals != this.showRentals) {
+      this.showRentals = showRentals;
+      this.visibleListings = [];
+      this.getListings();
+      this.loading = true;
+    }
   }
 
   async getListings() {

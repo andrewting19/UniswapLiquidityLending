@@ -1,6 +1,6 @@
 <div class="centered">
     <p *ngIf="loading || listings.length > 0" class="title">
-        Liquidity: <span>Rent</span>/<span >Buy</span>
+        Liquidity: <span class="pointer" (click)="switchListings(true)" [ngClass]="{ 'greyed-out': !showRentals } ">Rent</span>/<span (click)="switchListings(false)" class="pointer" [ngClass]="{ 'greyed-out': showRentals }">Buy</span>
     </p>
     <p class="title" *ngIf="!listings.length && !loading">No Listings :c</p>
 </div>
@@ -100,6 +100,5 @@
         >    
         </app-listing>
     </div>
-    <span *ngIf="loading && !listings.length"><mat-spinner style="margin: auto;" diameter="25"></mat-spinner></span>
-    <p *ngIf="loading && listings.length">Transaction in progress...</p>
+    <span *ngIf="loading"><mat-spinner style="margin: auto;" diameter="25"></mat-spinner></span>
 </div>

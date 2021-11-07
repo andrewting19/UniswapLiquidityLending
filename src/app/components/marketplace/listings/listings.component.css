@@ -57,6 +57,13 @@ th, td {
 }
 
 .greyed-out {
-    color: rgba(0,0,0,.6);
+    color: rgba(0,0,0,.4);
+}
+
+.greyed-out:hover {
+    color: initial;
+}
+
+.pointer {
     cursor: pointer;
 }
