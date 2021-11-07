@@ -13,7 +13,7 @@
                 <th>Fee</th>
                 <th>Range (in terms of)</th>
                 <th>Price (ETH)</th>
-                <th>Duration</th>
+                <th *ngIf="showRentals">Duration</th>
                 <th>ID</th>
             </tr>
         </thead>
@@ -60,7 +60,7 @@
                         (input)="search()" autocomplete="off"
                     >
                 </td>
-                <td>
+                <td *ngIf="showRentals">
                     <select (change)="search()" [(ngModel)]="operators[1]">
                         <option value="=">=</option>
                         <option value="<" selected><</option>
@@ -92,7 +92,8 @@
     <div class="listing" *ngFor="let listing of visibleListings">
         <app-listing 
             (updateEvent)="getListings()" 
-            [listing]="listing" 
+            [listing]="listing"
+            [isRental]="showRentals"
             [isRenter]="false" 
             [isOwner]="false"
             [ethPrice]="ethPrice"

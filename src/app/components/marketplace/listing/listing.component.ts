@@ -1,7 +1,8 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { RentInfo } from 'src/app/models/interfaces';
+import { ListingTypes, RentInfo } from 'src/app/models/interfaces';
 import { RenterContractService } from 'src/app/services/contracts/renterContract.service';
 import { DomSanitizer } from '@angular/platform-browser';
+import { SalesContractService } from 'src/app/services/contracts/salesContract.service';
 
 @Component({
   selector: 'app-listing',
@@ -10,6 +11,8 @@ import { DomSanitizer } from '@angular/platform-browser';
 })
 export class ListingComponent implements OnInit {
   @Input() listing: RentInfo = {} as RentInfo;
+  @Input() isRental: boolean = true;
+  @Input() listingType: ListingTypes = ListingTypes.Rental;
   @Input() ethPrice: number = 0; 
   @Input() isOwner: boolean = false;
   @Input() isRenter: boolean = false;
@@ -20,6 +23,7 @@ export class ListingComponent implements OnInit {
 
   constructor(
     private renterContractService: RenterContractService,
+    private salesContractService: SalesContractService,
     private domSanitizer: DomSanitizer
   ) { }
 
@@ -32,7 +36,6 @@ export class ListingComponent implements OnInit {
       'w': 604800
     }
     this.getNFTImg();
-    console.log(this.listing.pairing)
   }
 
   async getNFTImg() {
@@ -44,7 +47,11 @@ export class ListingComponent implements OnInit {
 
   async purchaseListing() {
     this.loading = true;
-    let result = await this.renterContractService.rent(this.listing.tokenId, this.listing.priceInEther);
+    if (this.isRental) {
+      let result = await this.renterContractService.rent(this.listing.tokenId, this.listing.priceInEther);
+    } else {
+      let result = await this.salesContractService.buy(this.listing.tokenId, this.listing.priceInEther);
+    }
     this.loading = false;
     this.updateEvent.emit(true);
   }
@@ -58,8 +65,11 @@ export class ListingComponent implements OnInit {
 
   async removeListing() {
     this.loading = true;
-    let result = await this.renterContractService.deleteRental(this.listing.tokenId);
-    console.log("removeListing:",this.listing.tokenId,result);
+    if (this.isRental) {
+      let result = await this.renterContractService.deleteRental(this.listing.tokenId);
+    } else {
+      let result = await this.salesContractService.deleteSale(this.listing.tokenId);
+    }
     this.loading = false;
     this.updateEvent.emit(true);
   }

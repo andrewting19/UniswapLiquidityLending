@@ -439,7 +439,7 @@ export const salesABI = [
         "type": "uint256"
       }
     ],
-    "name": "itemIdToListingInfo",
+    "name": "itemIdToSaleInfo",
     "outputs": [
       {
         "internalType": "address payable",

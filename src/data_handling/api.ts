@@ -2,7 +2,8 @@ import { execPath } from "process";
 
 const axios = require('axios').default;
 
-export const graphAPIURL = "https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v3"
+export const prodAPIURL = "https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v3";
+export const graphAPIURL = "https://api.thegraph.com/subgraphs/name/mtahon/uniswap-v3-rinkeby";
 
 export default class graphAPI {
 
@@ -22,6 +23,8 @@ export default class graphAPI {
         }
         depositedToken0
         depositedToken1
+        token0
+        token1
         collectedFeesToken0
         collectedFeesToken1
         liquidity
@@ -36,6 +39,7 @@ export default class graphAPI {
     const response =  await axios.post(this.url,{ "query": query, "variables":variables});
     try {            
       const resp = response.data.data;
+      console.log("Pos", positionId, response)
       return resp;
     } catch (error) {
       console.log(response.data);
@@ -84,7 +88,7 @@ public async getLastXSwaps(poolAddress: string, numSwaps: number) {
 
 
 
-public async getSwapsFromLastXDays(poolAddress: string, numDays: number, currTime: number) {
+  public async getSwapsFromLastXDays(poolAddress: string, numDays: number, currTime: number) {
     const query = `
     query ($min_timestamp: BigInt! $pool_addr: String!) {
       pool(id: $pool_addr){
@@ -127,9 +131,6 @@ public async getSwapsFromLastXDays(poolAddress: string, numDays: number, currTim
             
         return res;
   }
-
-
-
 
 public async getPoolInfo (poolAddress: string) {
   const query = `

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import Web3 from "web3";
 import { ERC20Token, Position, PriceRange, RentInfo } from 'src/app/models/interfaces';
 import { ERC20ABI, poolABI, NFTMinterABI, rentABI } from 'src/app/models/abi';
+import graphAPI, { graphAPIURL } from 'src/data_handling/api';
 
 declare const window: any;
 
@@ -16,13 +17,14 @@ export class RenterContractService {
   renterContract: any = null;
   NFTMinterContract: any = null;
   account: any = null;
+  graphAPI: any;
 
   constructor() {
     let setup = async () => {
       this.account = await this.openMetamask();
-
     }
     setup();
+    this.graphAPI = new graphAPI(graphAPIURL);
   }
   private getAccounts = async () => {
       try {
@@ -95,6 +97,7 @@ export class RenterContractService {
     await this.getNFTMinterContract();
     try {
       const position = await this.NFTMinterContract.methods.positions(tokenId).call();
+      const graphPos = await this.graphAPI.getPositionInfo(tokenId);
       let pricesInTermsOfToken2 = this.getPriceRangesFromTicks(position.tickLower, position.tickUpper, pairing[0].decimals, pairing[1].decimals);
       return {
         tickUpper: position.tickUpper,
@@ -103,6 +106,8 @@ export class RenterContractService {
         fee: position.fee / 10000,
         feeGrowth: [position.feeGrowthInside0LastX128, position.feeGrowthInside1LastX128],
         tokensOwed: [position.tokensOwed0, position.tokensOwed1],
+        tokensDeposited: [parseFloat(graphPos.position.depositedToken0), parseFloat(graphPos.position.depositedToken1)],
+        pool: graphPos.position.pool.id,
         priceRange: [
           {lower: 1/pricesInTermsOfToken2[1], upper: 1/pricesInTermsOfToken2[0]} as PriceRange, 
           {lower: pricesInTermsOfToken2[0], upper: pricesInTermsOfToken2[1]} as PriceRange],

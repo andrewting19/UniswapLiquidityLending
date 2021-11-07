@@ -15,17 +15,20 @@
             </ul>
             <ul class="grid1">
                 <li>#{{listing.tokenId}}</li>
-                <li>
+                <li *ngIf="isRental">
                     <mat-icon [inline]="true">schedule</mat-icon>
                 </li>
-                <li>
+                <li *ngIf="isRental">
                     {{deltaToString(listing.durationInSeconds)}}
                 </li>
             </ul>
             <ul class="grid2">
-            <!-- <p>{{listing.position.priceRange[0].lower}} - {{listing.position.priceRange[0].upper}}</p> -->
                 <li>{{getPriceRange(true, true)}} <-> {{getPriceRange(true, false)}}</li>
                 <li>{{listing.pairing[listing.position.rangeToShow].symbol}} per {{listing.pairing[(listing.position.rangeToShow - 1)*-1].symbol}}</li>
+            </ul>
+            <ul class="grid2">
+                <li>{{listing.position.tokensDeposited[0].toFixed(4)}} {{listing.pairing[0].symbol}}</li>
+                <li>{{listing.position.tokensDeposited[1].toFixed(4)}} {{listing.pairing[1].symbol}}</li>
             </ul>
             <div>
                 <div class="rent-btn">
@@ -36,16 +39,16 @@
                         <span *ngIf="!loading">Remove</span>
                         <span *ngIf="loading"><mat-spinner style="margin: auto;" diameter="20"></mat-spinner></span>
                     </button>
-                    <button *ngIf="isOwner && listing.expiryDate && timedelta(listing.expiryDate) == 'Expired'" (click)="reclaimLiquidity()" class="button button--mimas">
+                    <button *ngIf="isRental && isOwner && listing.expiryDate && timedelta(listing.expiryDate) == 'Expired'" (click)="reclaimLiquidity()" class="button button--mimas">
                         <span *ngIf="!loading">Reclaim</span>
                         <span *ngIf="loading"><mat-spinner style="margin: auto;" diameter="20"></mat-spinner></span>
                     </button>
-                    <button *ngIf="isRenter" (click)="collectFees()" class="button button--mimas">
+                    <button *ngIf="isRental && isRenter" (click)="collectFees()" class="button button--mimas">
                         <span *ngIf="!loading">Harvest</span>
                         <span *ngIf="loading"><mat-spinner style="margin: auto;" diameter="20"></mat-spinner></span>
                     </button>
                     <button *ngIf="!listing.buyer && !isOwner && !isRenter" (click)="purchaseListing()" class="button button--mimas">
-                        <span *ngIf="!loading">Rent</span>
+                        <span *ngIf="!loading">{{isRental ? 'Rent' : 'Buy'}}</span>
                         <span *ngIf="loading"><mat-spinner style="margin: auto;" diameter="20"></mat-spinner></span>
                     </button>
                 </div>

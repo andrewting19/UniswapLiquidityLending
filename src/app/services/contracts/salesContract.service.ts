@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import Web3 from "web3";
-import { ERC20Token, Position, PriceRange, ListingInfo } from 'src/app/models/interfaces';
+import { ERC20Token, Position, PriceRange, ListingInfo, RentInfo } from 'src/app/models/interfaces';
 import { ERC20ABI, salesABI, NFTMinterABI } from 'src/app/models/abi';
+import graphAPI, { graphAPIURL } from 'src/data_handling/api';
 
 declare const window: any;
 
@@ -16,13 +17,14 @@ export class SalesContractService {
   salesContract: any = null;
   NFTMinterContract: any = null;
   account: any = null;
+  graphAPI: any;
 
   constructor() {
     let setup = async () => {
       this.account = await this.openMetamask();
-
     }
     setup();
+    this.graphAPI = new graphAPI(graphAPIURL);
   }
   private getAccounts = async () => {
       try {
@@ -82,8 +84,9 @@ export class SalesContractService {
   public getPairing = async (tokenId: number) => {
     await this.getSalesContract();
     try {
-      const tokens = await this.salesContract.methods.itemIdToTokenAddrs(tokenId).call();
-      const tokenInfo: ERC20Token[] = [await this.getERC20TokenInfoFromAddress(tokens.token0Addr), await this.getERC20TokenInfoFromAddress(tokens.token1Addr)]
+      const tokens = await this.graphAPI.getPositionInfo(tokenId);
+      console.log(tokens)
+      const tokenInfo: ERC20Token[] = [await this.getERC20TokenInfoFromAddress(tokens.token0), await this.getERC20TokenInfoFromAddress(tokens.token1)]
       return tokenInfo;
     } catch (e) {
       console.log("ERROR :: getPairing ::", e);
@@ -216,7 +219,8 @@ export class SalesContractService {
     await this.getSalesContract();
     try {
       const tokenIds: any[] = await this.salesContract.methods.getAllItemIds().call();
-      const allListings: ListingInfo[] = await Promise.all(tokenIds.map(this.getSalesListingById));
+      console.log(tokenIds)
+      const allListings: RentInfo[] = await Promise.all(tokenIds.map(this.getSalesListingById));
       return allListings
     } catch (e) {
       console.log("ERROR :: getAllListings ::", e);
@@ -244,22 +248,25 @@ export class SalesContractService {
   public getSalesListingById = async (tokenId: number) => {
     await this.getSalesContract();
     try {
-      const result = await this.salesContract.methods.itemIdToListingInfo(tokenId).call({ from: this.account });
+      const result = await this.salesContract.methods.itemIdToSaleInfo(tokenId).call({ from: this.account });
+      console.log(tokenId, result)
       let makeSalesInfo = async (listing: any) => {
-        let pairing: ERC20Token[] = await this.getPairing(listing.tokenId);
+        let pairing: ERC20Token[] = [{ address: 'test', symbol:'test1', name:'test', decimals:0}, { address: 'test', symbol:'test2', name:'test', decimals:0}]//await this.getPairing(listing.tokenId);
         let position: Position = await this.getPosition(listing.tokenId, pairing);
         return {
           tokenId: listing.tokenId,
           seller: listing.originalOwner,
           priceInEther: window.web3.utils.fromWei(listing.price, 'ether'),
           pairing: pairing,
-          position: position
-        } as ListingInfo
+          position: position,
+          durationInSeconds: -1,
+          expiryDate: null
+        } as RentInfo
       }
       return await makeSalesInfo(result)
     } catch (e) {
       console.log("ERROR :: getSalesListingById ::", e);
-      return {} as ListingInfo
+      return {} as RentInfo
     }
   }
 

@@ -12,6 +12,8 @@ export interface Position {
     fee: number;
     feeGrowth: number[],
     tokensOwed: number[],
+    tokensDeposited: number[],
+    pool: string,
     priceRange: PriceRange[],
     rangeToShow: number; //whether priceRange[0] or priceRange[1] is more readable
 }
@@ -20,6 +22,16 @@ export interface PriceRange {
     lower: number;
     upper: number;
 }
+
+export enum ListingTypes {
+    Rental = "RENTAL",
+    Sale = "SALE",
+    Auction = "AUCTION", 
+    Option = "OPTION",
+    Swap = "SWAP",
+    Null = "NULL"
+  }
+  
 
 export interface ListingInfo {
     tokenId: number;
