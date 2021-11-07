@@ -7,7 +7,8 @@ import { SalesContractService } from 'src/app/services/contracts/salesContract.s
 import graphAPI, { graphAPIURL } from 'src/data_handling/api';
 import { DomSanitizer } from '@angular/platform-browser';
 import { CoingeckoService } from 'src/app/services/coingecko.service';
-
+import { ChartDataSets, ChartOptions, ChartType } from 'chart.js';
+import { Color, Label } from 'ng2-charts';
 
 @Component({
   selector: 'app-listing-details',
@@ -26,6 +27,32 @@ export class ListingDetailsComponent implements OnInit {
   durationMultiplier: any;
   nftSvg: any;
   ethPrice: any;
+  chartData: ChartDataSets[][];
+  chartLabels: Label[][];
+  chartOptions: ChartOptions[];
+  barChartType: ChartType = 'bar';
+  metricsColors: Color[] = [
+    {
+      borderColor: "#039BE5",
+      pointBackgroundColor: "#039BE5",
+      backgroundColor: 'rgba(3, 155, 229, 0.15)'
+    },
+    {
+      borderColor: "#e5be03",
+      pointBackgroundColor: "#e5be03",
+      backgroundColor: 'rgba(229, 190, 3, 0.15)'
+    },
+    {
+      borderColor: "#e5032a",
+      pointBackgroundColor: "#e5032a",
+      backgroundColor: 'rgba(229, 3, 42, 0.15)'
+    },
+    {
+      borderColor: "#03e54d",
+      pointBackgroundColor: "#03e54d",
+      backgroundColor: 'rgba(3, 229, 77, 0.15)'
+    }
+  ];
 
   constructor(
     private router: Router,
@@ -35,6 +62,60 @@ export class ListingDetailsComponent implements OnInit {
     private priceService: CoingeckoService,
     private domSanitizer: DomSanitizer
   ) {
+    this.chartData = [
+      [
+        { data: [], label: "Daily Volume USD"},
+      ]  as ChartDataSets[],
+      [
+        { data: [], label: "Recent Swaps"},
+      ]  as ChartDataSets[]
+    ];
+    this.chartLabels = [
+      [] as Label[],
+      [] as Label[]
+    ]
+    this.chartOptions = [
+      {
+        animation: {
+          duration: 0
+        },
+        legend: {
+          position: 'bottom'
+        },
+        scales: {
+          xAxes: [{
+            type: 'time',
+            time: {
+              displayFormats: {
+                'millisecond': 'MMM DD',
+                'second': 'MMM DD',
+                'minute': 'MMM DD',
+                'hour': 'MMM DD',
+                'day': 'MMM DD',
+                'week': 'MMM DD',
+                'month': 'MMM DD',
+                'quarter': 'MMM DD',
+                'year': 'MMM DD',
+            },
+              ticks: {
+                source: 'auto'
+              }
+            },
+            scaleLabel: {
+              display: true,
+              labelString: 'Time',
+            }
+          }],
+          yAxes: [{
+            scaleLabel: {
+              display: true,
+              labelString: 'Volume USD',
+            }
+          }]
+        },
+      },
+      {}
+    ];
     this.graphAPI = new graphAPI(graphAPIURL);
     this.router.events.subscribe((event: any) => {
       if (event instanceof NavigationEnd) {
@@ -95,6 +176,7 @@ export class ListingDetailsComponent implements OnInit {
   }
 
   onGetListingInfo = async () => {
+    this.setOptions();
     this.isSeller = this.listing.seller.toLowerCase() == this.renterContractService.account.toLowerCase();
     this.isBuyer = this.listing.buyer ? this.listing.buyer.toLowerCase() == this.renterContractService.account.toLowerCase() : false;
     this.getNFTImg();
@@ -102,9 +184,59 @@ export class ListingDetailsComponent implements OnInit {
     console.log(feeTierDist)
     let poolInfo = await this.graphAPI.getPoolInfo(this.listing.position.pool);
     console.log(poolInfo)
-    let lastSwaps = await this.graphAPI.getLastXSwaps(this.listing.position.pool, 1000)
+    let lastSwaps: any[] = await this.graphAPI.getLastXSwaps(this.listing.position.pool, 1000)
     console.log(lastSwaps)
-    console.log(this.listing.position.pool)
+    this.chartData[1][0].data = lastSwaps.map((swap) => -parseFloat(swap.amount0) / parseFloat(swap.amount1))
+    this.chartLabels[1] = lastSwaps.map((swap) => swap.timestamp*1000 as any)
+    let poolDays: any[] = (await this.graphAPI.getPoolDayDataFromLastXDays(this.listing.position.pool, 30)).poolDayDatas;
+    console.log(poolDays)
+    this.chartData[0][0].data = poolDays.map((day) => parseFloat(day.volumeUSD))
+    this.chartLabels[0] = poolDays.map((day) => day.date*1000 as any)
+    console.log(this.chartData, this.chartLabels)
+  }
+
+  setOptions() {
+    this.chartOptions[1] = {
+      animation: {
+        duration: 0
+      },
+      legend: {
+        position: 'bottom'
+      },
+      scales: {
+        xAxes: [{
+          type: 'time',
+          time: {
+            unit: 'day',
+            unitStepSize: 1,
+            displayFormats: {
+              'millisecond': 'MMM DD h:mm',
+              'second': 'MMM DD h',
+              'minute': 'MMM DD h',
+              'hour': 'MMM DD h:mm',
+              'day': 'MMM DD',
+              'week': 'MMM DD h',
+              'month': 'MMM DD h',
+              'quarter': 'MMM DD h',
+              'year': 'MMM DD h',
+           },
+            ticks: {
+              source: 'auto'
+            }
+          },
+          scaleLabel: {
+            display: true,
+            labelString: 'Time',
+          }
+        }],
+        yAxes: [{
+          scaleLabel: {
+            display: true,
+            labelString: this.listing.pairing[0].symbol + " per " + this.listing.pairing[1].symbol,
+          }
+        }]
+      },
+    }
   }
 
   async getNFTImg() {

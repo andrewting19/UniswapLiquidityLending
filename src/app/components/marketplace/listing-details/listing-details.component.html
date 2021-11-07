@@ -45,6 +45,26 @@
                 <span *ngIf="loading"><mat-spinner style="margin: auto;" diameter="20"></mat-spinner></span>
             </button>
         </div>
+        <div class="centered chart-div">
+            <canvas baseChart 
+                [datasets]="chartData[0]"
+                [labels]="this.chartLabels[0]"
+                [options]="chartOptions[0]"
+                [legend]="true"
+                [colors]="metricsColors"
+                [chartType]="barChartType">
+            </canvas>
+        </div>
+        <div class="centered chart-div">
+            <canvas baseChart 
+                [datasets]="chartData[1]"
+                [labels]="this.chartLabels[1]"
+                [options]="chartOptions[1]"
+                [legend]="true"
+                [colors]="metricsColors"
+                [chartType]="'scatter'">
+            </canvas>
+        </div>
     </div>
     
     <div *ngIf="loading && isNullListing()" class="centered">

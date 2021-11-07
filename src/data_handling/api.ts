@@ -49,6 +49,40 @@ export default class graphAPI {
   
   }
 
+  public async getPoolDayDataFromLastXDays (poolAddress: string, numDays: number) {
+    const query = `
+    query ($pool_addr: String!, $num_days: Int!) {
+      poolDayDatas(id: $pool_addr, first: $num_days) {
+        id
+        date
+        liquidity
+        sqrtPrice
+        token0Price
+        token1Price
+        tick 
+        feeGrowthGlobal0X128
+        feeGrowthGlobal1X128
+        tvlUSD
+        volumeToken0
+        volumeToken1
+        volumeUSD
+      }
+    }
+    `
+
+    const variables =  {"pool_addr": poolAddress, "num_days": numDays };
+    const response =  await axios.post(this.url,{ "query": query, "variables":variables});
+    console.log("Pooldaydata", response)
+    try {
+      const poolDayData = response.data.data;
+      return poolDayData;
+    } catch (error) {
+      console.log(response.data);
+      throw(error);
+  } 
+
+  }
+
 
 public async getLastXSwaps(poolAddress: string, numSwaps: number) {
   const query = `
