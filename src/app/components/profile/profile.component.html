@@ -21,12 +21,3 @@
     </div>
     <p *ngIf="loading">Transaction in progress...</p>
 </div>
-
-<div class="centered listings-div">
-    <p class="title">Your Liquidity On Sale</p>
-    <p *ngIf="!ownedSalesLoading && !ownedSalesListings.length">No liquidity on sale :(</p>
-    <span *ngIf="ownedSalesLoading && !ownedSalesListings.length"><mat-spinner style="margin: auto;" diameter="25"></mat-spinner></span>    <div class="listing" *ngFor="let listing of rentedListings">
-        <app-sale-listing (updateEvent)="getOwnedForSale()" [listing]="listing"  [isOwner]="true"></app-sale-listing>
-    </div>
-    <p *ngIf="loading">Transaction in progress...</p>
-</div>

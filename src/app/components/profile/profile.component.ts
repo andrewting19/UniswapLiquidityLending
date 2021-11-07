@@ -28,7 +28,7 @@ export class ProfileComponent implements OnInit {
     this.ownedRentalLoading = true;
     this.rentedLoading = true;
     this.getOwnedRental();
-    this.getOwnedForSale();
+    // this.getOwnedForSale();
     this.getRented();
     this.durationMultiplier = {
       's': 1,
@@ -54,11 +54,11 @@ export class ProfileComponent implements OnInit {
     console.log("Owned for Rent:",this.ownedRentalListings)
   }
 
-  async getOwnedForSale() {
-    this.ownedSalesListings = await this.salesContractService.getSalesListingsByOwner("");
-    this.ownedSalesLoading = false;
-    console.log("Owned For Sale:",this.ownedSalesListings)
-  }
+  // async getOwnedForSale() {
+  //   this.ownedSalesListings = await this.salesContractService.getSalesListingsByOwner("");
+  //   this.ownedSalesLoading = false;
+  //   console.log("Owned For Sale:",this.ownedSalesListings)
+  // }
 
   async getRented() {
     this.rentedListings = await this.renterContractService.getRentalListingsByRenter("");

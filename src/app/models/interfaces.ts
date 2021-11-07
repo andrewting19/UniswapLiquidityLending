@@ -12,7 +12,8 @@ export interface Position {
     fee: number;
     feeGrowth: number[],
     tokensOwed: number[],
-    priceRange: PriceRange[]
+    priceRange: PriceRange[],
+    rangeToShow: number; //whether priceRange[0] or priceRange[1] is more readable
 }
 
 export interface PriceRange {

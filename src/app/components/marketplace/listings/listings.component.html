@@ -1,6 +1,6 @@
 <div class="centered">
     <p *ngIf="loading || listings.length > 0" class="title">
-        Liquidity for Sale
+        Liquidity for Rent
     </p>
     <p class="title" *ngIf="!listings.length && !loading">No Listings :c</p>
 </div>
@@ -11,7 +11,9 @@
                 <th>Token 1</th>
                 <th>Token 2</th>
                 <th>Fee</th>
+                <th>Range (in terms of)</th>
                 <th>Price (ETH)</th>
+                <th>Duration</th>
                 <th>ID</th>
             </tr>
         </thead>
@@ -34,6 +36,17 @@
                         <option value="0.05">0.05%</option>
                         <option value="0.3" selected>0.3%</option>
                         <option value="1">1%</option>
+                    </select>
+                </td>
+                <td>
+                    <select (change)="search()" [(ngModel)]="searchFields[7]">
+                        <option value=">">Above</option>
+                        <option value="=" selected>In</option>
+                        <option value="<">Below</option>
+                    </select>
+                    <select (change)="search()" [(ngModel)]="searchFields[8]">
+                        <option value="0" selected>Token 1</option>
+                        <option value="1">Token 2</option>
                     </select>
                 </td>
                 <td>
@@ -77,13 +90,14 @@
 </div>
 <div class="centered listings-div">
     <div class="listing" *ngFor="let listing of visibleListings">
-        <app-sale-listing
+        <app-listing 
             (updateEvent)="getListings()" 
             [listing]="listing" 
+            [isRenter]="false" 
             [isOwner]="false"
             [ethPrice]="ethPrice"
         >    
-        </app-sale-listing>
+        </app-listing>
     </div>
     <span *ngIf="loading && !listings.length"><mat-spinner style="margin: auto;" diameter="25"></mat-spinner></span>
     <p *ngIf="loading && listings.length">Transaction in progress...</p>

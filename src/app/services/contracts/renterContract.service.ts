@@ -104,8 +104,9 @@ export class RenterContractService {
         feeGrowth: [position.feeGrowthInside0LastX128, position.feeGrowthInside1LastX128],
         tokensOwed: [position.tokensOwed0, position.tokensOwed1],
         priceRange: [
-          {lower: 1/pricesInTermsOfToken2[0], upper: 1/pricesInTermsOfToken2[1]} as PriceRange, 
-          {lower: pricesInTermsOfToken2[0], upper: pricesInTermsOfToken2[1]} as PriceRange]
+          {lower: 1/pricesInTermsOfToken2[1], upper: 1/pricesInTermsOfToken2[0]} as PriceRange, 
+          {lower: pricesInTermsOfToken2[0], upper: pricesInTermsOfToken2[1]} as PriceRange],
+        rangeToShow: pricesInTermsOfToken2[0] > 1/pricesInTermsOfToken2[1] ? 1 : 0
       } as Position
     } catch (e) {
       console.log("ERROR :: getPosition ::", e);

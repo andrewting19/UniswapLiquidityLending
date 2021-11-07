@@ -13,6 +13,38 @@ export default class graphAPI {
     this.url = url;
   }
 
+  public async getPositionInfo(positionId: number) {
+    const query = `
+    query ($position_id: String!) {
+      position(id: $position_id){
+        pool{
+          id
+        }
+        depositedToken0
+        depositedToken1
+        collectedFeesToken0
+        collectedFeesToken1
+        liquidity
+        
+      }
+  
+  
+  
+  
+    }`
+    const variables = { "position_id": positionId};
+    const response =  await axios.post(this.url,{ "query": query, "variables":variables});
+    try {            
+      const resp = response.data.data;
+      return resp;
+    } catch (error) {
+      console.log(response.data);
+      throw(error);
+    } 
+  
+  
+  }
+
 
 public async getLastXSwaps(poolAddress: string, numSwaps: number) {
   const query = `

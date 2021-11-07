@@ -1,45 +1,58 @@
 <div class="listing">
-    <!-- [routerLink]="'/listing/' + listing.tokenId" -->
     <div class="listing-fields">
         <div class="image-div">
             <img class="nft-image" *ngIf="nftSvg" [src]="nftSvg">
         </div>
         <div class="listing-info">
-            <p class="bold">{{listing.pairing[0].symbol}} / {{listing.pairing[1].symbol}}&nbsp;&nbsp;|&nbsp;&nbsp;{{listing.position.fee}}%</p>
-            <p class="bold">
-                <img class="eth-logo" src="/assets/eth_logo.svg">
-                {{listing.priceInEther}} (${{(listing.priceInEther * ethPrice).toFixed(2)}})
-            </p>
-            <p *ngIf="!listing.expiryDate">
-                <mat-icon [inline]="true">schedule</mat-icon>
-                &nbsp;{{deltaToString(listing.durationInSeconds)}}
-            </p>
-            <p *ngIf="listing.expiryDate">
-                <mat-icon [inline]="true">schedule</mat-icon>
-                &nbsp;{{timedelta(listing.expiryDate)}} remaining</p>
-            <p>{{listing.position.priceRange[0].lower}} - {{listing.position.priceRange[0].upper}}</p>
-            <!-- <p *ngIf="listing.renter">Rented by {{listing.renter}}</p> -->
-            <p>#{{listing.tokenId}}</p>
+            <ul class="grid1">
+                <li class="bold">{{listing.pairing[0].symbol}} / {{listing.pairing[1].symbol}}&nbsp;&nbsp;|&nbsp;&nbsp;{{listing.position.fee}}%</li>
+                <li>
+                    <img class="eth-logo" src="/assets/eth_logo.svg">
+                </li>
+                <li>
+                    {{listing.priceInEther}} (${{(listing.priceInEther * ethPrice).toFixed(2)}})
+                </li>
+            </ul>
+            <ul class="grid1">
+                <li>#{{listing.tokenId}}</li>
+                <li>
+                    <mat-icon [inline]="true">schedule</mat-icon>
+                </li>
+                <li>
+                    {{deltaToString(listing.durationInSeconds)}}
+                </li>
+            </ul>
+            <ul class="grid2">
+            <!-- <p>{{listing.position.priceRange[0].lower}} - {{listing.position.priceRange[0].upper}}</p> -->
+                <li>{{getPriceRange(true, true)}} <-> {{getPriceRange(true, false)}}</li>
+                <li>{{listing.pairing[listing.position.rangeToShow].symbol}} per {{listing.pairing[(listing.position.rangeToShow - 1)*-1].symbol}}</li>
+            </ul>
+            <div>
+                <div class="rent-btn">
+                    <button [routerLink]="'/listing/' + listing.tokenId" class=" details-btn button button--mimas">
+                        <span>Details</span>
+                    </button>
+                    <button *ngIf="isOwner && !listing.expiryDate" (click)="removeListing()" class="button button--mimas">
+                        <span *ngIf="!loading">Remove</span>
+                        <span *ngIf="loading"><mat-spinner style="margin: auto;" diameter="20"></mat-spinner></span>
+                    </button>
+                    <button *ngIf="isOwner && listing.expiryDate && timedelta(listing.expiryDate) == 'Expired'" (click)="reclaimLiquidity()" class="button button--mimas">
+                        <span *ngIf="!loading">Reclaim</span>
+                        <span *ngIf="loading"><mat-spinner style="margin: auto;" diameter="20"></mat-spinner></span>
+                    </button>
+                    <button *ngIf="isRenter" (click)="collectFees()" class="button button--mimas">
+                        <span *ngIf="!loading">Harvest</span>
+                        <span *ngIf="loading"><mat-spinner style="margin: auto;" diameter="20"></mat-spinner></span>
+                    </button>
+                    <button *ngIf="!listing.buyer && !isOwner && !isRenter" (click)="purchaseListing()" class="button button--mimas">
+                        <span *ngIf="!loading">Rent</span>
+                        <span *ngIf="loading"><mat-spinner style="margin: auto;" diameter="20"></mat-spinner></span>
+                    </button>
+                </div>
+                
+            </div>
         </div>
     </div>
-    <div>
-        <button *ngIf="isOwner && !listing.expiryDate" (click)="removeListing()" class="rent-btn button button--mimas">
-            <span *ngIf="!loading">Remove</span>
-            <span *ngIf="loading"><mat-spinner style="margin: auto;" diameter="25"></mat-spinner></span>
-        </button>
-        <button *ngIf="isOwner && listing.expiryDate && timedelta(listing.expiryDate) == 'Expired'" (click)="reclaimLiquidity()" class="rent-btn button button--mimas">
-            <span *ngIf="!loading">Reclaim</span>
-            <span *ngIf="loading"><mat-spinner style="margin: auto;" diameter="25"></mat-spinner></span>
-        </button>
-        <button *ngIf="isRenter" (click)="collectFees()" class="rent-btn button button--mimas">
-            <span *ngIf="!loading">Harvest</span>
-            <span *ngIf="loading"><mat-spinner style="margin: auto;" diameter="25"></mat-spinner></span>
-        </button>
-        <button *ngIf="!listing.buyer && !isOwner && !isRenter" (click)="purchaseListing()" class="rent-btn button button--mimas">
-            <span *ngIf="!loading">Rent</span>
-            <span *ngIf="loading"><mat-spinner style="margin: auto;" diameter="25"></mat-spinner></span>
-        </button>
-        <p *ngIf="loading">Transaction in progress...</p>
-    </div>
+    
     
 </div>

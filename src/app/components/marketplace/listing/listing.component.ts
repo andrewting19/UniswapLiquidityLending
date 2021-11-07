@@ -32,6 +32,7 @@ export class ListingComponent implements OnInit {
       'w': 604800
     }
     this.getNFTImg();
+    console.log(this.listing.pairing)
   }
 
   async getNFTImg() {
@@ -102,6 +103,25 @@ export class ListingComponent implements OnInit {
       prefix = " minutes"
     }
     return delta.toFixed(0) + prefix
+  }
+
+  getPriceRange(useToShowPrice: boolean, lower: boolean) {
+    let i = useToShowPrice? this.listing.position.rangeToShow : (this.listing.position.rangeToShow - 1)*-1;
+    let r = this.listing.position.priceRange[i];
+    let p = lower ? r.lower : r.upper;
+    if (p > 1000000000) { //in the billions
+      return (p / 1000000000).toFixed(0) + ' Bil'
+    } else if (p > 1000000) { //in the millions
+      return (p / 1000000).toFixed(2) + ' Mil'
+    } else if (p > 1000) {
+      return (p / 1000).toFixed(2) + 'k'
+    } else if (p > 100) {
+      return p.toFixed(2)
+    } else if (p < .0001) {
+      return "<0.0001"
+    } else {
+      return p.toFixed(4)
+    }
   }
 
 }

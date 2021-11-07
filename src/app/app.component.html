@@ -2,27 +2,15 @@
   <div class="header-items" >
     <div class="header-item" [ngClass]="{ 'active' : route == '/' }" routerLink="/">
       <span class="centered">Caravan</span>
-      <!-- <i *ngIf="route == '/'"></i> -->
     </div>
     <div class="header-item" [ngClass]="{ 'active' : route == '/listings' }" routerLink='/listings'>
       <span class="centered">Listings</span>
-      <!-- <i *ngIf="route == '/rent'"></i> -->
     </div>
     <div class="header-item" [ngClass]="{ 'active' : route == '/new' }" routerLink='/new'>
       <span class="centered">Create</span>
-      <!-- <i *ngIf="route == '/lend'"></i> -->
-    </div>
-    <div class="header-item" [ngClass]="{ 'active' : route == '/buy' }" routerLink='/buy'>
-      <span class="centered">Buy</span>
-      <!-- <i *ngIf="route == '/buy'"></i> -->
-    </div>
-    <div class="header-item" [ngClass]="{ 'active' : route == '/sell' }" routerLink='/sell'>
-      <span class="centered">Sell</span>
-      <!-- <i *ngIf="route == '/sell'"></i> -->
     </div>
     <div class="header-item" [ngClass]="{ 'active' : route == '/profile' }" routerLink='/profile'>
       <span class="centered">My NFTs</span>
-      <!-- <i *ngIf="route == '/profile'"></i> -->
     </div>
   </div>
 </header>

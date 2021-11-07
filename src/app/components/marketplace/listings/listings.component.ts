@@ -5,10 +5,10 @@ import { CoingeckoService } from 'src/app/services/coingecko.service';
 
 @Component({
   selector: 'app-listings',
-  templateUrl: './rental-listings.component.html',
-  styleUrls: ['./rental-listings.component.css']
+  templateUrl: './listings.component.html',
+  styleUrls: ['./listings.component.css']
 })
-export class RentalListingsComponent implements OnInit {
+export class ListingsComponent implements OnInit {
   listings: RentInfo[] = [];
   visibleListings: RentInfo[] = [];
   loading: boolean = false;
@@ -22,8 +22,10 @@ export class RentalListingsComponent implements OnInit {
     '', //duration #
     'd', //duration units
     '', //token id
+    '=', //range selection: in, above, or below range
+    '0', //index of listing.priceRange to use for range calculation 
   ]
-  operators = ['<', '<']
+  operators = ['<', '<'] //initial values for each operator
   operatorMap = (op: string, x: number, y: number) => {
     if (op == "=") return x == y
     else if (op == "<") return x < y
