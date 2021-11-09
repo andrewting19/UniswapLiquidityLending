@@ -14,7 +14,7 @@
                 </li>
             </ul>
             <ul *ngIf="isOption" class="grid1">
-                <li class="bold">{{listing.longToken.symbol}} Call&nbsp;&nbsp;|&nbsp;&nbsp;{{listing.position.priceRange[listing.pairingIndex].upper}}</li>
+                <li class="bold">{{listing.longToken.symbol}} Call&nbsp;&nbsp;|&nbsp;&nbsp;{{getPriceRange(true, true, true)}}</li>
                 <li>
                     <img class="eth-logo" src="/assets/eth_logo.svg">
                 </li>
