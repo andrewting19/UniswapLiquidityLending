@@ -102,6 +102,12 @@
     </div>
     <span *ngIf="loading"><mat-spinner style="margin: auto;" diameter="25"></mat-spinner></span>
 </div>
+<div class="centered">
+    <p *ngIf="loading || listings.length > 0" class="title">
+        Call Options
+    </p>
+    <p class="title" *ngIf="!optionListings.length && !loading">No Options :c</p>
+</div>
 <div class="centered listings-div">
     <div class="listing" *ngFor="let listing of optionListings">
         <app-listing 

@@ -223,6 +223,16 @@ public approveERC20Transfer = async (tokenAddr: string, amount: number) => {
     }
   }
 
+  public exerciseOption = async (tokenId: number) => {
+    try {
+      console.log(await this.optionContract.methods.excersizeOption(tokenId).send({ from: this.account }));
+      return true;
+    } catch (e) {
+      console.log("ERROR: exerciseOption ::", e)
+      return false;
+    }
+
+  }
 
   public getAllListings = async () => {
     await this.getOptionContract();
@@ -236,17 +246,17 @@ public approveERC20Transfer = async (tokenAddr: string, amount: number) => {
     }
   }
 
-  // public getListingsForSale = async () => {
-  //   await this.getOptionContract();
-  //   try {
-  //     const allListings: OptionInfo[] = await this.getAllListings();
-  //     const availableListings: OptionInfo[] = allListings.filter(listing => listing.forSale == true);
-  //     return availableListings
-  //   } catch (e) {
-  //     console.log("ERROR :: getListingsForSale ::", e);
-  //     return []
-  //   }
-  // }
+  public getListingsForSale = async () => {
+    await this.getOptionContract();
+    try {
+      const allListings: OptionInfo[] = await this.getAllListings();
+      const availableListings: OptionInfo[] = allListings.filter(listing => listing.forSale);
+      return availableListings
+    } catch (e) {
+      console.log("ERROR :: getListingsForSale ::", e);
+      return []
+    }
+  }
 
   public getOptionListingsByOwner = async (ownerAddress: string) => {
     await this.getOptionContract();

@@ -76,13 +76,11 @@ export class ListingsComponent implements OnInit {
       this.listings = await this.renterContractService.getRentalListings();
     } else {
       this.listings = await this.salesContractService.getAllListings();
-      console.log(this.listings)
     }
     this.visibleListings = [...this.listings];
     this.search();
-    this.optionListings = await this.optionContractService.getAllListings();
+    this.optionListings = await this.optionContractService.getListingsForSale();
     this.loading = false;
-    console.log(this.optionListings)
   }
 
   deltaToString(delta: number) {

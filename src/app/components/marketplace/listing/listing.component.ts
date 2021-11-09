@@ -120,10 +120,15 @@ export class ListingComponent implements OnInit {
     return delta.toFixed(0) + prefix
   }
 
-  getPriceRange(useToShowPrice: boolean, lower: boolean) {
-    let i = useToShowPrice? this.listing.position.rangeToShow : (this.listing.position.rangeToShow - 1)*-1;
-    let r = this.listing.position.priceRange[i];
-    let p = lower ? r.lower : r.upper;
+  getPriceRange(useToShowPrice: boolean, lower: boolean, returnStrikePrice: boolean = false) {
+    let p;
+    if (returnStrikePrice) {
+      p = this.listing.position.priceRange[this.listing.pairingIndex].upper;
+    } else {
+      let i = useToShowPrice? this.listing.position.rangeToShow : (this.listing.position.rangeToShow - 1)*-1;
+      let r = this.listing.position.priceRange[i];
+      p = lower ? r.lower : r.upper;
+    }
     if (p > 1000000000) { //in the billions
       return (p / 1000000000).toFixed(0) + ' Bil'
     } else if (p > 1000000) { //in the millions
@@ -139,8 +144,10 @@ export class ListingComponent implements OnInit {
     }
   }
 
-  exercise() {
-    
+  async exercise() {
+    this.loading = true;
+    await this.optionContractService.exerciseOption(this.listing.tokenId);
+    this.loading = false;
   }
 
 }
