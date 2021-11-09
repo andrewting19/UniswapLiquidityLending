@@ -5,7 +5,7 @@ import { ERC20ABI, NFTMinterABI, optionABI } from 'src/app/models/abi';
 
 declare const window: any;
 
-const OptionContractAddress = "0xCFC54252E470CAE5b532E218c4c6C5955db7b721"; //Address of our custom smart contract
+const OptionContractAddress = "0x27FDeAE0eE655770aEcDeE3187D56B942A07A5F1"; //Address of our custom smart contract
 const NFTMinterAddress = "0xC36442b4a4522E871399CD717aBDD847Ab11FE88"; //Hard coded address of Uniswap NFT Minter contract
 
 @Injectable({
@@ -157,7 +157,7 @@ public approveERC20Transfer = async (tokenAddr: string, amount: number) => {
     return true;
   }
 
-  public createNewLongOption = async (tokenId: number, priceInEther: number, tokenToLong: string, durationInSeconds: number) => {
+  public createNewLongOption = async (tokenId: number, priceInEther: number, tokenToLong: string, durationInSeconds: number, percentage: number) => {
     await this.getOptionContract();
     try {
       console.log(await this.approveNFTTransfer(tokenId));
@@ -165,6 +165,7 @@ public approveERC20Transfer = async (tokenAddr: string, amount: number) => {
         tokenId, 
         window.web3.utils.toWei(priceInEther.toString(), 'ether'),
         durationInSeconds,
+        percentage,
         tokenToLong,
       ).send({from: this.account});
       return true;
