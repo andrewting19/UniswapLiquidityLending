@@ -998,19 +998,6 @@ export const optionABI = [
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "_owner",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [
       {
         "internalType": "uint256",
@@ -1072,6 +1059,11 @@ export const optionABI = [
         "type": "uint256"
       },
       {
+        "internalType": "uint128",
+        "name": "percentage",
+        "type": "uint128"
+      },
+      {
         "internalType": "address",
         "name": "tokenLong",
         "type": "address"
@@ -1116,121 +1108,6 @@ export const optionABI = [
         "internalType": "uint256[]",
         "name": "",
         "type": "uint256[]"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "name": "itemIdToOptionInfo",
-    "outputs": [
-      {
-        "internalType": "address payable",
-        "name": "originalOwner",
-        "type": "address"
-      },
-      {
-        "internalType": "address payable",
-        "name": "currentOwner",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "tokenLong",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "paymentToken",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "tokenId",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint160",
-        "name": "costToExercise",
-        "type": "uint160"
-      },
-      {
-        "internalType": "uint256",
-        "name": "premium",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "expiryDate",
-        "type": "uint256"
-      },
-      {
-        "internalType": "bool",
-        "name": "forSale",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "name": "itemIdToTokenAddrs",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "token0Addr",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "token1Addr",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "name": "itemIds",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "marketplaceFee",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -1318,6 +1195,19 @@ export const optionABI = [
   {
     "inputs": [
       {
+        "internalType": "uint256",
+        "name": "tokenId",
+        "type": "uint256"
+      }
+    ],
+    "name": "returnToOriginalOwner",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "address payable",
         "name": "newOwner",
         "type": "address"
@@ -1356,7 +1246,6 @@ export const optionABI = [
     "type": "function"
   }
 ]
-
 
 
 

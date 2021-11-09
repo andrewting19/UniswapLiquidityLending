@@ -5,7 +5,7 @@ import { ERC20ABI, NFTMinterABI, optionABI } from 'src/app/models/abi';
 
 declare const window: any;
 
-const OptionContractAddress = "0x4E81963bC0ca7672B245C26fDDcB3EFd4e6011aA"; //Address of our custom smart contract
+const OptionContractAddress = "0xCFC54252E470CAE5b532E218c4c6C5955db7b721"; //Address of our custom smart contract
 const NFTMinterAddress = "0xC36442b4a4522E871399CD717aBDD847Ab11FE88"; //Hard coded address of Uniswap NFT Minter contract
 
 @Injectable({
