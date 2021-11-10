@@ -94,8 +94,11 @@ export class NewListingComponent implements OnInit {
         this.postError = true;
       }
     }
-    if ((this.isSale() && this.tokenId.invalid && this.priceInEther.invalid) || (this.isRental() && this.form.invalid) || (this.isOption() && this.form.invalid || this.tokenAddress.invalid || this.percentage.invalid)) {
+    if ((this.isSale() && this.tokenId.invalid && this.priceInEther.invalid) || (this.isRental() && this.form.invalid) || (this.isOption() && (this.form.invalid || this.tokenAddress.invalid || this.percentage.invalid))) {
       console.log("Form has validation errors");
+      console.log(this.isSale() && this.tokenId.invalid && this.priceInEther.invalid)
+      console.log((this.isRental() && this.form.invalid))
+      console.log(this.isOption() && (this.form.invalid || this.tokenAddress.invalid || this.percentage.invalid))
       this.error = true;
       return
     }
