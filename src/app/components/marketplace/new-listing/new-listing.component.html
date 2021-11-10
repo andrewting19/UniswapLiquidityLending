@@ -54,7 +54,7 @@
         </div>
         <div *ngIf="error || postError">
             <p *ngIf="error">Please fill out all of the required fields.</p>
-            <p *ngIf="postError">Transaction rejected by smart contract. Please ensure your inputs are correct and you are the owner of the smart contract.</p>
+            <p *ngIf="postError">Transaction rejected by smart contract. Please ensure your inputs are correct and you are the owner of the position.</p>
         </div>
         <div class="centered" (click)="submitForm()">
             <button  class="button button--mimas">
