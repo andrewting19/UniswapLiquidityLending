@@ -40,6 +40,13 @@
             <p class="error-txt" *ngIf="error && duration.invalid">Duration must be a number. Choose between seconds, minutes, hours, days, or weeks.</p>
         </div>
         <div *ngIf="isOption()" class="field" tabindex="5">
+            <label for="percentage">
+                <i class="far fa-user"></i>% of Position to Allocate
+            </label>
+            <input [formControl]="percentage" [ngClass]="{ 'error': error && percentage.invalid }" name="percentage" type="text" placeholder="100" required>
+            <p class="error-txt" *ngIf="error && duration.invalid">Duration must be an integer from 1 to 100</p>
+        </div>
+        <div *ngIf="isOption()" class="field" tabindex="6">
             <label for="tokenAddress">
                 <i class="far fa-user"></i>Long Token Address 
             </label>

@@ -130,9 +130,9 @@ export class ListingComponent implements OnInit {
       p = lower ? r.lower : r.upper;
     }
     if (p > 1000000000) { //in the billions
-      return (p / 1000000000).toFixed(0) + ' Bil'
+      return (p / 1000000000).toFixed(0) + 'B'
     } else if (p > 1000000) { //in the millions
-      return (p / 1000000).toFixed(2) + ' Mil'
+      return (p / 1000000).toFixed(2) + 'M'
     } else if (p > 1000) {
       return (p / 1000).toFixed(2) + 'k'
     } else if (p > 100) {

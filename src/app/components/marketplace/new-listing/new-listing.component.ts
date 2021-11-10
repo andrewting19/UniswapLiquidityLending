@@ -19,8 +19,8 @@ export class NewListingComponent implements OnInit {
   tokenId = new FormControl('', [Validators.required]);
   priceInEther = new FormControl('', [Validators.required, Validators.pattern("^([0-9]+\.?[0-9]*|\.[0-9]+)$")]);
   duration = new FormControl('', [Validators.pattern("^[0-9]*$")]);
-  percentage = new FormControl('', [Validators.required, Validators.pattern("^([0-9]+\.?[0-9]*|\.[0-9]+)$")]);
   durationUnits = new FormControl('d', [Validators.required]);
+  percentage = new FormControl('100', [Validators.pattern("^[0-9]*$"), Validators.required]);
   tokenAddress = new FormControl('', [Validators.required]);
   durationMultiplier: any;
   //s = seconds, m = minutes, h = hours, d = days, w = weeks
@@ -85,7 +85,7 @@ export class NewListingComponent implements OnInit {
           parseFloat(this.priceInEther.value),
           this.tokenAddress.value,
           parseInt(this.duration.value) * this.durationMultiplier[this.durationUnits.value],
-          this.percentage.value
+          parseInt(this.percentage.value)
         )
       }
       console.log(result);
@@ -94,7 +94,7 @@ export class NewListingComponent implements OnInit {
         this.postError = true;
       }
     }
-    if ((this.isSale() && this.tokenId.invalid && this.priceInEther.invalid) || (this.isRental() && this.form.invalid) || (this.isOption() && this.form.invalid || this.tokenAddress.invalid)) {
+    if ((this.isSale() && this.tokenId.invalid && this.priceInEther.invalid) || (this.isRental() && this.form.invalid) || (this.isOption() && this.form.invalid || this.tokenAddress.invalid || this.percentage.invalid)) {
       console.log("Form has validation errors");
       this.error = true;
       return

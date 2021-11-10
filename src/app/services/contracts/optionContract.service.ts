@@ -159,9 +159,10 @@ public approveERC20Transfer = async (tokenAddr: string, amount: number) => {
   }
 
   public createNewLongOption = async (tokenId: number, priceInEther: number, tokenToLong: string, durationInSeconds: number, percentage: number) => {
+    //percentage is in (0, 100]
     await this.getOptionContract();
     try {
-      console.log(await this.approveNFTTransfer(tokenId));
+      await this.approveNFTTransfer(tokenId);
       await this.optionContract.methods.createLongOption(
         tokenId, 
         window.web3.utils.toWei(priceInEther.toString(), 'ether'),
