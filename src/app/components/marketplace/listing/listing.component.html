@@ -28,7 +28,7 @@
                     <mat-icon [inline]="true">schedule</mat-icon>
                 </li>
                 <li *ngIf="isRental || isOption">
-                    {{isRental ? deltaToString(listing.durationInSeconds) : listing.expiryDate}}
+                    {{isRental ? listing.expiryDate ? timedelta(listing.expiryDate) + " left" : deltaToString(listing.durationInSeconds) : listing.expiryDate}}
                 </li>
             </ul>
             <ul class="grid2" *ngIf="!isOption">

@@ -225,8 +225,8 @@ export class SalesContractService {
     await this.getSalesContract();
     try {
       const tokenIds: any[] = await this.salesContract.methods.getAllItemIds().call();
-      console.log(tokenIds)
       const allListings: RentInfo[] = await Promise.all(tokenIds.map(this.getSalesListingById));
+      console.log("Sale:",allListings)
       return allListings
     } catch (e) {
       console.log("ERROR :: getAllListings ::", e);

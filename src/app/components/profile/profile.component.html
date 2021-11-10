@@ -12,7 +12,9 @@
             [listing]="listing" 
             [isRenter]="false" 
             [isOwner]="true"
-            [isRental]="listing.durationInSeconds != -1">
+            [isRental]="listing.durationInSeconds != -1"
+            [ethPrice]="ethPrice"
+            >
         </app-listing>
     </div>
     <div class="listing" *ngFor="let listing of ownedOptions">
@@ -21,7 +23,9 @@
             [isRenter]="false" 
             [isOwner]="true"
             [isRental]="false"
-            [isOption]="true">
+            [isOption]="true"
+            [ethPrice]="ethPrice"
+            >
         </app-listing>
     </div>
     <p *ngIf="loading">Transaction in progress...</p>
@@ -31,7 +35,14 @@
     <p class="title">Rented Liquidity</p>
     <p *ngIf="!rentedLoading && !rentedListings.length">No rented liquidity :(</p>
     <span *ngIf="rentedLoading && !rentedListings.length"><mat-spinner style="margin: auto;" diameter="25"></mat-spinner></span>    <div class="listing" *ngFor="let listing of rentedListings">
-        <app-listing (updateEvent)="getRented()" [listing]="listing" [isRenter]="true" [isOwner]="false"></app-listing>
+        <app-listing 
+            (updateEvent)="getRented()" 
+            [listing]="listing" 
+            [isRenter]="true" 
+            [isOwner]="false"
+            [ethPrice]="ethPrice"
+        >
+    </app-listing>
     </div>
     <p *ngIf="loading">Transaction in progress...</p>
 </div>
