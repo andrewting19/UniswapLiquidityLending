@@ -68,8 +68,19 @@ export class HomeComponent implements OnInit {
 
     // console.log(await this.swapContractService.returnSwapToOwner(8277));
 
+    // console.log(await this.optionContractService.getAllListings());
+    // console.log(await this.optionContractService.createNewLongOption(9206,0.0001,"0xc7AD46e0b8a400Bb3C915120d284AafbA8fc4735", 600, 10));
+    // console.log(await this.optionContractService.getAllListings());
 
-    
+    console.log(await this.optionContractService.buyOption(9206, 0.0001));
+    console.log(await this.optionContractService.getAllListings());
+    console.log(await this.optionContractService.exerciseOption(9206));
+    console.log(await this.optionContractService.getAllListings());
+    // console.log(this.optionContractService.returnToOwner(9201));
+
+
+
+
     // console.log(await this.salesContractService.createNewSellOffer(8302, 0.001));
     // console.log(await this.salesContractService.getAllListings());
     // // console.log(await this.salesContractService.deleteSale(7812));
@@ -78,8 +89,6 @@ export class HomeComponent implements OnInit {
     // console.log(await this.optionContractService.createNewLongOption(8559,0.0001,"0xc7AD46e0b8a400Bb3C915120d284AafbA8fc4735", 180));
     // console.log(await this.optionContractService.getAllListings());
     // // console.log(await this.optionContractService.listOptionForSale(8559));
-    // console.log(await this.optionContractService.buyOption(8559, 0.0001));
-    // console.log(await this.optionContractService.getAllListings());
   }
 
   async collectFees() {

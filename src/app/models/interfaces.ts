@@ -59,6 +59,8 @@ export interface OptionInfo {
     premium: number; //in Eth
     currentOwner: string;
     costToExercise: number; //in paymentToken
+    optionPayout: number; //in tokenLong
+    amountToReturn: number; //in paymentToken
     longToken: ERC20Token;
     forSale: boolean;
     paymentToken: ERC20Token;

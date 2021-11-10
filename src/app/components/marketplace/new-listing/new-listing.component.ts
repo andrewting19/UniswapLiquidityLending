@@ -19,6 +19,7 @@ export class NewListingComponent implements OnInit {
   tokenId = new FormControl('', [Validators.required]);
   priceInEther = new FormControl('', [Validators.required, Validators.pattern("^([0-9]+\.?[0-9]*|\.[0-9]+)$")]);
   duration = new FormControl('', [Validators.pattern("^[0-9]*$")]);
+  percentage = new FormControl('', [Validators.required, Validators.pattern("^([0-9]+\.?[0-9]*|\.[0-9]+)$")]);
   durationUnits = new FormControl('d', [Validators.required]);
   tokenAddress = new FormControl('', [Validators.required]);
   durationMultiplier: any;
@@ -83,7 +84,8 @@ export class NewListingComponent implements OnInit {
           this.tokenId.value,
           parseFloat(this.priceInEther.value),
           this.tokenAddress.value,
-          parseInt(this.duration.value) * this.durationMultiplier[this.durationUnits.value]
+          parseInt(this.duration.value) * this.durationMultiplier[this.durationUnits.value],
+          this.percentage.value
         )
       }
       console.log(result);
