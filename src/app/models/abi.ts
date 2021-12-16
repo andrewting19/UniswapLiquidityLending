@@ -409,6 +409,45 @@ export const salesABI = [
     "inputs": [
       {
         "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "deposit",
+    "outputs": [],
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getAllItemIds",
+    "outputs": [
+      {
+        "internalType": "uint256[]",
+        "name": "",
+        "type": "uint256[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "itemIdToSaleInfo",
+    "outputs": [
+      {
+        "internalType": "address payable",
+        "name": "originalOwner",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
         "name": "tokenId",
         "type": "uint256"
       },
@@ -429,7 +468,34 @@ export const salesABI = [
         "internalType": "uint256",
         "name": "tokenId",
         "type": "uint256"
+      }
+    ],
+    "name": "itemIdToTokenAddrs",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "token0Addr",
+        "type": "address"
       },
+      {
+        "internalType": "address",
+        "name": "token1Addr",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "itemIds",
+    "outputs": [
       {
         "internalType": "uint256",
         "name": "premium",
@@ -472,7 +538,173 @@ export const salesABI = [
         "type": "uint256"
       }
     ],
-    "name": "excersizeOption",
+    "name": "removeNFTForSale",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "itemIdToOptionInfo",
+    "outputs": [
+      {
+        "internalType": "address payable",
+        "name": "originalOwner",
+        "type": "address"
+      }
+    ],
+    "name": "setOwner",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "withdraw",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "tokenId",
+        "type": "uint256"
+      }
+    ],
+    "name": "withdrawFees",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+]
+
+
+
+
+export const auctionABI =  [
+  {
+    "inputs": [
+      {
+        "internalType": "address payable",
+        "name": "currentOwner",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "tokenLong",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "tokenId",
+        "type": "uint256"
+      }
+    ],
+    "name": "buyOption",
+    "outputs": [],
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "fee",
+        "type": "uint256"
+      }
+    ],
+    "name": "changeFee",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "tokenId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "newpremium",
+        "type": "uint256"
+      }
+    ],
+    "name": "changeOptionPremium",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "tokenId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "premium",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "duration",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint128",
+        "name": "percentage",
+        "type": "uint128"
+      },
+      {
+        "internalType": "address",
+        "name": "tokenLong",
+        "type": "address"
+      }
+    ],
+    "name": "createLongOption",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "premium",
+        "type": "uint256"
+      }
+    ],
+    "name": "deposit",
+    "outputs": [],
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "tokenId",
+        "type": "uint256"
+      }
+    ],
+    "name": "excerciseOption",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -482,9 +714,33 @@ export const salesABI = [
     "name": "getAllItemIds",
     "outputs": [
       {
-        "internalType": "uint256[]",
+        "internalType": "uint256",
+        "name": "expiryDate",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bool",
+        "name": "forSale",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
         "name": "",
-        "type": "uint256[]"
+        "type": "uint256"
+      }
+    ],
+    "name": "itemIdToAmountToReturn",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -501,8 +757,8 @@ export const salesABI = [
     "name": "itemIdToOptionInfo",
     "outputs": [
       {
-        "internalType": "address payable",
-        "name": "originalOwner",
+        "internalType": "address",
+        "name": "token0Addr",
         "type": "address"
       },
       {
@@ -557,44 +813,7 @@ export const salesABI = [
         "type": "uint256"
       }
     ],
-    "name": "itemIdToTokenAddrs",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "token0Addr",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "token1Addr",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "name": "itemIds",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "marketplaceFee",
+    "name": "itemIdToOptionPayout",
     "outputs": [
       {
         "internalType": "uint256",
@@ -739,6 +958,7 @@ export const salesABI = [
   }
 ]
 
+
 export const optionABI = [
   {
     "inputs": [
@@ -762,19 +982,6 @@ export const optionABI = [
     "outputs": [
       {
         "internalType": "contract INonfungiblePositionManager",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "_owner",
-    "outputs": [
-      {
-        "internalType": "address",
         "name": "",
         "type": "address"
       }
@@ -844,6 +1051,11 @@ export const optionABI = [
         "type": "uint256"
       },
       {
+        "internalType": "uint128",
+        "name": "percentage",
+        "type": "uint128"
+      },
+      {
         "internalType": "address",
         "name": "tokenLong",
         "type": "address"
@@ -875,7 +1087,7 @@ export const optionABI = [
         "type": "uint256"
       }
     ],
-    "name": "excersizeOption",
+    "name": "exerciseOption",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -888,6 +1100,25 @@ export const optionABI = [
         "internalType": "uint256[]",
         "name": "",
         "type": "uint256[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "itemIdToIndex",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -929,13 +1160,23 @@ export const optionABI = [
         "type": "uint256"
       },
       {
-        "internalType": "uint160",
+        "internalType": "uint256",
         "name": "costToExercise",
-        "type": "uint160"
+        "type": "uint256"
       },
       {
         "internalType": "uint256",
         "name": "premium",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "optionPayout",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amountToReturn",
         "type": "uint256"
       },
       {
@@ -985,19 +1226,6 @@ export const optionABI = [
       }
     ],
     "name": "itemIds",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "marketplaceFee",
     "outputs": [
       {
         "internalType": "uint256",
@@ -1090,6 +1318,19 @@ export const optionABI = [
   {
     "inputs": [
       {
+        "internalType": "uint256",
+        "name": "tokenId",
+        "type": "uint256"
+      }
+    ],
+    "name": "returnToOriginalOwner",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "address payable",
         "name": "newOwner",
         "type": "address"
@@ -1128,6 +1369,7 @@ export const optionABI = [
     "type": "function"
   }
 ]
+
 
 
 

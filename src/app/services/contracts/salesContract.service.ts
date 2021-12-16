@@ -1,11 +1,13 @@
 import { Injectable } from '@angular/core';
 import Web3 from "web3";
-import { ERC20Token, Position, PriceRange, ListingInfo } from 'src/app/models/interfaces';
+import { ERC20Token, Position, PriceRange, ListingInfo, RentInfo } from 'src/app/models/interfaces';
 import { ERC20ABI, salesABI, NFTMinterABI } from 'src/app/models/abi';
+import graphAPI, { graphAPIURL } from 'src/data_handling/api';
 
 declare const window: any;
 
-const SalesContractAddress = "0xC3e195d2eE0D883be710988Ef37df5a81DB6FC5F"; //Address of our custom smart contract
+//0x5FbDB2315678afecb367f032d93F642f64180aa3
+const SalesContractAddress = "0x0F8528a14e2417EeEcccb298Df3f8BBA8b3F1B4d"; //Address of our custom smart contract
 const NFTMinterAddress = "0xC36442b4a4522E871399CD717aBDD847Ab11FE88"; //Hard coded address of Uniswap NFT Minter contract
 
 @Injectable({
@@ -16,13 +18,14 @@ export class SalesContractService {
   salesContract: any = null;
   NFTMinterContract: any = null;
   account: any = null;
+  graphAPI: any;
 
   constructor() {
     let setup = async () => {
       this.account = await this.openMetamask();
-
     }
     setup();
+    this.graphAPI = new graphAPI(graphAPIURL);
   }
   private getAccounts = async () => {
       try {
@@ -83,6 +86,7 @@ export class SalesContractService {
     await this.getSalesContract();
     try {
       const tokens = await this.salesContract.methods.itemIdToTokenAddrs(tokenId).call();
+      console.log(tokens)
       const tokenInfo: ERC20Token[] = [await this.getERC20TokenInfoFromAddress(tokens.token0Addr), await this.getERC20TokenInfoFromAddress(tokens.token1Addr)]
       return tokenInfo;
     } catch (e) {
@@ -95,6 +99,7 @@ export class SalesContractService {
     await this.getNFTMinterContract();
     try {
       const position = await this.NFTMinterContract.methods.positions(tokenId).call();
+      const graphPos = await this.graphAPI.getPositionInfo(tokenId);
       let pricesInTermsOfToken2 = this.getPriceRangesFromTicks(position.tickLower, position.tickUpper, pairing[0].decimals, pairing[1].decimals);
       return {
         tickUpper: position.tickUpper,
@@ -103,9 +108,12 @@ export class SalesContractService {
         fee: position.fee / 10000,
         feeGrowth: [position.feeGrowthInside0LastX128, position.feeGrowthInside1LastX128],
         tokensOwed: [position.tokensOwed0, position.tokensOwed1],
+        tokensDeposited: [parseFloat(graphPos.position.depositedToken0), parseFloat(graphPos.position.depositedToken1)],
+        pool: graphPos.position.pool.id,
         priceRange: [
-          {lower: 1/pricesInTermsOfToken2[0], upper: 1/pricesInTermsOfToken2[1]} as PriceRange, 
-          {lower: pricesInTermsOfToken2[0], upper: pricesInTermsOfToken2[1]} as PriceRange]
+          {lower: 1/pricesInTermsOfToken2[1], upper: 1/pricesInTermsOfToken2[0]} as PriceRange, 
+          {lower: pricesInTermsOfToken2[0], upper: pricesInTermsOfToken2[1]} as PriceRange],
+        rangeToShow: pricesInTermsOfToken2[0] > 1/pricesInTermsOfToken2[1] ? 1 : 0
       } as Position
     } catch (e) {
       console.log("ERROR :: getPosition ::", e);
@@ -138,6 +146,7 @@ export class SalesContractService {
   public createNewSellOffer = async (tokenId: number, priceInEther: number) => {
     await this.getSalesContract();
     try {
+      console.log(this.salesContract)
       await this.approveTransfer(tokenId);
       await this.salesContract.methods.putUpNFTForSale(
         tokenId, 
@@ -216,7 +225,8 @@ export class SalesContractService {
     await this.getSalesContract();
     try {
       const tokenIds: any[] = await this.salesContract.methods.getAllItemIds().call();
-      const allListings: ListingInfo[] = await Promise.all(tokenIds.map(this.getSalesListingById));
+      const allListings: RentInfo[] = await Promise.all(tokenIds.map(this.getSalesListingById));
+      console.log("Sale:",allListings)
       return allListings
     } catch (e) {
       console.log("ERROR :: getAllListings ::", e);
@@ -231,8 +241,8 @@ export class SalesContractService {
       ownerAddress = this.account;
     }
     try {
-      const allListings: ListingInfo[] = await this.getAllListings();
-      const ownedListings: ListingInfo[] = allListings.filter(listing => listing.seller?.toLowerCase() == ownerAddress.toLowerCase())
+      const allListings: RentInfo[] = await this.getAllListings();
+      const ownedListings: RentInfo[] = allListings.filter(listing => listing.seller?.toLowerCase() == ownerAddress.toLowerCase())
       return ownedListings
     } catch (e) {
       console.log("ERROR :: getSalesListingsByOwner ::", e);
@@ -244,7 +254,8 @@ export class SalesContractService {
   public getSalesListingById = async (tokenId: number) => {
     await this.getSalesContract();
     try {
-      const result = await this.salesContract.methods.itemIdToListingInfo(tokenId).call({ from: this.account });
+      const result = await this.salesContract.methods.itemIdToSaleInfo(tokenId).call({ from: this.account });
+      console.log(tokenId, result)
       let makeSalesInfo = async (listing: any) => {
         let pairing: ERC20Token[] = await this.getPairing(listing.tokenId);
         let position: Position = await this.getPosition(listing.tokenId, pairing);
@@ -253,13 +264,15 @@ export class SalesContractService {
           seller: listing.originalOwner,
           priceInEther: window.web3.utils.fromWei(listing.price, 'ether'),
           pairing: pairing,
-          position: position
-        } as ListingInfo
+          position: position,
+          durationInSeconds: -1,
+          expiryDate: null
+        } as RentInfo
       }
       return await makeSalesInfo(result)
     } catch (e) {
       console.log("ERROR :: getSalesListingById ::", e);
-      return {} as ListingInfo
+      return {} as RentInfo
     }
   }
 

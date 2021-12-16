@@ -1,6 +1,6 @@
 <div class="centered">
     <p *ngIf="loading || listings.length > 0" class="title">
-        Liquidity for Sale
+        Liquidity: <span class="pointer" (click)="switchListings(true)" [ngClass]="{ 'greyed-out': !showRentals } ">Rent</span>/<span (click)="switchListings(false)" class="pointer" [ngClass]="{ 'greyed-out': showRentals }">Buy</span>
     </p>
     <p class="title" *ngIf="!listings.length && !loading">No Listings :c</p>
 </div>
@@ -11,7 +11,9 @@
                 <th>Token 1</th>
                 <th>Token 2</th>
                 <th>Fee</th>
+                <th>Range (in terms of)</th>
                 <th>Price (ETH)</th>
+                <th *ngIf="showRentals">Duration</th>
                 <th>ID</th>
             </tr>
         </thead>
@@ -37,6 +39,17 @@
                     </select>
                 </td>
                 <td>
+                    <select (change)="search()" [(ngModel)]="searchFields[7]">
+                        <option value=">">Above</option>
+                        <option value="=" selected>In</option>
+                        <option value="<">Below</option>
+                    </select>
+                    <select (change)="search()" [(ngModel)]="searchFields[8]">
+                        <option value="0" selected>Token 1</option>
+                        <option value="1">Token 2</option>
+                    </select>
+                </td>
+                <td>
                     <select (change)="search()" [(ngModel)]="operators[0]">
                         <option value="=">=</option>
                         <option value="<" selected><</option>
@@ -47,7 +60,7 @@
                         (input)="search()" autocomplete="off"
                     >
                 </td>
-                <td>
+                <td *ngIf="showRentals">
                     <select (change)="search()" [(ngModel)]="operators[1]">
                         <option value="=">=</option>
                         <option value="<" selected><</option>
@@ -77,14 +90,35 @@
 </div>
 <div class="centered listings-div">
     <div class="listing" *ngFor="let listing of visibleListings">
-        <app-sale-listing
+        <app-listing 
             (updateEvent)="getListings()" 
-            [listing]="listing" 
+            [listing]="listing"
+            [isRental]="showRentals"
+            [isRenter]="false" 
             [isOwner]="false"
             [ethPrice]="ethPrice"
         >    
-        </app-sale-listing>
+        </app-listing>
     </div>
-    <span *ngIf="loading && !listings.length"><mat-spinner style="margin: auto;" diameter="25"></mat-spinner></span>
-    <p *ngIf="loading && listings.length">Transaction in progress...</p>
+    <span *ngIf="loading"><mat-spinner style="margin: auto;" diameter="25"></mat-spinner></span>
+</div>
+<div class="centered">
+    <p *ngIf="loading || listings.length > 0" class="title">
+        Call Options
+    </p>
+    <p class="title" *ngIf="!optionListings.length && !loading">No Options :c</p>
+</div>
+<div class="centered listings-div">
+    <div class="listing" *ngFor="let listing of optionListings">
+        <app-listing 
+            (updateEvent)="getListings()" 
+            [listing]="listing"
+            [isRental]="false"
+            [isRenter]="false" 
+            [isOwner]="false"
+            [ethPrice]="ethPrice"
+            [isOption]="true"
+        >    
+        </app-listing>
+    </div>
 </div>

@@ -19,4 +19,8 @@ export class CoingeckoService {
     // See: https://www.coingecko.com/en/api/documentation for valid coinNames
     return await this.client.simple.price({ ids: [coinName], vs_currencies: ['usd']})
   }
+
+  getList = async () => {
+    return await this.client.coins.list();
+  }
 }

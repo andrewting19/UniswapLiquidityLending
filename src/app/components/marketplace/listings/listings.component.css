@@ -5,7 +5,7 @@
     width: 50%;
 }
 
-.sale-btn {
+.rent-btn {
     margin: 10px;
 }
 
@@ -54,4 +54,16 @@ th, td {
 
 .fill {
     width: -webkit-fill-available;
+}
+
+.greyed-out {
+    color: rgba(0,0,0,.4);
+}
+
+.greyed-out:hover {
+    color: initial;
+}
+
+.pointer {
+    cursor: pointer;
 }

@@ -1,17 +1,21 @@
 import { Component, OnInit } from '@angular/core';
-import { RentInfo } from 'src/app/models/interfaces';
+import { RentInfo, OptionInfo, ListingTypes } from 'src/app/models/interfaces';
 import { RenterContractService } from 'src/app/services/contracts/renterContract.service';
 import { CoingeckoService } from 'src/app/services/coingecko.service';
+import { SalesContractService } from 'src/app/services/contracts/salesContract.service';
+import { OptionContractService } from 'src/app/services/contracts/optionContract.service';
 
 @Component({
   selector: 'app-listings',
-  templateUrl: './rental-listings.component.html',
-  styleUrls: ['./rental-listings.component.css']
+  templateUrl: './listings.component.html',
+  styleUrls: ['./listings.component.css']
 })
-export class RentalListingsComponent implements OnInit {
+export class ListingsComponent implements OnInit {
   listings: RentInfo[] = [];
   visibleListings: RentInfo[] = [];
+  optionListings: OptionInfo[] = [];
   loading: boolean = false;
+  showRentals: boolean = true;
   durationMultiplier: any;
   ethPrice: number = 0;
   value = ""
@@ -22,8 +26,11 @@ export class RentalListingsComponent implements OnInit {
     '', //duration #
     'd', //duration units
     '', //token id
+    '=', //range selection: in, above, or below range
+    '0', //index of listing.priceRange to use for range calculation 
   ]
-  operators = ['<', '<']
+  operators = ['<', '<'] //initial values for each operator
+  listingType: ListingTypes = ListingTypes.Rental;
   operatorMap = (op: string, x: number, y: number) => {
     if (op == "=") return x == y
     else if (op == "<") return x < y
@@ -33,6 +40,8 @@ export class RentalListingsComponent implements OnInit {
 
   constructor(
     private renterContractService: RenterContractService,
+    private salesContractService: SalesContractService,
+    private optionContractService: OptionContractService,
     private coinGecko: CoingeckoService
   ) { }
 
@@ -53,19 +62,25 @@ export class RentalListingsComponent implements OnInit {
     this.ethPrice = await this.coinGecko.getEthPrice();
   }
 
-  async getListings() {
-    this.listings = await this.renterContractService.getRentalListings();
-    this.visibleListings = [...this.listings];
-    this.search();
-    this.loading = false;
-    console.log(this.listings)
+  switchListings(showRentals: boolean) {
+    if (showRentals != this.showRentals) {
+      this.showRentals = showRentals;
+      this.visibleListings = [];
+      this.getListings();
+      this.loading = true;
+    }
   }
 
-  async purchaseListing(listing: RentInfo) {
-    this.loading = true;
-    let result = await this.renterContractService.rent(listing.tokenId, listing.priceInEther);
+  async getListings() {
+    if (this.showRentals) {
+      this.listings = await this.renterContractService.getRentalListings();
+    } else {
+      this.listings = await this.salesContractService.getAllListings();
+    }
+    this.visibleListings = [...this.listings];
+    this.search();
+    this.optionListings = await this.optionContractService.getListingsForSale();
     this.loading = false;
-    this.getListings();
   }
 
   deltaToString(delta: number) {
@@ -102,7 +117,7 @@ export class RentalListingsComponent implements OnInit {
       if (fields[3] != '') {
         result = result && this.operatorMap(this.operators[0], listing.priceInEther, parseFloat(fields[3]));
       }
-      if (fields[4] != '') {
+      if (this.showRentals && fields[4] != '') {
         result = result && this.operatorMap(this.operators[1], listing.durationInSeconds, parseFloat(fields[4])*this.durationMultiplier[fields[5]]);
       }
       return result &&
@@ -111,5 +126,10 @@ export class RentalListingsComponent implements OnInit {
         listing.position.fee == parseFloat(fields[2]) &&
         listing.tokenId.toString().includes(fields[6])
     });
+    console.log(this.visibleListings)
+  }
+
+  getType() {
+    return ListingTypes.Option;
   }
 }

@@ -20,14 +20,51 @@ p {
     width: fit-content;
 }
 
-.rent-btn {
-    margin: 10px;
-}
-
 .listing-fields {
     display: flex;
     flex-direction: row;
     justify-content: center;
+}
+
+ul {
+    font-size: 14px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.grid1 {
+    display: grid;
+    grid-template-columns: 2fr 15px 1fr;
+    grid-column-gap: 5px;
+    justify-items: start;
+}
+
+.grid2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-column-gap: 5px;
+    justify-items: start;
+}
+
+.grid1 li:nth-child(1) {
+    justify-self: start;
+    grid-column: 1;
+}
+
+.grid1 li:nth-child(2) {
+    grid-column: 2;
+    justify-self: end;
+}
+
+.grid1 li:nth-child(3) {
+    grid-column: 3;
+    justify-self: center;
+}
+
+.grid2 li:nth-child(2) {
+    grid-column: 2;
+    justify-self: end;
 }
 
 .listing-info {
@@ -38,7 +75,7 @@ p {
 }
 
 .image-div {
-    width: 100px;
+    width: 75px;
 }
 
 .nft-image {
@@ -52,4 +89,21 @@ p {
     vertical-align: middle;
     margin-top: -1px;
 }
+
+button {
+    padding: 10px 20px;
+    margin: 10px 0px 5px 10px;
+}
+
+.rent-btn {
+    margin-left: auto;
+    width: fit-content;
+    grid-column: 2;
+    justify-self: end;
+}
+/* 
+.details-btn {
+    grid-column: 1;
+    justify-self: start;
+} */
 

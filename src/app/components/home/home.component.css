@@ -2,6 +2,13 @@
     font-family: "Roboto",sans-serif;
 }
 
+.caravan-logo {
+    margin: 20px auto 0 auto;
+    width: 10%;
+    height: auto;
+    border-radius: 10px;
+}
+
 .textblock {
     margin: 0 auto;
     text-align: left;

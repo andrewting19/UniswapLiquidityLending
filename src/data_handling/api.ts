@@ -2,7 +2,8 @@ import { execPath } from "process";
 
 const axios = require('axios').default;
 
-export const graphAPIURL = "https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v3"
+export const graphAPIURL = "https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v3";
+// export const graphAPIURL = "https://api.thegraph.com/subgraphs/name/mtahon/uniswap-v3-rinkeby";
 
 export default class graphAPI {
 
@@ -11,6 +12,75 @@ export default class graphAPI {
 
   constructor(url: string) {
     this.url = url;
+  }
+
+  public async getPositionInfo(positionId: number) {
+    const query = `
+    query ($position_id: String!) {
+      position(id: $position_id){
+        pool{
+          id
+        }
+        depositedToken0
+        depositedToken1
+        token0
+        token1
+        collectedFeesToken0
+        collectedFeesToken1
+        liquidity
+        
+      }
+  
+  
+  
+  
+    }`
+    const variables = { "position_id": positionId};
+    const response =  await axios.post(this.url,{ "query": query, "variables":variables});
+    try {            
+      const resp = response.data.data;
+      console.log("Pos", positionId, response)
+      return resp;
+    } catch (error) {
+      console.log(response.data);
+      throw(error);
+    } 
+  
+  
+  }
+
+  public async getPoolDayDataFromLastXDays (poolAddress: string, numDays: number) {
+    const query = `
+    query ($pool_addr: String!, $num_days: Int!) {
+      poolDayDatas(id: $pool_addr, first: $num_days) {
+        id
+        date
+        liquidity
+        sqrtPrice
+        token0Price
+        token1Price
+        tick 
+        feeGrowthGlobal0X128
+        feeGrowthGlobal1X128
+        tvlUSD
+        volumeToken0
+        volumeToken1
+        volumeUSD
+      }
+    }
+    `
+
+    const variables =  {"pool_addr": poolAddress, "num_days": numDays };
+    const response =  await axios.post(this.url,{ "query": query, "variables":variables});
+    console.log("Pooldaydata", response)
+    try {
+      const poolDayData = response.data.data;
+      return poolDayData;
+    } catch (error) {
+      console.log(response.data);
+      throw(error);
+  } 
+
   }
 
 
@@ -52,7 +122,7 @@ public async getLastXSwaps(poolAddress: string, numSwaps: number) {
 
 
 
-public async getSwapsFromLastXDays(poolAddress: string, numDays: number, currTime: number) {
+  public async getSwapsFromLastXDays(poolAddress: string, numDays: number, currTime: number) {
     const query = `
     query ($min_timestamp: BigInt! $pool_addr: String!) {
       pool(id: $pool_addr){
@@ -95,9 +165,6 @@ public async getSwapsFromLastXDays(poolAddress: string, numDays: number, currTim
             
         return res;
   }
-
-
-
 
 public async getPoolInfo (poolAddress: string) {
   const query = `

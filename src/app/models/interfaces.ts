@@ -12,13 +12,26 @@ export interface Position {
     fee: number;
     feeGrowth: number[],
     tokensOwed: number[],
-    priceRange: PriceRange[]
+    tokensDeposited: number[],
+    pool: string,
+    priceRange: PriceRange[],
+    rangeToShow: number; //whether priceRange[0] or priceRange[1] is more readable
 }
 
 export interface PriceRange {
     lower: number;
     upper: number;
 }
+
+export enum ListingTypes {
+    Rental = "RENTAL",
+    Sale = "SALE",
+    Auction = "AUCTION", 
+    Option = "OPTION",
+    Swap = "SWAP",
+    Null = "NULL"
+  }
+  
 
 export interface ListingInfo {
     tokenId: number;
@@ -41,15 +54,20 @@ export interface AuctionInfo extends ListingInfo {
     expiryDate: Date | null;
 }
 
-export interface OptionInfo extends ListingInfo {
+export interface OptionInfo {
+    tokenId: number;
     premium: number; //in Eth
+    currentOwner: string;
     costToExercise: number; //in paymentToken
-    tokenLong: string;
+    optionPayout: number; //in tokenLong
+    amountToReturn: number; //in paymentToken
+    longToken: ERC20Token;
     forSale: boolean;
-    paymentToken: string;
+    paymentToken: ERC20Token;
     expiryDate: Date | null;
     pairing: ERC20Token[];
     position: Position;
+    pairingIndex: number;
 }
 
 export interface SwapInfo extends ListingInfo {

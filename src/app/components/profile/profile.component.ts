@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { RentInfo, ListingInfo} from 'src/app/models/interfaces';
+import { RentInfo, ListingInfo, OptionInfo} from 'src/app/models/interfaces';
 import { RenterContractService } from 'src/app/services/contracts/renterContract.service';
 import { SalesContractService } from 'src/app/services/contracts/salesContract.service';
+import { OptionContractService } from 'src/app/services/contracts/optionContract.service';
+import { CoingeckoService } from 'src/app/services/coingecko.service';
 
 @Component({
   selector: 'app-profile',
@@ -10,8 +12,10 @@ import { SalesContractService } from 'src/app/services/contracts/salesContract.s
 })
 export class ProfileComponent implements OnInit {
   ownedRentalListings: RentInfo[] = [];
+  ownedOptions: OptionInfo[] = [];
   ownedSalesListings: ListingInfo[] = [];
   loading: boolean = false;
+  ethPrice: number = 0;
 
   rentedListings: RentInfo[] = [];
   ownedRentalloading: boolean = false;
@@ -22,14 +26,18 @@ export class ProfileComponent implements OnInit {
   durationMultiplier: any;
 
   constructor(    private renterContractService: RenterContractService,
-    private salesContractService: SalesContractService) { }
+    private salesContractService: SalesContractService,
+    private optionContractService: OptionContractService,
+    private priceService: CoingeckoService
+  ) { }
 
   ngOnInit(): void {
     this.ownedRentalLoading = true;
     this.rentedLoading = true;
     this.getOwnedRental();
-    this.getOwnedForSale();
+    // this.getOwnedForSale();
     this.getRented();
+    this.getEthPrice();
     this.durationMultiplier = {
       's': 1,
       'm': 60,
@@ -38,6 +46,10 @@ export class ProfileComponent implements OnInit {
       'w': 604800
     }
     
+  }
+
+  async getEthPrice() {
+    this.ethPrice = await this.priceService.getEthPrice();
   }
 
   async collectMarketplaceFees() {
@@ -50,15 +62,18 @@ export class ProfileComponent implements OnInit {
 
   async getOwnedRental() {
     this.ownedRentalListings = await this.renterContractService.getRentalListingsByOwner("");
+    let selling = await this.salesContractService.getSalesListingsByOwner("");
+    this.ownedOptions = await this.optionContractService.getOptionListingsByOwner("");
+    console.log("Options",this.ownedOptions)
+    this.ownedRentalListings = [...this.ownedRentalListings, ...selling]
     this.ownedRentalLoading = false;
-    console.log("Owned for Rent:",this.ownedRentalListings)
   }
 
-  async getOwnedForSale() {
-    this.ownedSalesListings = await this.salesContractService.getSalesListingsByOwner("");
-    this.ownedSalesLoading = false;
-    console.log("Owned For Sale:",this.ownedSalesListings)
-  }
+  // async getOwnedForSale() {
+  //   this.ownedSalesListings = await this.salesContractService.getSalesListingsByOwner("");
+  //   this.ownedSalesLoading = false;
+  //   console.log("Owned For Sale:",this.ownedSalesListings)
+  // }
 
   async getRented() {
     this.rentedListings = await this.renterContractService.getRentalListingsByRenter("");
