@@ -6,6 +6,7 @@ import graphAPI, { graphAPIURL } from 'src/data_handling/api';
 import { AuctionContractService } from 'src/app/services/contracts/auctionContract.service';
 import { SwapperContractService } from 'src/app/services/contracts/swapContract.service';
 import { OptionContractService } from 'src/app/services/contracts/optionContract.service';
+import { router01ContractService } from 'src/app/services/contracts/router01Contract.service';
 
 @Component({
   selector: 'app-home',
@@ -27,6 +28,7 @@ export class HomeComponent implements OnInit {
     private auctionContractService: AuctionContractService,
     private optionContractService: OptionContractService,
     private swapContractService: SwapperContractService,
+    private routerContractService: router01ContractService,
     private domSanitizer: DomSanitizer
   ) { }
 
@@ -77,6 +79,9 @@ export class HomeComponent implements OnInit {
     // console.log(await this.optionContractService.exerciseOption(9206));
     // console.log(await this.optionContractService.getAllListings());
     // console.log(this.optionContractService.returnToOwner(9206));
+
+
+    console.log(this.routerContractService.getRentalPrice(10, 12, 6000, "0x8ad599c3a0ff1de082011efddc58f1908eb6e6d8"));
 
 
 
